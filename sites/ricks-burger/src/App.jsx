@@ -1372,11 +1372,10 @@ footer {
 `;
 
 const IMGS = {
-  hero_energy:      'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1920&q=85&auto=format&fit=crop',
-  street_exterior:  'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&q=80&auto=format&fit=crop',
-  signature_product:'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=900&q=80&auto=format&fit=crop',
+  hero_signature:   'https://pfst.cf2.poecdn.net/base/image/67179607b407b129e40ed5b3feeea3be081c237298e15c80b57268642098c2fd',
+  interior:         'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1920&q=85&auto=format&fit=crop',
+  food_close:       'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=900&q=80&auto=format&fit=crop',
   crowd_vibe:       'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80&auto=format&fit=crop',
-  detail_shot:      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=80&auto=format&fit=crop',
 };
 
 const DAYS = [
@@ -1489,7 +1488,7 @@ export default function App() {
         <section className="hero" aria-label="Ricks Burger Leipzig">
           <div className="hero-bg" aria-hidden="true">
             <img
-              src={IMGS.hero_energy}
+              src={IMGS.hero_signature}
               alt=""
               loading="eager"
               fetchpriority="high"
@@ -1587,8 +1586,8 @@ export default function App() {
                 <div className="about-sticker" aria-hidden="true">Reudnitz · Leipzig</div>
                 <div className="about-img-main">
                   <img
-                    src={IMGS.street_exterior}
-                    alt="Ricks Burger — Außenansicht, Reudnitz Leipzig"
+                    src={IMGS.interior}
+                    alt="Ricks Burger — urbaner Burger-Joint in Reudnitz Leipzig"
                     loading="lazy"
                   />
                 </div>
@@ -1654,7 +1653,7 @@ export default function App() {
             <div className="menu-featured reveal">
               <div className="feat-img">
                 <img
-                  src={IMGS.signature_product}
+                  src={IMGS.food_close}
                   alt="Smashburger Double — Signature-Burger bei Ricks Burger Leipzig"
                   loading="lazy"
                 />
@@ -1853,14 +1852,6 @@ export default function App() {
               </div>
 
               <div className="anfahrt-right">
-                <div className="detail-frame">
-                  <img
-                    src={IMGS.detail_shot}
-                    alt="Frische Zutaten — Handgemacht täglich bei Ricks Burger"
-                    loading="lazy"
-                  />
-                  <div className="detail-label" aria-hidden="true">Handgemacht · Täglich frisch</div>
-                </div>
                 <div className="map-frame">
                   <iframe
                     title="Ricks Burger Standort Reudnitz Leipzig"
