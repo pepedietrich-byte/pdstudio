@@ -26,7 +26,9 @@ SUMMARY_FILE="${RUNNER_PATH}/runs/${RUN_ID}.json"
 # ─── Logging ─────────────────────────────────────────────────────────────────
 
 mkdir -p "${RUNNER_PATH}/logs" "${RUNNER_PATH}/runs"
-exec > >(tee -a "$LOG_FILE") 2>&1
+# server.js pipes our stdout/stderr to the log file via spawn
+# Do NOT also tee to the log file here — that causes double entries
+# Log functions write to stdout only (server.js captures it)
 
 ts() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
 log()  { echo "[$(ts)] $*"; }
@@ -103,7 +105,9 @@ if [ "$MODE" = "analyze" ]; then
   check() {
     local name="$1"
     local result="$2"
-    local detail="${3:-}"
+    # Sanitize detail: first line only, escape backslashes and double-quotes for JSON
+    local detail; detail=$(printf '%s' "${3:-}" | head -1 | \
+      sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr -d '\r\n')
     if [ "$result" = "ok" ]; then
       logok "${name}: ${detail:-ok}"
       CHECKS_JSON="${CHECKS_JSON}{\"check\":\"${name}\",\"status\":\"ok\",\"detail\":\"${detail}\"},"
