@@ -333,11 +333,15 @@ fi
 if [ "$HAS_PACKAGE_JSON" = true ]; then
   cd "$SITE_ABS"
 
-  # npm install only if node_modules missing or lockfile changed
+  # npm install only if node_modules missing, lockfile changed, or vite binary missing
   NEED_INSTALL=false
   if [ ! -d "node_modules" ]; then
     NEED_INSTALL=true
     log "node_modules missing — running npm install"
+  elif [ ! -x "node_modules/.bin/vite" ] && grep -q '"vite"' package.json 2>/dev/null; then
+    NEED_INSTALL=true
+    log "node_modules/.bin/vite missing — reinstalling"
+    rm -rf node_modules
   elif git diff HEAD -- package-lock.json 2>/dev/null | grep -q "^[+-]" ; then
     NEED_INSTALL=true
     log "package-lock.json changed — running npm install"
