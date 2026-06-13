@@ -84,9 +84,17 @@ export function filterRelevantSites(leads = []) {
     // 1. Session-Fresh? Immer anzeigen
     if (fresh[l.lead_id]) return true
 
-    // 2. Datum aus Sheet — gestern/heute?
+    // 2. Datum aus Sheet — gestern, heute, ODER zukünftig
     const d = buildDate(l.build)
     if (d && isYesterdayOrToday(d, now)) return true
+
+    // 3. NEUE Regel: Site stammt aus dem 5-style oder 10-build run (source-Spalte)
+    //    Diese sind frisch gebaut auch wenn das Datum durcheinander geriet.
+    const src = (l.build?.source || '').toLowerCase()
+    if (src.includes('build-run') || src.includes('a2-vps') || src.includes('a3-polish') ||
+        src.includes('5-styles') || src.includes('10-build') || src.includes('ui-manual-save')) {
+      return true
+    }
 
     return false
   })

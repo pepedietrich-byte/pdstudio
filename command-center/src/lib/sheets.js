@@ -174,7 +174,7 @@ export function joinLeadData(sheets) {
     deduped.push(lead)
   }
 
-  return deduped.map(lead => ({
+  const leadsWithRelations = deduped.map(lead => ({
     ...lead,
     content:    contentMap.get(lead.lead_id)    ?? {},
     images:     imagesMap.get(lead.lead_id)     ?? {},
@@ -182,6 +182,39 @@ export function joinLeadData(sheets) {
     concept:    conceptMap.get(lead.lead_id)    ?? {},
     build:      buildMap.get(lead.lead_id)      ?? {},
   }))
+
+  // ── Virtual leads from BUILD-only rows ────────────────────────────────────
+  // Sites die im Build-Run via build-meta-write geschrieben wurden, haben oft
+  // KEINE LEADS-Zeile. Diese als Pseudo-Lead anzeigen damit sie im Sites-Tab
+  // erscheinen.
+  const knownIds = new Set(leadsWithRelations.map(l => l.lead_id))
+  const virtuals = []
+  for (const [leadId, build] of buildMap.entries()) {
+    if (!leadId || knownIds.has(leadId)) continue
+    if (!build.demo_url) continue   // ohne demo_url ist nichts zu zeigen
+
+    // Try content/concept lookups
+    const content = contentMap.get(leadId) ?? {}
+    const concept = conceptMap.get(leadId) ?? {}
+
+    virtuals.push({
+      lead_id:       leadId,
+      business_name: build.restaurant_name || content.name || concept.name || leadId,
+      name:          build.restaurant_name || content.name || leadId,
+      address:       content.address || build.address || '',
+      phone:         content.phone   || build.phone   || '',
+      cuisine:       build.branche   || content.cuisine || 'Restaurant',
+      score:         build.opportunity_score || 0,
+      virtual:       true,    // marker
+      content,
+      images:        imagesMap.get(leadId) ?? {},
+      validation:    validationMap.get(leadId) ?? {},
+      concept,
+      build,
+    })
+  }
+
+  return [...leadsWithRelations, ...virtuals]
 }
 
 export function getLeadStage(lead) {
