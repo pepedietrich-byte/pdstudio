@@ -121,7 +121,7 @@ html,body {
   color: var(--cream);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -133,7 +133,7 @@ button { font: inherit; cursor: pointer; border: 0; background: none; padding: 0
   font-family: var(--sans);
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--cream-mute);
 }
@@ -406,10 +406,10 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 .hero-main { max-width: 820px; }
 .hero-main h1 {
   font-family: var(--display);
-  font-size: clamp(64px,12vw,172px);
+  font-size: clamp(72px,12.5vw,184px);
   font-weight: 600;
-  line-height: 0.87;
-  letter-spacing: -0.04em;
+  line-height: 0.86;
+  letter-spacing: -0.042em;
   margin: 0 0 clamp(28px,4vw,44px);
   color: var(--cream);
   font-variation-settings: 'opsz' 96;
@@ -417,15 +417,16 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 }
 .hero-main h1 em {
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300;
   color: var(--orange-b);
   display: block;
+  letter-spacing: -0.03em;
 }
 .hero-sub {
-  font-size: clamp(16px,1.4vw,19px);
-  line-height: 1.6;
+  font-size: clamp(16px,1.4vw,20px);
+  line-height: 1.7;
   color: var(--cream-soft);
-  max-width: 54ch;
+  max-width: 50ch;
   margin: 0 0 clamp(32px,4vw,48px);
   text-wrap: pretty;
 }
@@ -455,9 +456,9 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 }
 .hero-meta-item .v {
   font-family: var(--display);
-  font-size: clamp(17px,1.6vw,22px);
+  font-size: clamp(18px,1.8vw,24px);
   font-weight: 500;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   color: var(--cream);
   line-height: 1.2;
   font-variation-settings: 'opsz' 24;
@@ -514,16 +515,16 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 
 .konzept-left h2 {
   font-family: var(--display);
-  font-size: clamp(38px,5.5vw,76px);
+  font-size: clamp(42px,6vw,84px);
   font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  line-height: 0.93;
+  letter-spacing: -0.036em;
   margin: 16px 0 28px;
   color: var(--cream);
   text-wrap: balance;
-  font-variation-settings: 'opsz' 76;
+  font-variation-settings: 'opsz' 84;
 }
-.konzept-left h2 em { font-style: italic; font-weight: 400; color: var(--cream-soft); }
+.konzept-left h2 em { font-style: italic; font-weight: 300; color: var(--cream-soft); }
 .konzept-img {
   border-radius: var(--r-lg);
   overflow: hidden;
@@ -538,17 +539,18 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 
 .konzept-right .lead-p {
   font-size: clamp(17px,1.5vw,21px);
-  line-height: 1.55;
+  line-height: 1.65;
   color: var(--cream);
   margin: 0 0 24px;
   text-wrap: pretty;
 }
 .konzept-right p {
   font-size: clamp(15px,1.1vw,17px);
-  line-height: 1.7;
+  line-height: 1.75;
   color: var(--cream-soft);
   margin: 0 0 20px;
   max-width: 58ch;
+  text-wrap: pretty;
 }
 
 .konzept-facts {
@@ -621,12 +623,13 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 .showcase-text p {
   font-family: var(--display);
   font-style: italic;
-  font-size: clamp(22px,2.8vw,36px);
-  line-height: 1.16;
-  letter-spacing: -0.025em;
+  font-weight: 300;
+  font-size: clamp(24px,3vw,40px);
+  line-height: 1.13;
+  letter-spacing: -0.028em;
   color: var(--cream);
   margin: 0;
-  font-variation-settings: 'opsz' 36;
+  font-variation-settings: 'opsz' 40;
 }
 
 /* ── Karte ───────────────────────────────────────────────────────── */
@@ -646,15 +649,16 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 @media (max-width: 760px) { .karte-head { grid-template-columns: 1fr; gap: 20px; } }
 .karte-head h2 {
   font-family: var(--display);
-  font-size: clamp(52px,10vw,136px);
+  font-size: clamp(56px,10vw,140px);
   font-weight: 600;
-  line-height: 0.87;
-  letter-spacing: -0.04em;
+  line-height: 0.86;
+  letter-spacing: -0.042em;
   margin: 16px 0 0;
   color: var(--cream);
   font-variation-settings: 'opsz' 96;
+  text-wrap: balance;
 }
-.karte-head h2 em { font-style: italic; font-weight: 400; color: var(--cream-soft); }
+.karte-head h2 em { font-style: italic; font-weight: 300; color: var(--cream-soft); letter-spacing: -0.03em; }
 .karte-demo-note { text-align: right; }
 @media (max-width: 760px) { .karte-demo-note { text-align: left; } }
 .demo-tag {
@@ -712,13 +716,13 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 }
 .dish-name {
   font-family: var(--display);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
   color: var(--cream);
-  line-height: 1.25;
+  line-height: 1.2;
   margin: 0 0 4px;
-  font-variation-settings: 'opsz' 18;
+  font-variation-settings: 'opsz' 20;
 }
 .dish-tag {
   display: inline-block;
@@ -763,15 +767,16 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 @media (max-width: 920px) { .hours-grid { grid-template-columns: 1fr; gap: 36px; } }
 .hours-head h2 {
   font-family: var(--display);
-  font-size: clamp(38px,5.5vw,64px);
+  font-size: clamp(40px,5.5vw,70px);
   font-weight: 600;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  line-height: 0.93;
+  letter-spacing: -0.036em;
   margin: 16px 0 16px;
   color: var(--cream);
-  font-variation-settings: 'opsz' 64;
+  font-variation-settings: 'opsz' 70;
+  text-wrap: balance;
 }
-.hours-head h2 em { font-style: italic; font-weight: 400; color: var(--cream-soft); }
+.hours-head h2 em { font-style: italic; font-weight: 300; color: var(--cream-soft); }
 .hours-head .lead-text {
   font-size: 16px;
   line-height: 1.75;
@@ -833,15 +838,16 @@ section { padding: clamp(80px,10vw,140px) 0; position: relative; }
 
 .contact-left h2 {
   font-family: var(--display);
-  font-size: clamp(38px,5.5vw,68px);
+  font-size: clamp(40px,6vw,76px);
   font-weight: 600;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  line-height: 0.93;
+  letter-spacing: -0.036em;
   margin: 16px 0 20px;
   color: var(--cream);
-  font-variation-settings: 'opsz' 68;
+  font-variation-settings: 'opsz' 76;
+  text-wrap: balance;
 }
-.contact-left h2 em { font-style: italic; font-weight: 400; color: var(--cream-soft); }
+.contact-left h2 em { font-style: italic; font-weight: 300; color: var(--cream-soft); }
 .contact-left > .intro-p {
   font-size: 17px;
   color: var(--cream-soft);
