@@ -285,7 +285,7 @@ function App() {
             <motion.div key="sites"
               initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.18, ease: EASE }}>
-              <SitesView leads={leads} onOpenLead={selectLead} />
+              <SitesView leads={leads} onOpenLead={selectLead} lastRefresh={lastRefresh} />
             </motion.div>
           ) : activeTab === 'executions' ? (
             <motion.div key="executions"

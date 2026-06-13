@@ -3,12 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Globe, ExternalLink, Sparkles, PenTool, ShieldCheck,
   ChevronRight, Loader2, CheckCircle2, AlertCircle, Calendar, Star,
+  Save, AlertTriangle, Database,
 } from 'lucide-react'
 import {
   filterRelevantSites, getSiteDate, formatRelativeDate,
-  useFreshSitesVersion, markSiteFresh, isFresh,
+  useFreshSitesVersion, markSiteFresh, isFresh, hasPersistedDate,
+  getSitesDiagnostics,
 } from '../lib/sites'
-import { triggerPolish, triggerWriter, triggerFactCheck } from '../lib/n8n'
+import { triggerPolish, triggerWriter, triggerFactCheck, updateBuildMetadata, isBuildMetaWriteAvailable } from '../lib/n8n'
 
 const EASE = [0.23, 1, 0.32, 1]
 
@@ -23,13 +25,33 @@ function SiteCard({ lead, onOpenLead }) {
   const [busy, setBusy]     = useState(null)
   const [result, setResult] = useState(null)
   const [error, setError]   = useState('')
+  const [persistState, setPersistState] = useState('idle') // idle | saving | saved | failed
 
   const url    = lead.build?.demo_url || ''
   const date   = getSiteDate(lead)
   const fresh  = isFresh(lead.lead_id)
+  const persisted = hasPersistedDate(lead)
   const score  = parseInt(lead.score || lead.audit_score || 0) || null
   const cuisine = lead.cuisine || lead.business?.cuisine || lead.branche || ''
   const name   = lead.business_name || lead.business?.name || lead.name || lead.lead_id
+
+  async function persistMeta() {
+    if (persistState === 'saving') return
+    setPersistState('saving')
+    try {
+      await updateBuildMetadata(lead.lead_id, {
+        demo_url:      url,
+        build_status:  lead.build?.build_status || 'success',
+        deploy_status: lead.build?.deploy_status || 'success',
+        site_dir:      lead.build?.site_dir || `sites/${lead.lead_id}`,
+        source:        'ui-manual-save',
+        kind:          'manual',
+      })
+      setPersistState('saved')
+    } catch (e) {
+      setPersistState('failed'); setError(e.message)
+    }
+  }
 
   async function doPolish() {
     setBusy('polish'); setError(''); setResult(null)
@@ -133,6 +155,35 @@ function SiteCard({ lead, onOpenLead }) {
             </div>
           )}
         </div>
+
+        {/* Persistence warning */}
+        {!persisted && (
+          <div className="mt-3 flex items-center justify-between gap-2 p-2 rounded"
+            style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.25)' }}>
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle size={11} style={{ color: '#f5a623', flexShrink: 0 }} />
+              <span className="text-[10px]" style={{ color: '#f5a623' }}>
+                Nicht dauerhaft gespeichert — built_at fehlt
+              </span>
+            </div>
+            <button onClick={persistMeta} disabled={persistState === 'saving' || persistState === 'saved'}
+              className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium flex-shrink-0"
+              style={{
+                background: persistState === 'saved' ? 'rgba(57,255,136,0.15)' : 'rgba(245,166,35,0.15)',
+                color: persistState === 'saved' ? '#39ff88' : '#f5a623',
+                border: `1px solid ${persistState === 'saved' ? 'rgba(57,255,136,0.3)' : 'rgba(245,166,35,0.3)'}`,
+                opacity: persistState === 'saving' ? 0.6 : 1,
+              }}>
+              {persistState === 'saving' ? <Loader2 size={9} className="animate-spin" /> :
+               persistState === 'saved'  ? <CheckCircle2 size={9} /> :
+               <Save size={9} />}
+              {persistState === 'saving' ? 'Speichere...' :
+               persistState === 'saved'  ? 'Gespeichert' :
+               persistState === 'failed' ? 'Fehler' :
+               'Metadaten speichern'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Actions */}
@@ -278,7 +329,7 @@ function CheckResult({ data }) {
 }
 
 // ─── Main SitesView ─────────────────────────────────────────────────────────
-export default function SitesView({ leads = [], onOpenLead }) {
+export default function SitesView({ leads = [], onOpenLead, lastRefresh }) {
   useFreshSitesVersion()
 
   const sites = useMemo(() => {
@@ -289,6 +340,9 @@ export default function SitesView({ leads = [], onOpenLead }) {
       return db - da
     })
   }, [leads])
+
+  const diag = useMemo(() => getSitesDiagnostics(leads), [leads])
+  const writeAvailable = isBuildMetaWriteAvailable()
 
   return (
     <div className="space-y-4">
@@ -307,6 +361,28 @@ export default function SitesView({ leads = [], onOpenLead }) {
         </div>
       </div>
 
+      {/* Diagnostic strip */}
+      <div className="rounded-lg p-3 grid grid-cols-2 md:grid-cols-5 gap-3 text-xs"
+        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <DiagStat label="Sichtbar" value={diag.total} color="#e8197f" />
+        <DiagStat label="Persistiert" value={diag.persisted} color="#39ff88" />
+        <DiagStat label="Session-only" value={diag.session_only} color="#f5a623" />
+        <DiagStat label="Datum fehlt" value={diag.missing_date} color={diag.missing_date > 0 ? '#ef4444' : '#6b7a90'} />
+        <DiagStat
+          label="Letzter Refresh"
+          value={lastRefresh ? new Date(lastRefresh).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—'}
+          color="#6b7a90" small
+        />
+      </div>
+
+      {!writeAvailable && (
+        <div className="p-2 rounded text-xs flex items-center gap-2"
+          style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.25)', color: '#f5a623' }}>
+          <Database size={11} />
+          needs_sheet_write_connection — VITE_N8N_BUILD_META_WEBHOOK nicht gesetzt. Frische Builds werden nicht persistiert.
+        </div>
+      )}
+
       {sites.length === 0 ? (
         <EmptyState />
       ) : (
@@ -316,6 +392,15 @@ export default function SitesView({ leads = [], onOpenLead }) {
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function DiagStat({ label, value, color, small }) {
+  return (
+    <div>
+      <div className={small ? "font-mono text-sm font-bold" : "font-mono text-xl font-bold"} style={{ color }}>{value}</div>
+      <div className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: '#6b7a90' }}>{label}</div>
     </div>
   )
 }

@@ -23,17 +23,26 @@ function isYesterdayOrToday(date, now = new Date()) {
 }
 
 // Versucht aus einem BUILD-Row das beste Datum zu extrahieren
+// Priorisierte Reihenfolge laut Spec
+const DATE_FIELDS = [
+  'deployed_at', 'built_at', 'polished_at', 'build_date',
+  'created_at', 'generated_at', 'updated_at',
+  'website_built_at',  // Legacy field
+  'date', 'timestamp',
+]
+
 function buildDate(build) {
   if (!build) return null
-  const fields = [
-    'deployed_at', 'built_at', 'build_date', 'created_at',
-    'generated_at', 'updated_at', 'date', 'timestamp',
-  ]
-  for (const f of fields) {
+  for (const f of DATE_FIELDS) {
     const d = parseDate(build[f])
     if (d) return d
   }
   return null
+}
+
+// Hat das BUILD-Row mindestens ein persistiertes Datum?
+export function hasPersistedDate(lead) {
+  return !!buildDate(lead?.build)
 }
 
 // ── Session-Tracker ─────────────────────────────────────────────────────────
@@ -106,6 +115,27 @@ export function formatRelativeDate(date) {
 
 export function countRelevantSites(leads = []) {
   return filterRelevantSites(leads).length
+}
+
+// Diagnose-Stats für den Sites-Tab
+export function getSitesDiagnostics(leads = []) {
+  const sites = filterRelevantSites(leads)
+  const fresh = readFresh()
+  let withDate = 0
+  let withoutDate = 0
+  let sessionOnly = 0
+  for (const s of sites) {
+    if (hasPersistedDate(s)) withDate++
+    else withoutDate++
+    if (fresh[s.lead_id] && !hasPersistedDate(s)) sessionOnly++
+  }
+  return {
+    total: sites.length,
+    persisted: withDate,
+    session_only: sessionOnly,
+    missing_date: withoutDate,
+    fresh_session: Object.keys(fresh).length,
+  }
 }
 
 // React hook für reactives Re-Rendern nach markSiteFresh

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, PenTool, Calculator, ShieldCheck, Loader2, CheckCircle2, AlertCircle, Copy, ExternalLink } from 'lucide-react'
-import { triggerPolish, triggerWriter, triggerPricing, triggerFactCheck } from '../lib/n8n'
+import { triggerPolish, triggerWriter, triggerPricing, triggerFactCheck, updateBuildMetadata } from '../lib/n8n'
 import { markSiteFresh } from '../lib/sites'
 
 const AGENT_META = {
@@ -78,6 +78,18 @@ function A3Panel({ lead }) {
       setState(r.deploy_status === 'success' ? 'done' : 'error')
       if (r.deploy_status === 'success' && r.polished_url) {
         markSiteFresh(lead.lead_id, r.polished_url)
+        // Persist polished_at into BUILD sheet
+        try {
+          await updateBuildMetadata(lead.lead_id, {
+            demo_url:      r.polished_url,
+            build_status:  r.build_status,
+            deploy_status: r.deploy_status,
+            site_dir:      r.site_dir,
+            run_id:        r.run_id,
+            source:        'a3-polish-agent',
+            kind:          'polish',
+          })
+        } catch (e) { console.warn('Polish meta persist failed', e) }
       }
       if (r.error) setError(r.error)
     } catch (e) {

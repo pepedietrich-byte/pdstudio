@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Rocket, ExternalLink, Loader2, CheckCircle2, AlertCircle, Server } from 'lucide-react'
-import { triggerVpsBuild } from '../lib/n8n'
+import { triggerVpsBuild, updateBuildMetadata } from '../lib/n8n'
 import { markSiteFresh } from '../lib/sites'
 
 // Build-Style Optionen (Pepe wählt im UI)
@@ -41,6 +41,18 @@ export default function VpsBuildPanel({ lead }) {
       setState(r.deploy_status === 'success' ? 'done' : 'error')
       if (r.deploy_status === 'success' && r.demo_url) {
         markSiteFresh(lead.lead_id, r.demo_url)
+        // Persist metadata into BUILD sheet so the site survives reload
+        try {
+          await updateBuildMetadata(lead.lead_id, {
+            demo_url:      r.demo_url,
+            build_status:  r.build_status,
+            deploy_status: r.deploy_status,
+            site_dir:      r.site_dir || `sites/${lead.lead_id}`,
+            run_id:        r.run_id,
+            source:        'a2-vps-builder',
+            kind:          'build',
+          })
+        } catch (e) { console.warn('BUILD meta persist failed', e) }
       }
       if (r.deploy_status !== 'success' && !error) setError(r.error || 'Deploy fehlgeschlagen')
     } catch (e) {
