@@ -262,9 +262,33 @@ app.post('/run-a2', requireAuth, async (req, res) => {
     })
 
     // Fire and forget — clean up state when done
-    spawnRunner(runId, scriptEnv).then(() => {
+    spawnRunner(runId, scriptEnv).then(({ timedOut, code, spawnError }) => {
       if (mode !== 'analyze') activeRun = null
       try { unlinkSync(promptFile) } catch {}
+      // Write failure summary if runner died without producing one
+      const summary = readSummary(runId)
+      if (!summary) {
+        const summaryPath = join(RUNNER_PATH, 'runs', `${runId}.json`)
+        const reason = timedOut ? 'timeout' : (spawnError ? `spawn_error: ${spawnError}` : `exit_${code}_no_summary`)
+        const status = timedOut ? 'timeout' : 'failed'
+        try {
+          writeFileSync(summaryPath, JSON.stringify({
+            run_id:        runId,
+            status:        status,
+            mode:          mode,
+            site_dir:      siteDir,
+            lead_name:     metadata.lead_name || '',
+            build_status:  'failed',
+            deploy_status: 'failed',
+            deploy_url:    '',
+            error:         `Runner killed without summary (${reason}). RUN_TIMEOUT_MS=${RUN_TIMEOUT_MS}.`,
+            completed_at:  new Date().toISOString(),
+          }, null, 2), 'utf8')
+          console.log(`[RUN] ${runId} wrote forced-${status} summary`)
+        } catch (e) {
+          console.error(`[RUN] ${runId} failed to write forced summary:`, e)
+        }
+      }
       console.log(`[RUN] ${runId} completed (async)`)
     }).catch(err => {
       if (mode !== 'analyze') activeRun = null
