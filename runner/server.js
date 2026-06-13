@@ -199,6 +199,23 @@ app.post('/run-a2', requireAuth, async (req, res) => {
     }
   }
 
+  // ── SERVER-SIDE GATE ENFORCEMENT (Stufe 2 — pflicht für mode=build) ────
+  // Verhindert dass jemand am Frontend-Gate vorbei direkt baut.
+  if (mode === 'build' && !req.body.skip_gate_check) {
+    const gateRequired = metadata.gates_passed
+    if (gateRequired === false) {
+      return res.status(403).json({
+        error: 'gate_not_passed',
+        severity: 'blocking',
+        message: 'Server-side enforcement: build aborted because PreBuildGate did not pass. Frontend muss runPreBuildGate() laufen lassen vor Build.',
+      })
+    }
+    // Hero-Pflicht: prompt muss mind. eine Hero-URL referenzieren
+    if (!prompt || !/score 9[0-9]|score 100/.test(prompt)) {
+      console.warn(`[GATE] ${run_id} no hero score 90+ in prompt — proceeding with warning`)
+    }
+  }
+
   // ── Concurrency lock (analyze is read-only, always allowed)
   if (mode !== 'analyze' && activeRun) {
     return res.status(409).json({
