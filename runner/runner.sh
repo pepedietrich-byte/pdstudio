@@ -335,12 +335,14 @@ if [ "$HAS_PACKAGE_JSON" = true ]; then
 
   # npm install only if node_modules missing, lockfile changed, or vite binary missing
   NEED_INSTALL=false
+  WIPE_LOCKFILE=false
   if [ ! -d "node_modules" ]; then
     NEED_INSTALL=true
     log "node_modules missing — running npm install"
   elif [ ! -x "node_modules/.bin/vite" ] && grep -q '"vite"' package.json 2>/dev/null; then
     NEED_INSTALL=true
-    log "node_modules/.bin/vite missing — reinstalling"
+    WIPE_LOCKFILE=true
+    log "node_modules/.bin/vite missing — wiping lockfile and reinstalling"
     rm -rf node_modules
   elif git diff HEAD -- package-lock.json 2>/dev/null | grep -q "^[+-]" ; then
     NEED_INSTALL=true
@@ -348,7 +350,16 @@ if [ "$HAS_PACKAGE_JSON" = true ]; then
   fi
 
   if [ "$NEED_INSTALL" = true ]; then
+    if [ "$WIPE_LOCKFILE" = true ] && [ -f package-lock.json ]; then
+      rm -f package-lock.json
+    fi
     npm install 2>&1 | tail -5
+    # Verify vite is actually installed if required
+    if grep -q '"vite"' package.json 2>/dev/null && [ ! -x "node_modules/.bin/vite" ]; then
+      log "⚠ vite still missing after install — wiping lockfile and retrying"
+      rm -rf node_modules package-lock.json
+      npm install 2>&1 | tail -5
+    fi
     logok "npm install done"
   fi
 
