@@ -456,6 +456,20 @@ export function detectCategory(input = {}) {
   }
 }
 
+// Word-boundary match: "pho" matched NICHT in "photography",
+// aber "pho bowl" matched in "fresh pho bowl ramen".
+function termInText(term, text) {
+  if (!term) return false
+  // Escape regex special chars, then word boundary on both sides for multi-word terms
+  const safe = term.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  // For multi-word terms allow flexible whitespace
+  const parts = safe.split(/\s+/)
+  const pattern = parts.length === 1
+    ? new RegExp(`\\b${parts[0]}\\b`, 'i')
+    : new RegExp(`\\b${parts.join('\\s+')}\\b`, 'i')
+  return pattern.test(text)
+}
+
 // Validiert ob ein image-Begriff / URL zur Kategorie passt
 export function validateImageForCategory(categoryId, imageDescription = '') {
   const cat = CATEGORIES[categoryId]
@@ -463,9 +477,10 @@ export function validateImageForCategory(categoryId, imageDescription = '') {
 
   const desc = imageDescription.toLowerCase()
 
-  // 1. Forbidden check
+  // 1. Forbidden check — word-boundary matching to avoid false positives
+  // (e.g. "pho" must not match "photography")
   for (const f of cat.forbidden_image_terms) {
-    if (desc.includes(f.toLowerCase())) {
+    if (termInText(f, desc)) {
       return {
         ok: false,
         reason: `forbidden term "${f}" in image for category "${categoryId}"`,
@@ -474,10 +489,18 @@ export function validateImageForCategory(categoryId, imageDescription = '') {
     }
   }
 
-  // 2. Allowed signal
+  // 2. Allowed signal — count matches for stronger signals
+  let matchedTerms = []
   for (const a of cat.allowed_image_terms) {
-    if (desc.includes(a.toLowerCase())) {
-      return { ok: true, reason: `matched allowed term "${a}"`, signal_strength: 1 }
+    if (termInText(a, desc)) matchedTerms.push(a)
+  }
+  if (matchedTerms.length > 0) {
+    return {
+      ok: true,
+      reason: `matched ${matchedTerms.length} allowed terms (${matchedTerms.slice(0, 3).join(', ')})`,
+      // 1 match = strength 1 (positive), 2+ = 2 (strong positive)
+      signal_strength: matchedTerms.length >= 2 ? 2 : 1,
+      matched: matchedTerms,
     }
   }
 
