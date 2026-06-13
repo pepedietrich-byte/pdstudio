@@ -12,8 +12,14 @@ const POE_API = 'https://api.poe.com/v1/chat/completions'
 async function fetchWebsite(url) {
   const r = await fetch(url, {
     redirect: 'follow',
-    headers: { 'User-Agent': 'Mozilla/5.0 PDSTUDIO-Enrich/1.0' },
-    signal: AbortSignal.timeout(15000),
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'de-DE,de;q=0.9,en;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Cache-Control': 'no-cache',
+    },
+    signal: AbortSignal.timeout(20000),
   })
   const html = await r.text()
   return { status: r.status, html, finalUrl: r.url }
