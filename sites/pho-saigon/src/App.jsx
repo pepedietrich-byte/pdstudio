@@ -1,5 +1,6 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { useState, useEffect, useRef } from 'react'
 
 const today = new Date().getDay()
@@ -26,6 +27,8 @@ const MENU = [
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 import { useState, useEffect } from 'react'
 
 const HOURS = [
@@ -37,6 +40,9 @@ const HOURS = [
   { day: 'Samstag',    jsDay: 6, time: '11:30 — 22:00' },
   { day: 'Sonntag',    jsDay: 0, time: 'Ruhetag', closed: true },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -47,6 +53,7 @@ const LEGAL = {
     title: 'Impressum',
     body: `<p><strong>Pho Saigon</strong><br>Karl-Liebknecht-Straße<br>04275 Leipzig</p>
            <p>Verantwortlich für den Inhalt gemäß § 55 Abs. 2 RStV: der Inhaber.</p>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
            <p style="font-size:12px;color:var(--ink-mute);margin-top:20px;"><em>Hinweis: Diese Seite ist eine Konzept-Vorschau. Die rechtlich vollständigen Angaben werden vor Live-Schaltung ergänzt.</em></p>`
@@ -61,6 +68,8 @@ const LEGAL = {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
            <p style="font-size:12px;opacity:0.55;margin-top:24px;"><em>Diese Seite ist eine Demo-Vorschau, erstellt von PDSTUDIO. Die rechtlich vollständigen Angaben werden vor Livegang ergänzt.</em></p>`,
   },
   datenschutz: {
@@ -71,6 +80,9 @@ const LEGAL = {
            <p><strong>3. Ihre Rechte</strong><br>Auskunft, Berichtigung und Löschung gemäß DSGVO Art. 15–17 auf Anfrage.</p>
            <p style="font-size:12px;opacity:0.55;margin-top:24px;"><em>Stand: Demo-Vorschau.</em></p>`,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -79,6 +91,7 @@ const LEGAL = {
     title: 'AGB',
     body: `<p><strong>Allgemeine Geschäftsbedingungen — Pho Saigon</strong></p>
            <p><strong>§ 1 Geltungsbereich</strong><br>Diese AGB gelten für alle Verträge zwischen Pho Saigon und seinen Gästen.</p>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
            <p><strong>§ 2 Bestellungen</strong><br>Für Bestellungen über externe Partner (Lieferando) gelten zusätzlich deren AGB.</p>
@@ -98,6 +111,8 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
            <p><strong>§ 2 Bestellungen über Drittplattformen</strong><br>Für Bestellungen über Lieferando gelten zusätzlich deren AGB.</p>
@@ -158,6 +173,9 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -166,6 +184,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     const obs = new IntersectionObserver(
@@ -237,6 +256,8 @@ export default function App() {
             >
               Online bestellen
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     const els = document.querySelectorAll('.reveal')
@@ -320,6 +341,9 @@ export default function App() {
             <a href="https://www.lieferando.de" target="_blank" rel="noopener" className="nav-cta" onClick={closeMenu}>
               <IconCart/> Auf Lieferando bestellen
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -330,6 +354,7 @@ export default function App() {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       <main id="top">
 
         {/* HERO */}
@@ -338,12 +363,17 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
       <main id="oben">
 
         {/* ── HERO ── */}
         <section className="hero">
           <div className="hero-bg" aria-hidden="true">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -356,6 +386,7 @@ export default function App() {
           </div>
           <div className="container hero-content">
             <div className="hero-top">
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
               <span className="eyebrow">
@@ -400,6 +431,8 @@ export default function App() {
                 Anfrage stellen
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
               <span className="hero-eyebrow">Vietnamesisch · Südvorstadt Leipzig</span>
@@ -448,6 +481,9 @@ export default function App() {
               <a href="#karte" className="btn-ghost">
                 Zur Karte
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -458,6 +494,7 @@ export default function App() {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         {/* TRUST STRIP */}
         <section className="trust">
           <div className="container">
@@ -465,6 +502,8 @@ export default function App() {
               <div className="trust-item">
                 <span className="n">4,5 ★</span>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         {/* ── SHOWCASE — food ── */}
@@ -487,6 +526,9 @@ export default function App() {
               <div className="trust-item">
                 <span className="n">4,5</span>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -494,6 +536,7 @@ export default function App() {
               </div>
               <div className="trust-item">
                 <span className="n">8h</span>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
                 <span className="l">Pho-Brühe — täglich frisch</span>
@@ -512,6 +555,8 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
                 <span className="l">Knochenbrühe täglich</span>
               </div>
               <div className="trust-item">
@@ -526,6 +571,9 @@ export default function App() {
                 <span className="n">Lieferando</span>
                 <span className="l">Lieferung direkt nach Hause</span>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -534,6 +582,7 @@ export default function App() {
           </div>
         </section>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         {/* SHOWCASE 1 — Pho */}
@@ -566,6 +615,8 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         {/* ── KONZEPT ── */}
         <section id="konzept">
           <div className="container">
@@ -582,6 +633,9 @@ export default function App() {
                     src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&q=80&auto=format&fit=crop"
                     alt="Interieur — Pho Saigon Leipzig Südvorstadt"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -590,6 +644,7 @@ export default function App() {
                 </div>
               </div>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
               <div ref={addRef} className="manifesto-body reveal">
@@ -626,6 +681,8 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
               <div className="konzept-body reveal">
                 <p>
                   Pho Saigon ist kein Trend-Restaurant. Es ist ein kleiner, ehrlicher Laden
@@ -658,6 +715,9 @@ export default function App() {
               </div>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -665,6 +725,7 @@ export default function App() {
           </div>
         </section>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         {/* KARTE */}
@@ -683,6 +744,8 @@ export default function App() {
                   Auf Lieferando bestellen
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M7 17L17 7M7 7h10v10"/></svg>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         {/* ── ATMOSPHÄRE STRIP ── */}
@@ -722,6 +785,9 @@ export default function App() {
                 >
                   Auf Lieferando bestellen <IconArrow/>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -729,6 +795,7 @@ export default function App() {
               </div>
             </div>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
             <div ref={addRef} className="menu-spread reveal">
@@ -817,6 +884,8 @@ export default function App() {
                 ))}
               </div>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             <div className="menu-demo-note">
@@ -967,6 +1036,9 @@ export default function App() {
               </div>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -974,6 +1046,7 @@ export default function App() {
           </div>
         </section>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         {/* KONTAKT */}
@@ -992,6 +1065,8 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         {/* ── ANFAHRT & KONTAKT ── */}
         <section id="anfahrt" className="contact-section">
           <div className="container">
@@ -1007,6 +1082,9 @@ export default function App() {
                   Direkt an der Straßenbahnlinie. Fußläufig vom Karl-Liebknecht-Platz
                   und der Innenstadt. Parkplätze in der Straße vorhanden.
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1015,6 +1093,7 @@ export default function App() {
                 <div className="contact-block">
                   <div className="contact-cell">
                     <div className="key">Adresse</div>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
                     <div className="val">Karl-Liebknecht-Str.<br />04275 Leipzig<br />Südvorstadt</div>
@@ -1040,6 +1119,8 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
                     <div className="val">Karl-Liebknecht-Str.<br/>04275 Leipzig</div>
                   </div>
                   <div className="contact-cell">
@@ -1059,6 +1140,9 @@ export default function App() {
                         Lieferando
                       </a>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1066,6 +1150,7 @@ export default function App() {
                   </div>
                 </div>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
                 {formSent ? (
@@ -1123,6 +1208,8 @@ export default function App() {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
                 <a
                   href="https://www.lieferando.de"
                   target="_blank" rel="noopener"
@@ -1154,6 +1241,9 @@ export default function App() {
               </div>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1163,6 +1253,7 @@ export default function App() {
 
       </main>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
       {/* FOOTER */}
@@ -1210,6 +1301,8 @@ export default function App() {
             <p>Erstellt von <strong>PDSTUDIO</strong></p>
             <span className="demo-tag">Konzept-Demo</span>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
       {/* ── FOOTER ── */}
@@ -1276,6 +1369,9 @@ export default function App() {
             <p>© 2026 Pho Saigon · Karl-Liebknecht-Str., 04275 Leipzig · Erstellt von PDSTUDIO</p>
             <span className="footer-badge">Demo · noindex</span>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -1283,6 +1379,7 @@ export default function App() {
         </div>
       </footer>
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
       {/* LEGAL MODAL */}
@@ -1303,6 +1400,8 @@ export default function App() {
             </div>
             <div className="legal-body" dangerouslySetInnerHTML={{ __html: LEGAL[legalModal].body }} />
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
       {/* ── LEGAL MODAL ── */}
@@ -1347,6 +1446,9 @@ export default function App() {
               dangerouslySetInnerHTML={{ __html: LEGAL[legalKey].body }}
             />
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
