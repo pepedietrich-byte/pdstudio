@@ -277,11 +277,29 @@ if [ "$MODE" = "build" ] || [ "$MODE" = "fix" ]; then
 
   # Run headless — permissions set in ~/.claude/settings.json (allow all)
   # < /dev/null prevents 3s stdin wait in non-interactive mode
-  if claude -p "$(cat "$PROMPT_FILE")" < /dev/null 2>&1; then
+  set +e
+  CLAUDE_OUTPUT=$(claude -p "$(cat "$PROMPT_FILE")" < /dev/null 2>&1)
+  CLAUDE_EXIT=$?
+  set -e
+  echo "$CLAUDE_OUTPUT" | tail -30
+
+  # Detect session limit explicitly
+  if echo "$CLAUDE_OUTPUT" | grep -qiE "session limit|hit your.*limit|usage limit"; then
+    log "⚠ Claude session limit detected"
+    SESSION_LIMITED=true
+  fi
+
+  # Check whether Claude actually changed files — that's what matters
+  cd "$REPO_PATH"
+  CHANGED_AFTER_CLAUDE=$(git status --porcelain 2>/dev/null | wc -l)
+
+  if [ "$CLAUDE_EXIT" = "0" ]; then
     logok "Claude Code run complete"
+  elif [ "$CHANGED_AFTER_CLAUDE" -gt 0 ]; then
+    log "⚠ Claude exited ${CLAUDE_EXIT} but wrote ${CHANGED_AFTER_CLAUDE} files — continuing with build"
   else
-    CLAUDE_EXIT=$?
-    fail "Claude Code exited with code ${CLAUDE_EXIT}"
+    fail "Claude Code exited ${CLAUDE_EXIT} with no file changes. Output tail:
+$(echo "$CLAUDE_OUTPUT" | tail -10)"
   fi
 fi
 
