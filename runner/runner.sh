@@ -275,8 +275,9 @@ if [ "$MODE" = "build" ] || [ "$MODE" = "fix" ]; then
   # Run Claude Code from repo root so it has full file access
   cd "$REPO_PATH"
 
-  # Run headless — -p (print mode) handles permissions without interactive prompts
-  if claude -p "$(cat "$PROMPT_FILE")" 2>&1; then
+  # Run headless — permissions set in ~/.claude/settings.json (allow all)
+  # < /dev/null prevents 3s stdin wait in non-interactive mode
+  if claude -p "$(cat "$PROMPT_FILE")" < /dev/null 2>&1; then
     logok "Claude Code run complete"
   else
     CLAUDE_EXIT=$?
@@ -337,7 +338,7 @@ RULES:
 - After fixing, the build command 'npm run build' must succeed."
 
       cd "$REPO_PATH"
-      if claude -p "$FIX_PROMPT" 2>&1; then
+      if claude -p "$FIX_PROMPT" < /dev/null 2>&1; then
         logok "Claude fix run complete. Retrying build..."
         cd "$SITE_ABS"
         BUILD_LOG2=$(npm run build 2>&1)
