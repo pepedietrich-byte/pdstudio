@@ -124,8 +124,8 @@ export async function triggerPolish(lead, polishOptions = {}) {
     demo_url:      lead.demo_url || lead.build?.demo_url || '',
     site_slug:     lead.site_slug || '',
     polish_options: {
-      level: polishOptions.level || 'normal', // light | normal | deep
-      focus: polishOptions.focus || 'images', // images | typography | color | layout | all
+      level: polishOptions.level || 'normal',
+      focus: polishOptions.focus || 'images',
     },
   }
   const r = await fetch(A3_POLISH_WEBHOOK, {
@@ -134,7 +134,23 @@ export async function triggerPolish(lead, polishOptions = {}) {
     body: JSON.stringify(payload),
   })
   if (!r.ok) throw new Error(`A3 HTTP ${r.status}: ${await r.text()}`)
-  return r.json()
+  const started = await r.json()
+
+  // Async pattern — poll runner status if still running
+  if (started.status === 'started' || started.status === 'running' || started.build_status === 'running') {
+    const final = await pollRunnerStatus(started.run_id, polishOptions.onProgress)
+    return {
+      ...started,
+      ...final,
+      polished_url:  final.deploy_url || started.polished_url || '',
+      polish_level:  started.polish_level,
+      polish_focus:  started.polish_focus,
+      run_id:        started.run_id,
+      duration_s:    final.duration_seconds,
+    }
+  }
+
+  return started
 }
 
 // ─── A4 Human Writer ─────────────────────────────────────────────────────────

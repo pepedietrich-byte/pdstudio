@@ -92,7 +92,8 @@ export function filterRelevantSites(leads = []) {
     //    Diese sind frisch gebaut auch wenn das Datum durcheinander geriet.
     const src = (l.build?.source || '').toLowerCase()
     if (src.includes('build-run') || src.includes('a2-vps') || src.includes('a3-polish') ||
-        src.includes('5-styles') || src.includes('10-build') || src.includes('ui-manual-save')) {
+        src.includes('5-styles') || src.includes('10-build') || src.includes('ui-manual-save') ||
+        src.includes('backfill') || src.includes('manual')) {
       return true
     }
 
