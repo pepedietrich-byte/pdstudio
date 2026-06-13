@@ -193,8 +193,32 @@ export default async function handler(req, res) {
   if (!/^https?:\/\//.test(url)) url = 'https://' + url
 
   try {
-    // 1. Fetch HTML
-    const fetched = await fetchWebsite(url)
+    // 1. Fetch HTML — primary
+    let fetched
+    try {
+      fetched = await fetchWebsite(url)
+    } catch (e) {
+      // Fallback: microlink as proxy (rendert auch SPAs, umgeht Cloudflare partial)
+      try {
+        const proxyUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&data.html=true&meta=false&audio=false&video=false`
+        const mr = await fetch(proxyUrl, { signal: AbortSignal.timeout(25000) })
+        const md = await mr.json()
+        if (md?.data?.html) {
+          fetched = { status: 200, html: md.data.html, finalUrl: url }
+        } else {
+          throw new Error('microlink returned no html')
+        }
+      } catch (e2) {
+        return res.status(200).json({
+          success: false,
+          error: 'website_unreachable',
+          detail: `Direkt: ${e.message}. Proxy: ${e2.message}. Möglicherweise Cloudflare-Block — manuell eingeben.`,
+          lead: { website_url: url, business_name: '', source: 'manual_required' },
+          action_required: 'manual_data_entry',
+        })
+      }
+    }
+
     if (fetched.status >= 400) {
       return res.status(200).json({
         success: false,
