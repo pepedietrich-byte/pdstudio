@@ -70,6 +70,45 @@ const VPS_BUILDER_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT2_VPS_WEBHOOK ||
   `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent2-build`
 
+// ─── BUILD Sheet Metadata Persistence ───────────────────────────────────────
+// Schreibt demo_url + Datumsfelder persistent ins BUILD-Sheet.
+// Wird automatisch nach jedem erfolgreichen A2 Build und A3 Polish aufgerufen,
+// und manuell wenn der User in der Site-Karte "Metadaten speichern" klickt.
+const BUILD_META_WEBHOOK =
+  import.meta.env.VITE_N8N_BUILD_META_WEBHOOK ||
+  `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/build-meta-write`
+
+export async function updateBuildMetadata(leadId, fields = {}) {
+  if (!leadId) throw new Error('lead_id ist Pflicht')
+  const payload = {
+    lead_id:       leadId,
+    demo_url:      fields.demo_url || '',
+    build_status:  fields.build_status || '',
+    deploy_status: fields.deploy_status || '',
+    site_dir:      fields.site_dir || '',
+    built_at:      fields.built_at,
+    polished_at:   fields.polished_at,
+    deployed_at:   fields.deployed_at,
+    run_id:        fields.run_id || '',
+    source:        fields.source || 'ui',
+    kind:          fields.kind || 'build',  // 'build' | 'polish' | 'manual'
+  }
+  // Strip undefined so the workflow defaults timestamps correctly
+  Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k])
+
+  const r = await fetch(BUILD_META_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!r.ok) throw new Error(`Meta-Write HTTP ${r.status}: ${await r.text()}`)
+  return r.json()
+}
+
+export function isBuildMetaWriteAvailable() {
+  return !!BUILD_META_WEBHOOK
+}
+
 // ─── A3 Polish Agent ─────────────────────────────────────────────────────────
 const A3_POLISH_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT3_POLISH_WEBHOOK ||

@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Globe, ExternalLink, Clock, Zap, Rocket, Image } from 'lucide-react'
-import { getLeadStage } from '../lib/sheets'
-import { triggerWebsiteBuild, triggerBuild } from '../lib/n8n'
+import {
+  Globe, ExternalLink, Sparkles, PenTool, ShieldCheck,
+  ChevronRight, Loader2, CheckCircle2, AlertCircle, Calendar, Star,
+  Save, AlertTriangle, Database,
+} from 'lucide-react'
+import {
+  filterRelevantSites, getSiteDate, formatRelativeDate,
+  useFreshSitesVersion, markSiteFresh, isFresh, hasPersistedDate,
+  getSitesDiagnostics,
+} from '../lib/sites'
+import { triggerPolish, triggerWriter, triggerFactCheck, updateBuildMetadata, isBuildMetaWriteAvailable } from '../lib/n8n'
 
 const EASE = [0.23, 1, 0.32, 1]
-const STAGE_LABELS = ['', 'LEAD', 'TEXT', 'IMG', 'VALID', 'CONCEPT', 'BUILD', 'LIVE']
-const STAGE_COLORS = ['', '#00d4ff', '#e8197f', '#2ddb72', '#f5a623', '#9b6ef3', '#00d4ff', '#e8197f']
 
 function scoreColor(n) {
   if (n >= 60) return '#2ddb72'
@@ -14,235 +20,404 @@ function scoreColor(n) {
   return '#f03a3a'
 }
 
-export default function SitesView({ leads = [] }) {
-  const sites = leads.filter(l => {
-    const url = l.build?.demo_url || ''
-    return url && !url.startsWith('/files') && /^https?:\/\//.test(url)
-  })
+// ─── Site Card ──────────────────────────────────────────────────────────────
+function SiteCard({ lead, onOpenLead }) {
+  const [busy, setBusy]     = useState(null)
+  const [result, setResult] = useState(null)
+  const [error, setError]   = useState('')
+  const [persistState, setPersistState] = useState('idle') // idle | saving | saved | failed
 
-  const buildable = leads.filter(l => {
-    const stage = getLeadStage(l)
-    return stage >= 1 && stage < 7
-  })
+  const url    = lead.build?.demo_url || ''
+  const date   = getSiteDate(lead)
+  const fresh  = isFresh(lead.lead_id)
+  const persisted = hasPersistedDate(lead)
+  const score  = parseInt(lead.score || lead.audit_score || 0) || null
+  const cuisine = lead.cuisine || lead.business?.cuisine || lead.branche || ''
+  const name   = lead.business_name || lead.business?.name || lead.name || lead.lead_id
 
-  return (
-    <div className="space-y-4">
-      <LiveSites sites={sites} />
-      {buildable.length > 0 && <BuildQueue leads={buildable} />}
-    </div>
-  )
-}
-
-function LiveSites({ sites }) {
-  return (
-    <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', borderRadius: 8 }}>
-      <div className="px-4 py-2.5 flex items-center gap-2" style={{ borderBottom: '1px solid var(--border)' }}>
-        <Globe size={11} style={{ color: '#e8197f', opacity: 0.8 }} />
-        <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--text-dim)' }}>
-          DEPLOYED SITES
-        </span>
-        <span className="font-mono text-[10px] ml-1" style={{ color: 'var(--text-dim)' }}>({sites.length})</span>
-      </div>
-
-      {sites.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-2">
-          <Globe size={20} style={{ color: 'var(--text-dim)', opacity: 0.3 }} />
-          <div className="font-mono text-xs" style={{ color: 'var(--text-dim)' }}>Keine Sites gebaut</div>
-          <div className="font-mono text-[10px]" style={{ color: 'var(--text-dim)', opacity: 0.5 }}>
-            URL eingeben und Pipeline starten
-          </div>
-        </div>
-      ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
-          <AnimatePresence initial={false}>
-            {sites.map((lead, i) => (
-              <SiteCard key={lead.lead_id} lead={lead} index={i} />
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function SiteCard({ lead, index }) {
-  const score   = +lead.score || 0
-  const sc      = scoreColor(score)
-  const demoUrl = lead.build?.demo_url || ''
-  const builtAt = lead.build?.website_built_at || ''
-  const heroUrl = lead.images?.hero_url || ''
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.18, delay: index * 0.04, ease: EASE }}
-      className="rounded-lg overflow-hidden"
-      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-    >
-      {/* Hero image / placeholder */}
-      <div className="relative" style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.03)' }}>
-        {heroUrl ? (
-          <img src={heroUrl} alt={lead.name} className="w-full h-full object-cover opacity-80" />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Image size={24} style={{ color: 'rgba(255,255,255,0.1)' }} />
-          </div>
-        )}
-        {/* Live badge */}
-        <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full"
-          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-          <motion.div className="w-1.5 h-1.5 rounded-full" style={{ background: '#e8197f' }}
-            animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2.5, repeat: Infinity }} />
-          <span className="font-mono text-[9px]" style={{ color: '#e8197f' }}>LIVE</span>
-        </div>
-        {/* Score badge */}
-        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold"
-          style={{ background: 'rgba(0,0,0,0.7)', color: sc, backdropFilter: 'blur(8px)' }}>
-          {score}
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="p-3">
-        <div className="font-ui text-sm font-medium truncate mb-0.5" style={{ color: 'var(--text-hi)' }}>
-          {lead.name || lead.lead_id}
-        </div>
-        {builtAt && (
-          <div className="flex items-center gap-1 mb-2" style={{ color: 'var(--text-dim)' }}>
-            <Clock size={8} />
-            <span className="font-mono text-[9px]">
-              {new Date(builtAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
-            </span>
-          </div>
-        )}
-        <a
-          href={demoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded font-mono text-xs font-bold transition-all"
-          style={{
-            background: 'rgba(232,25,127,0.1)',
-            color: '#e8197f',
-            border: '1px solid rgba(232,25,127,0.25)',
-          }}
-        >
-          <ExternalLink size={10} />
-          SITE ÖFFNEN
-        </a>
-      </div>
-    </motion.div>
-  )
-}
-
-function BuildQueue({ leads }) {
-  return (
-    <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', borderRadius: 8 }}>
-      <div className="px-4 py-2.5 flex items-center gap-2" style={{ borderBottom: '1px solid var(--border)' }}>
-        <Clock size={11} style={{ color: 'var(--text-dim)' }} />
-        <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--text-dim)' }}>
-          IN PIPELINE
-        </span>
-        <span className="font-mono text-[10px] ml-1" style={{ color: 'var(--text-dim)' }}>({leads.length})</span>
-      </div>
-      <div className="p-1">
-        {leads.slice(0, 12).map((lead, i) => (
-          <BuildRow key={lead.lead_id || i} lead={lead} index={i} />
-        ))}
-        {leads.length > 12 && (
-          <div className="text-center py-2 font-mono text-[10px]" style={{ color: 'var(--text-dim)' }}>
-            +{leads.length - 12} weitere
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function BuildRow({ lead, index }) {
-  const [building, setBuilding] = useState(false)
-  const [done,     setDone]     = useState(false)
-  const [err,      setErr]      = useState('')
-
-  const stage      = getLeadStage(lead)
-  const score      = +lead.score || 0
-  const sc         = scoreColor(score)
-  const stageColor = STAGE_COLORS[stage] || 'var(--text-dim)'
-  const stageLabel = STAGE_LABELS[stage] || ''
-  const canBuild   = stage >= 5
-
-  async function build() {
-    setBuilding(true); setErr('')
+  async function persistMeta() {
+    if (persistState === 'saving') return
+    setPersistState('saving')
     try {
-      if (stage >= 6) await triggerWebsiteBuild(lead.lead_id)
-      else            await triggerBuild(lead.lead_id)
-      setDone(true)
+      await updateBuildMetadata(lead.lead_id, {
+        demo_url:      url,
+        build_status:  lead.build?.build_status || 'success',
+        deploy_status: lead.build?.deploy_status || 'success',
+        site_dir:      lead.build?.site_dir || `sites/${lead.lead_id}`,
+        source:        'ui-manual-save',
+        kind:          'manual',
+      })
+      setPersistState('saved')
     } catch (e) {
-      setErr(e.message)
-    } finally {
-      setBuilding(false)
+      setPersistState('failed'); setError(e.message)
     }
+  }
+
+  async function doPolish() {
+    setBusy('polish'); setError(''); setResult(null)
+    try {
+      const r = await triggerPolish(
+        { ...lead, demo_url: url, business_name: name, cuisine, atmosphere: lead.atmosphere || lead.concept?.atmosphere || '' },
+        { level: 'normal', focus: 'images' }
+      )
+      setResult({ kind: 'polish', data: r })
+      if (r.polished_url) markSiteFresh(lead.lead_id, r.polished_url)
+    } catch (e) { setError(e.message) }
+    finally { setBusy(null) }
+  }
+
+  async function doWrite() {
+    setBusy('write'); setError(''); setResult(null)
+    try {
+      const r = await triggerWriter(
+        { ...lead, demo_url: url, business_name: name },
+        { channel: 'email', context: 'demo_intro' }
+      )
+      setResult({ kind: 'write', data: r })
+    } catch (e) { setError(e.message) }
+    finally { setBusy(null) }
+  }
+
+  async function doCheck() {
+    setBusy('check'); setError(''); setResult(null)
+    try {
+      const r = await triggerFactCheck({
+        ...lead,
+        business_name: name,
+        website_url: lead.website_url || lead.business?.website || '',
+        phone: lead.phone || lead.business?.phone || '',
+        email: lead.email || lead.content?.email || '',
+        address: lead.address || lead.business?.address || '',
+      })
+      setResult({ kind: 'check', data: r })
+    } catch (e) { setError(e.message) }
+    finally { setBusy(null) }
+  }
+
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t) } catch {}
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -4 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.02, duration: 0.14, ease: EASE }}
-      className="flex items-center gap-3 px-3 py-2 rounded"
-      whileHover={{ background: 'rgba(255,255,255,0.02)' }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: EASE }}
+      className="rounded-lg overflow-hidden"
+      style={{
+        background: 'rgba(232,25,127,0.04)',
+        border: '1px solid rgba(232,25,127,0.25)',
+        boxShadow: fresh ? '0 0 28px rgba(232,25,127,0.18)' : 'none',
+      }}
     >
-      <div className="w-1 h-4 rounded-full flex-shrink-0" style={{ background: `${stageColor}50` }} />
+      {/* Header */}
+      <div className="p-4 border-b" style={{ borderColor: 'rgba(232,25,127,0.15)' }}>
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-base truncate" style={{ color: '#e8edf4' }}>{name}</h3>
+              {fresh && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded uppercase tracking-widest font-mono font-bold"
+                  style={{ background: '#e8197f', color: '#fff' }}>NEU</span>
+              )}
+            </div>
+            <a href={url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs font-mono truncate hover:underline"
+              style={{ color: '#e8197f' }}>
+              <ExternalLink size={11} /> {url.replace(/^https?:\/\//, '')}
+            </a>
+          </div>
+          <div className="text-right text-[10px] space-y-0.5" style={{ color: '#6b7a90' }}>
+            <div className="flex items-center gap-1 justify-end">
+              <Calendar size={9} />
+              <span>{formatRelativeDate(date)}</span>
+            </div>
+            {score !== null && (
+              <div className="flex items-center gap-1 justify-end">
+                <Star size={9} style={{ color: scoreColor(score) }} />
+                <span style={{ color: scoreColor(score) }} className="font-mono font-bold">{score}</span>
+              </div>
+            )}
+          </div>
+        </div>
 
-      <span className="flex-1 font-ui text-sm truncate" style={{ color: 'var(--text)' }}>
-        {lead.name || lead.lead_id}
-      </span>
-
-      <span className="font-mono text-xs font-bold tabular-nums flex-shrink-0" style={{ color: sc }}>
-        {score || '—'}
-      </span>
-
-      {stageLabel && (
-        <span className="font-mono text-[10px] flex-shrink-0 px-1.5 py-0.5 rounded"
-          style={{ color: stageColor, background: `${stageColor}10`, border: `1px solid ${stageColor}20` }}>
-          A{stage}
-        </span>
-      )}
-
-      {err ? (
-        <span className="font-mono text-[10px] flex-shrink-0" style={{ color: '#f03a3a' }}>ERROR</span>
-      ) : done ? (
-        <span className="font-mono text-[10px] flex-shrink-0" style={{ color: '#2ddb72' }}>STARTED ✓</span>
-      ) : canBuild ? (
-        <motion.button
-          onClick={build}
-          disabled={building}
-          className="flex items-center gap-1 px-2 py-1 rounded font-mono text-[10px] font-bold flex-shrink-0 transition-colors"
-          style={{
-            background: building ? 'rgba(45,219,114,0.05)' : 'rgba(45,219,114,0.1)',
-            color: '#2ddb72',
-            border: '1px solid rgba(45,219,114,0.25)',
-            cursor: building ? 'not-allowed' : 'pointer',
-          }}
-          whileTap={!building ? { scale: 0.95 } : {}}
-        >
-          {building ? (
-            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 0.9, repeat: Infinity }}>
-              <Zap size={8} />
-            </motion.span>
-          ) : stage >= 6 ? (
-            <><Zap size={8} /> A7</>
-          ) : (
-            <><Rocket size={8} /> BUILD</>
+        <div className="flex items-center gap-3 text-[10px] mt-2" style={{ color: '#6b7a90' }}>
+          {cuisine && (
+            <div className="flex items-center gap-1">
+              <span className="font-mono uppercase tracking-widest">{cuisine}</span>
+            </div>
           )}
-        </motion.button>
-      ) : (
-        <span className="font-mono text-[10px] flex-shrink-0" style={{ color: 'var(--text-dim)', opacity: 0.4 }}>
-          warten
-        </span>
+          {lead.build?.deploy_status && (
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full"
+                style={{ background: lead.build.deploy_status === 'success' ? '#39ff88' : '#f5a623' }} />
+              <span>{lead.build.deploy_status}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Persistence warning */}
+        {!persisted && (
+          <div className="mt-3 flex items-center justify-between gap-2 p-2 rounded"
+            style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.25)' }}>
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle size={11} style={{ color: '#f5a623', flexShrink: 0 }} />
+              <span className="text-[10px]" style={{ color: '#f5a623' }}>
+                Nicht dauerhaft gespeichert — built_at fehlt
+              </span>
+            </div>
+            <button onClick={persistMeta} disabled={persistState === 'saving' || persistState === 'saved'}
+              className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium flex-shrink-0"
+              style={{
+                background: persistState === 'saved' ? 'rgba(57,255,136,0.15)' : 'rgba(245,166,35,0.15)',
+                color: persistState === 'saved' ? '#39ff88' : '#f5a623',
+                border: `1px solid ${persistState === 'saved' ? 'rgba(57,255,136,0.3)' : 'rgba(245,166,35,0.3)'}`,
+                opacity: persistState === 'saving' ? 0.6 : 1,
+              }}>
+              {persistState === 'saving' ? <Loader2 size={9} className="animate-spin" /> :
+               persistState === 'saved'  ? <CheckCircle2 size={9} /> :
+               <Save size={9} />}
+              {persistState === 'saving' ? 'Speichere...' :
+               persistState === 'saved'  ? 'Gespeichert' :
+               persistState === 'failed' ? 'Fehler' :
+               'Metadaten speichern'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="p-3 grid grid-cols-2 gap-2">
+        <a href={url} target="_blank" rel="noopener noreferrer"
+          className="flex items-center justify-center gap-1.5 py-2 rounded text-xs font-medium"
+          style={{ background: 'rgba(232,25,127,0.15)', color: '#fff' }}>
+          <Globe size={12} /> Seite öffnen
+        </a>
+        <button onClick={() => onOpenLead?.(lead)}
+          className="flex items-center justify-center gap-1.5 py-2 rounded text-xs font-medium"
+          style={{ background: 'rgba(255,255,255,0.05)', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <ChevronRight size={12} /> Lead öffnen
+        </button>
+      </div>
+
+      {/* Agent triggers */}
+      <div className="p-3 pt-0 grid grid-cols-3 gap-2">
+        <ActionButton
+          onClick={doPolish} busy={busy === 'polish'} disabled={!!busy}
+          color="#e8197f" icon={<Sparkles size={11} />} label="A3 Polish"
+        />
+        <ActionButton
+          onClick={doWrite} busy={busy === 'write'} disabled={!!busy}
+          color="#f5a623" icon={<PenTool size={11} />} label="A4 Email"
+        />
+        <ActionButton
+          onClick={doCheck} busy={busy === 'check'} disabled={!!busy}
+          color="#ff6b35" icon={<ShieldCheck size={11} />} label="A6 Check"
+        />
+      </div>
+
+      {/* Result panel */}
+      <AnimatePresence>
+        {result && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="p-3 pt-0">
+              <div className="p-3 rounded text-xs space-y-2"
+                style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                {result.kind === 'polish' && <PolishResult data={result.data} />}
+                {result.kind === 'write'  && <WriteResult  data={result.data} onCopy={copyText} />}
+                {result.kind === 'check'  && <CheckResult  data={result.data} />}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {error && (
+        <div className="px-3 pb-3">
+          <div className="p-2 rounded text-xs" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>{error}</div>
+        </div>
       )}
     </motion.div>
+  )
+}
+
+function ActionButton({ onClick, busy, disabled, color, icon, label }) {
+  return (
+    <button onClick={onClick} disabled={disabled}
+      className="flex items-center justify-center gap-1 py-1.5 rounded text-[10px] font-medium transition-all"
+      style={{
+        background: busy ? `${color}30` : `${color}12`,
+        color: busy ? color : `${color}cc`,
+        border: `1px solid ${color}35`,
+        opacity: disabled && !busy ? 0.4 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      }}>
+      {busy ? <Loader2 size={11} className="animate-spin" /> : icon}
+      {label}
+    </button>
+  )
+}
+
+function PolishResult({ data }) {
+  const ok = data.deploy_status === 'success'
+  return (
+    <>
+      <div className="flex items-center gap-2" style={{ color: ok ? '#39ff88' : '#ef4444' }}>
+        {ok ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}
+        <span className="font-medium">A3 Polish · {data.duration_s}s</span>
+      </div>
+      {data.polished_url && (
+        <a href={data.polished_url} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-1 font-mono" style={{ color: '#39ff88' }}>
+          <ExternalLink size={10} /> {data.polished_url.replace(/^https?:\/\//, '')}
+        </a>
+      )}
+      {data.error && <div style={{ color: '#ef4444' }}>{data.error}</div>}
+    </>
+  )
+}
+
+function WriteResult({ data, onCopy }) {
+  const text = data.subject ? `Betreff: ${data.subject}\n\n${data.body}` : data.body
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <span className="font-medium" style={{ color: '#f5a623' }}>A4 Email · {data.word_count} Wörter</span>
+        <button onClick={() => onCopy(text)} className="text-[10px] px-2 py-0.5 rounded"
+          style={{ background: 'rgba(255,255,255,0.08)', color: '#cbd5e1' }}>kopieren</button>
+      </div>
+      {data.subject && (
+        <div><span style={{ color: '#6b7a90' }}>Betreff:</span> <span style={{ color: '#e8edf4', fontWeight: 600 }}>{data.subject}</span></div>
+      )}
+      <pre className="whitespace-pre-wrap font-sans p-2 rounded" style={{ background: 'rgba(0,0,0,0.3)', color: '#cbd5e1', lineHeight: 1.55, maxHeight: 200, overflowY: 'auto' }}>
+        {data.body}
+      </pre>
+    </>
+  )
+}
+
+function CheckResult({ data }) {
+  const color = data.trust_score >= 70 ? '#39ff88' : data.trust_score >= 50 ? '#f5a623' : '#ef4444'
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <span className="font-medium" style={{ color: '#ff6b35' }}>A6 Fact Check</span>
+        <span className="font-bold font-mono text-base" style={{ color }}>{data.trust_score}/100</span>
+      </div>
+      <div className="grid grid-cols-2 gap-1">
+        {(data.checks || []).map(c => (
+          <div key={c.name} className="flex items-center gap-1.5">
+            <span style={{ color: c.ok ? '#39ff88' : '#ef4444' }}>{c.ok ? '✓' : '✗'}</span>
+            <span style={{ color: '#9ca3b5' }}>{c.name.replace(/_/g, ' ')}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between pt-1 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <span style={{ color: '#6b7a90' }}>Empfehlung:</span>
+        <span className="uppercase font-bold font-mono"
+          style={{ color: data.recommendation === 'proceed' ? '#39ff88' : data.recommendation === 'review' ? '#f5a623' : '#ef4444' }}>
+          {data.recommendation}
+        </span>
+      </div>
+    </>
+  )
+}
+
+// ─── Main SitesView ─────────────────────────────────────────────────────────
+export default function SitesView({ leads = [], onOpenLead, lastRefresh }) {
+  useFreshSitesVersion()
+
+  const sites = useMemo(() => {
+    const filtered = filterRelevantSites(leads)
+    return filtered.sort((a, b) => {
+      const da = getSiteDate(a)?.getTime() || 0
+      const db = getSiteDate(b)?.getTime() || 0
+      return db - da
+    })
+  }, [leads])
+
+  const diag = useMemo(() => getSitesDiagnostics(leads), [leads])
+  const writeAvailable = isBuildMetaWriteAvailable()
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-end justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight" style={{ color: '#e8edf4' }}>
+            Sites
+          </h2>
+          <p className="text-xs mt-1" style={{ color: '#6b7a90' }}>
+            Nur gestern + heute deployed Demo-Sites · Ältere Sheet-Einträge sind ausgeblendet
+          </p>
+        </div>
+        <div className="text-right">
+          <div className="font-mono text-3xl font-bold" style={{ color: '#e8197f' }}>{sites.length}</div>
+          <div className="text-[10px] uppercase tracking-widest" style={{ color: '#6b7a90' }}>Aktive Demos</div>
+        </div>
+      </div>
+
+      {/* Diagnostic strip */}
+      <div className="rounded-lg p-3 grid grid-cols-2 md:grid-cols-5 gap-3 text-xs"
+        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <DiagStat label="Sichtbar" value={diag.total} color="#e8197f" />
+        <DiagStat label="Persistiert" value={diag.persisted} color="#39ff88" />
+        <DiagStat label="Session-only" value={diag.session_only} color="#f5a623" />
+        <DiagStat label="Datum fehlt" value={diag.missing_date} color={diag.missing_date > 0 ? '#ef4444' : '#6b7a90'} />
+        <DiagStat
+          label="Letzter Refresh"
+          value={lastRefresh ? new Date(lastRefresh).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—'}
+          color="#6b7a90" small
+        />
+      </div>
+
+      {!writeAvailable && (
+        <div className="p-2 rounded text-xs flex items-center gap-2"
+          style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.25)', color: '#f5a623' }}>
+          <Database size={11} />
+          needs_sheet_write_connection — VITE_N8N_BUILD_META_WEBHOOK nicht gesetzt. Frische Builds werden nicht persistiert.
+        </div>
+      )}
+
+      {sites.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {sites.map(lead => (
+            <SiteCard key={lead.lead_id} lead={lead} onOpenLead={onOpenLead} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DiagStat({ label, value, color, small }) {
+  return (
+    <div>
+      <div className={small ? "font-mono text-sm font-bold" : "font-mono text-xl font-bold"} style={{ color }}>{value}</div>
+      <div className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: '#6b7a90' }}>{label}</div>
+    </div>
+  )
+}
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 rounded-lg gap-3"
+      style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)' }}>
+      <Globe size={36} style={{ color: '#6b7a90', opacity: 0.6 }} />
+      <h3 className="font-semibold" style={{ color: '#e8edf4' }}>Noch keine aktiven Demos</h3>
+      <p className="text-xs text-center max-w-sm" style={{ color: '#6b7a90' }}>
+        Hier erscheinen Sites die heute oder gestern deployed wurden, sowie alle frisch gebauten Demos dieser Session.
+        Ältere Sheet-Einträge werden nicht mehr angezeigt.
+      </p>
+      <p className="text-[10px] mt-2" style={{ color: '#6b7a90' }}>
+        Tipp: Lead auswählen → A2 Mode "Runner (VPS)" → Build & Deploy
+      </p>
+    </div>
   )
 }
