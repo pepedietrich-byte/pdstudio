@@ -1,0 +1,2127 @@
+{
+  "updatedAt": "2026-06-09T08:09:29.115Z",
+  "createdAt": "2026-06-06T09:43:45.190Z",
+  "id": "8K3BEqjsfl21BAS9",
+  "name": "MONEYLAN Agent 1 — Lead Scanner",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "72dbd92a-13e8-43ed-978b-d28681f19cd6",
+      "name": "Manueller Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3376,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6a1d0ed-da49-41ce-bad3-257693c86820",
+              "name": "branche",
+              "value": "={{ $json.body?.branche || $json.branche || 'Restaurant' }}",
+              "type": "string"
+            },
+            {
+              "id": "71597db5-bde2-48b1-8f68-4a0546e37541",
+              "name": "ort",
+              "value": "={{ $json.body?.ort || $json.ort || 'Leipzig-Zentrum' }}",
+              "type": "string"
+            },
+            {
+              "id": "1070db84-a2af-46fa-b36d-7419ec120cba",
+              "name": "radius_m",
+              "value": "={{ $json.body?.radius_m || $json.radius_m || 3000 }}",
+              "type": "number"
+            },
+            {
+              "id": "ba006620-58af-4ba3-907e-7a953919f067",
+              "name": "score_threshold",
+              "value": "={{ $json.body?.score_threshold ?? $json.score_threshold ?? 20 }}",
+              "type": "number"
+            },
+            {
+              "id": "60de9d2a-954f-4d7e-a15f-bb427a1ae2de",
+              "name": "max_leads",
+              "value": "={{ $json.body?.max_leads || $json.max_leads || 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "google-url-field",
+              "name": "google_url",
+              "value": "={{ $json.body?.google_url || $json.google_url || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d5f30123-69e3-47d3-aa79-f2048e81c85b",
+      "name": "Suchparameter",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3184,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "={{ $credentials ? '' : '' }}AIzaSyA2_IrB95ZremXFTZ_qqdhyyQ2K3LtM2h4"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.googleMapsUri,nextPageToken"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"textQuery\": \"{{ $json.branche }} in {{ $json.ort }}\",\n  \"languageCode\": \"de\",\n  \"maxResultCount\": {{ $json.max_leads || 5 }},\n  \"pageToken\": \"{{ $json.nextPageToken || '' }}\"\n}",
+        "options": {}
+      },
+      "id": "46ff394b-2f41-4e8f-b9b1-0bdeb4a63391",
+      "name": "Google Places Text Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2976,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "places",
+        "options": {}
+      },
+      "id": "bc51ec70-ac53-4053-9cea-2112675f1fe0",
+      "name": "Split: ein Betrieb pro Item",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2784,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e0097c0-fa34-47a7-b069-0c33e3dfc13f",
+              "name": "business.name",
+              "value": "={{ $json.displayName?.text || $json.displayName }}",
+              "type": "string"
+            },
+            {
+              "id": "80a6cd77-dd67-42e2-b96c-2e2cd382833e",
+              "name": "business.address",
+              "value": "={{ $json.formattedAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "973bcbb9-4be9-4ed4-9670-152858488caf",
+              "name": "business.phone",
+              "value": "={{ $json.nationalPhoneNumber || null }}",
+              "type": "string"
+            },
+            {
+              "id": "b81f73d9-9879-41da-84ee-93954dc7e45d",
+              "name": "business.website",
+              "value": "={{ $json.websiteUri || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "affdb3a4-3d9e-491f-af57-b2290d8c2ad0",
+              "name": "business.google_rating",
+              "value": "={{ $json.rating || null }}",
+              "type": "number"
+            },
+            {
+              "id": "142631bd-14e0-4c78-9c4c-1e299d5eb129",
+              "name": "business.google_reviews_count",
+              "value": "={{ $json.userRatingCount || null }}",
+              "type": "number"
+            },
+            {
+              "id": "7641d3f4-a7ff-48a5-a610-8858e02f5102",
+              "name": "business.place_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "558c3bad-5e0a-44b6-b7c6-c55a1039f4b4",
+              "name": "business.maps_url",
+              "value": "={{ $json.googleMapsUri || null }}",
+              "type": "string"
+            },
+            {
+              "id": "0d3b43e7-07af-41d7-b035-0189e09a0530",
+              "name": "business.branche",
+              "value": "={{ $('Suchparameter').item.json.branche }}",
+              "type": "string"
+            },
+            {
+              "id": "db0d9795-844b-4e83-a336-7574fbfbb53c",
+              "name": "business.ort",
+              "value": "={{ $('Suchparameter').item.json.ort }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "90d6b222-ab27-429e-b56e-ddc0eb9a7862",
+      "name": "Map -> business",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2576,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "4cdcc9f4-2847-48b6-9277-42aa1a7876ea",
+              "leftValue": "={{ $json.business.website }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f73a5215-7c5e-45fa-831c-2744203c2a09",
+      "name": "Filter: hat Website",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2384,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c0d73ade-bcc5-4a31-8e18-2dd3d5fc94c3",
+      "name": "Loop je Lead",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2176,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.business.website }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 5
+            }
+          },
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "8122d99f-c014-4449-aa46-ab8ca34c9364",
+      "name": "HTML holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1984,
+        -928
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dae0bc79-ea4c-47d1-a712-8e15c9834f0f",
+              "name": "business",
+              "value": "={{ $('Loop je Lead').item.json.business }}",
+              "type": "object"
+            },
+            {
+              "id": "5975bb3e-ba32-456e-97d7-316ae0cd9558",
+              "name": "html",
+              "value": "={{ $json.data || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "d21d98a0-6bc5-4a96-9ca1-be98a3d371fa",
+              "name": "final_url",
+              "value": "={{ $('Loop je Lead').item.json.business.website }}",
+              "type": "string"
+            },
+            {
+              "id": "382be568-d596-4fc1-934e-326663009f68",
+              "name": "http_status",
+              "value": "={{ null }}",
+              "type": "string"
+            },
+            {
+              "id": "6f122854-189f-4e3b-aa32-e7f2476f7296",
+              "name": "fetch_ok",
+              "value": "={{ !!$json.data && String($json.data).length > 100 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f593e97-08de-4e21-9889-bccee2a7df8b",
+      "name": "Prep fuer Audit",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1776,
+        -1024
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "55c71673-13fb-4620-b97e-a7b19d88e5e1",
+      "name": "Gesammelte Leads",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        -1104
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b2b88cdd-f36d-48e9-842f-dc0987ac2700",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": "={{ $('Suchparameter').first().json.score_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0fe1f268-b558-44cb-a6ad-3104caa821a4",
+      "name": "Filter: Score >= Schwelle",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -976,
+        -1104
+      ]
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "score",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "77ad53fe-7e0e-42b5-b976-0e23c3453dcb",
+      "name": "Sortieren: Score desc",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        -1104
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Fjw6K4MY-H3KfsM4CrZ9BAbDQ0cOKosqAGVsqqftpjc",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "LEADS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "lead_id": "={{ $json.lead_id }}",
+            "name": "={{ $json.business.name }}",
+            "score": "={{ $json.score }}",
+            "website": "={{ $json.business.website }}",
+            "phone": "={{ $json.business.phone }}",
+            "address": "={{ $json.business.address }}",
+            "google_rating": "={{ $json.business.google_rating }}",
+            "google_reviews": "={{ $json.business.google_reviews_count }}"
+          },
+          "matchingColumns": [
+            "lead_id"
+          ],
+          "schema": [
+            {
+              "id": "lead_id",
+              "displayName": "lead_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "google_rating",
+              "displayName": "google_rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "google_reviews",
+              "displayName": "google_reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text_extrahiert",
+              "displayName": "text_extrahiert",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "e7928c30-d393-4f8f-940d-34a9336b32a5",
+      "name": "Google Sheets (fuer mich)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -576,
+        -1168
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "EsWUzcrYxH8tX93F",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "a7d4dcca-ed8a-4b8a-8e7a-a775df690007",
+      "name": "Aggregiere Leads",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -1024
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5da1e9f-4c48-485b-b3f7-6d326ba49a4e",
+              "name": "schema_version",
+              "value": "2.0",
+              "type": "string"
+            },
+            {
+              "id": "8281b475-13b6-4492-b9c8-59fb770cffca",
+              "name": "agent",
+              "value": "lead_scanner",
+              "type": "string"
+            },
+            {
+              "id": "45f0bb95-a2f2-46ae-8fba-a4aaabe07c1f",
+              "name": "generated_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "eaf59103-ea21-4284-be52-3f089dc5e81a",
+              "name": "search",
+              "value": "={{ { branche: $('Suchparameter').first().json.branche, ort: $('Suchparameter').first().json.ort, radius_m: $('Suchparameter').first().json.radius_m } }}",
+              "type": "object"
+            },
+            {
+              "id": "98b9f797-0c42-461d-bab8-646aa6a99e17",
+              "name": "leads",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6c5df5c8-e44d-4546-9663-98826650ab6d",
+      "name": "Baue Pipeline-JSON",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -1024
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/files/agent1_leads.json",
+        "options": {}
+      },
+      "id": "0c071fb5-c353-4040-ab79-bff1204355f0",
+      "name": "Schreibe agent1_leads.json",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -1024
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = JSON.stringify($input.first().json, null, 2);\nreturn [{\n  json: { ok: true },\n  binary: {\n    data: {\n      data: Buffer.from(text).toString('base64'),\n      mimeType: 'application/json',\n      fileName: 'agent1_leads.json'\n    }\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -1024
+      ],
+      "id": "f83be8c3-8d1e-40bc-8796-1c39846fb6a4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.poe.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.vision_payload || {model:'Claude-Sonnet-4.6',temperature:0,max_tokens:50,messages:[{role:'user',content:'Antworte mit: {\"above_the_fold_score\":null,\"hero_present\":null,\"hero_quality\":null,\"cta_above_fold\":null,\"cta_text_found\":[],\"visual_modernity_score\":null,\"vs_modern_benchmark\":\"\",\"visual_findings\":[\"no_screenshot\"]}'}]} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 90000
+        }
+      },
+      "id": "c573bebd-fc6a-4c69-be5b-7e3efc7f85e1",
+      "name": "Poe Vision",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -960,
+        -1024
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UJ5khOPRpBDsxk6m",
+          "name": "Header Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "\n// Direkt nach Prep fuer Audit: $json = {business, html, final_url, fetch_ok, http_status}\n// PSI-Calls via fetch() intern, kein Cross-Node-Ref nötig\n\nconst b         = $json.business || {};\nconst html      = $json.html || '';\nconst finalUrl  = $json.final_url || b.website || '';\nconst fetchOk   = $json.fetch_ok !== false;\nconst httpSt    = $json.http_status ?? null;\nconst warnings  = [];\n\nconst PSI_KEY   = 'AIzaSyD5jhTAZnrT_GAQQhaYJSWLe0us4NypLHA';\n\nfunction norm(v) {\n  if (v == null || isNaN(v)) return null;\n  const n = Number(v);\n  return n <= 1 ? Math.round(n * 100) : Math.round(n);\n}\n\n// PSI fetch (async)\nasync function fetchPSI(url, strategy) {\n  if (!url) return null;\n  try {\n    const q = `url=${encodeURIComponent(url)}&strategy=${strategy}&category=performance&category=seo&category=accessibility&category=best-practices&key=${PSI_KEY}`;\n    const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${q}`);\n    return await resp.json();\n  } catch(e) { return null; }\n}\n\nconst [psiMobRaw, psiDesRaw] = await Promise.all([\n  fetchPSI(finalUrl, 'mobile'),\n  fetchPSI(finalUrl, 'desktop'),\n]);\n\nconst lhrM = psiMobRaw?.lighthouseResult || {};\nconst hasPSI = !!(lhrM?.categories?.performance?.score != null);\nif (!hasPSI) warnings.push('psi_unavailable');\n\nconst psi = {\n  performance:    norm(lhrM?.categories?.performance?.score),\n  seo:            norm(lhrM?.categories?.seo?.score),\n  accessibility:  norm(lhrM?.categories?.accessibility?.score),\n  best_practices: norm(lhrM?.categories?.['best-practices']?.score),\n  lcp_ms:  lhrM?.audits?.['largest-contentful-paint']?.numericValue ?? null,\n  cls:     lhrM?.audits?.['cumulative-layout-shift']?.numericValue ?? null,\n};\n\nconst screenshotMobile  = lhrM?.audits?.['final-screenshot']?.details?.data ?? null;\nconst lhrD              = (psiDesRaw?.lighthouseResult) || {};\nconst screenshotDesktop = lhrD?.audits?.['final-screenshot']?.details?.data ?? null;\n\nif (!screenshotMobile && !screenshotDesktop) warnings.push('screenshot_failed');\n\nconst visionPrompt =\n  'Du bist ein Conversion- und Webdesign-Experte. Bewerte die Screenshots der Startseite. ' +\n  'Website: ' + (b.website || 'unbekannt') + '. ' +\n  'Vergleiche mit modernen Restaurantseiten 2026. ' +\n  'Antworte NUR mit validem JSON (kein Markdown): ' +\n  '{\"above_the_fold_score\":0,\"hero_present\":false,\"hero_quality\":\"none|weak|ok|strong\",' +\n  '\"cta_above_fold\":false,\"cta_text_found\":[],\"visual_modernity_score\":0,' +\n  '\"vs_modern_benchmark\":\"string\",\"visual_findings\":[]}';\n\nconst visionContent = [{ type: 'text', text: visionPrompt }];\nif (screenshotDesktop) visionContent.push({ type: 'image_url', image_url: { url: screenshotDesktop } });\nif (screenshotMobile)  visionContent.push({ type: 'image_url', image_url: { url: screenshotMobile } });\n\nreturn {\n  lead_id:      $json.lead_id || '',\n  business:     b,\n  html:         html,\n  final_url:    finalUrl,\n  fetch_ok:     fetchOk,\n  http_status:  httpSt,\n  psi,\n  screenshot_mobile_b64:  screenshotMobile,\n  screenshot_desktop_b64: screenshotDesktop,\n  vision_payload: {\n    model: 'Claude-Sonnet-4.6', temperature: 0, max_tokens: 800,\n    messages: [{ role: 'user', content: visionContent }]\n  },\n  warnings,\n};\n"
+      },
+      "id": "ee483090-3139-41a8-b4e7-882e62eb5332",
+      "name": "PSI + Vision-Prep",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1584,
+        -1024
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "07964032-48a9-40ae-a684-2448fbc1830b",
+      "name": "Merge PSI + Vision",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -960,
+        -752
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "\n// Input: $json = \"Merge PSI + Vision\" Set-Node Output (oder raw chatcmpl falls Set-Node fehlschlägt)\n// PSI/Business-Daten direkt aus PSI + Vision-Prep lesen (robuster als Set-Node-Expressions)\nlet psiPrep = null;\ntry { psiPrep = $('PSI + Vision-Prep').item.json; } catch(e) {}\n\nconst business  = psiPrep?.business    || $json.business   || {};\nconst html      = psiPrep?.html        || $json.html       || '';\nconst finalUrl  = psiPrep?.final_url   || $json.final_url  || business.website || '';\nconst fetchOk   = psiPrep ? psiPrep.fetch_ok !== false : $json.fetch_ok !== false;\nconst httpStatus = psiPrep?.http_status ?? $json.http_status ?? null;\nconst psi        = psiPrep?.psi        || $json.psi        || {};\nconst warnings   = Array.isArray(psiPrep?.warnings) ? [...psiPrep.warnings]\n                 : Array.isArray($json.warnings)    ? [...$json.warnings] : [];\n\n// Vision-Raw: erst _vision_raw vom Set-Node, dann direkt aus chatcmpl\nconst visionRaw = $json._vision_raw || $json.choices?.[0]?.message?.content || '';\nlet av = null;\nif (visionRaw) {\n  try {\n    const cleaned = String(visionRaw).replace(/```json?/gi,'').replace(/```/g,'').trim();\n    const m = cleaned.match(/\\{[\\s\\S]*\\}/);\n    if (m) av = JSON.parse(m[0]);\n  } catch(_) { warnings.push('vision_parse_failed'); }\n}\nif (!av || typeof av !== 'object') { warnings.push('vision_parse_failed'); av = {}; }\n\nconst auditVisual = {\n  screenshot_desktop_url:  $json.screenshot_desktop_b64 ? 'psi_base64' : null,\n  screenshot_mobile_url:   $json.screenshot_mobile_b64  ? 'psi_base64' : null,\n  above_the_fold_score:    av.above_the_fold_score    ?? null,\n  hero_present:            av.hero_present             ?? null,\n  hero_quality:            av.hero_quality             ?? null,\n  cta_above_fold:          av.cta_above_fold           ?? null,\n  cta_text_found:          av.cta_text_found           || [],\n  visual_modernity_score:  av.visual_modernity_score   ?? null,\n  vs_modern_benchmark:     av.vs_modern_benchmark      || null,\n  visual_findings:         av.visual_findings          || [],\n};\n\nfunction norm(v) { if (v==null||isNaN(v)) return null; const n=Number(v); return n<=1?Math.round(n*100):Math.round(n); }\nfunction slug(name,addr) {\n  const plz=(String(addr||'').match(/\\b(\\d{5})\\b/)||[])[1]||'';\n  const base=String(name||'lead').toLowerCase().normalize('NFKD')\n    .replace(/[̀-ͯ]/g,'').replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')\n    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50);\n  return plz?`${base}-${plz}`:base;\n}\n\nconst h  = String(html);\nconst at = {};\nat.final_url    = finalUrl;\nat.fetch_ok     = fetchOk;\nat.http_status  = httpStatus!=null?Number(httpStatus):null;\nat.https        = /^https:/i.test(String(finalUrl||''));\nat.has_viewport_meta = /<meta[^>]+name=[\"']?viewport[\"']?[^>]*>/i.test(h);\nconst psiPerfNorm = norm(psi.performance);\nconst psiAvail    = psiPerfNorm !== null;\nat.psi_performance_mobile = psiPerfNorm;\nat.psi_seo            = norm(psi.seo);\nat.psi_accessibility  = norm(psi.accessibility);\nat.psi_best_practices = norm(psi.best_practices);\nat.psi_lcp_ms = psi.lcp_ms!=null?Number(psi.lcp_ms):null;\nat.psi_cls    = psi.cls!=null?Number(psi.cls):null;\nat.mobile_friendly = at.has_viewport_meta&&(!psiAvail||psiPerfNorm>=50);\nconst titleM=h.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);\nat.has_title=!!(titleM&&titleM[1].trim()); at.title_text=titleM?titleM[1].trim().slice(0,200):null;\nat.has_meta_description=/<meta[^>]+name=[\"']?description[\"']?[^>]*content=[\"'][^\"']{10,}/i.test(h);\nat.has_h1=/<h1[\\s>]/i.test(h); at.has_schema_jsonld=/<script[^>]+type=[\"']application\\/ld\\+json[\"']/i.test(h);\nat.has_impressum=(/impressum/i).test(h); at.has_datenschutz=(/(datenschutz|privacy)/i).test(h);\nat.has_phone_link=/href=[\"']tel:/i.test(h);\nat.has_contact_form=/<form[\\s>]/i.test(h)&&/(kontakt|contact|schreib|message)/i.test(h.toLowerCase());\nat.has_reservation_link=/(reserv|booking|tisch\\s*reserv)/i.test(h.toLowerCase());\nconst tech=[],age=[];\nif(!at.has_viewport_meta)age.push('no-viewport');\nif(/wp-content|wordpress/i.test(h))tech.push('WordPress');\nif(/wix\\.com/i.test(h))tech.push('Wix');\nif(/<font[\\s>]/i.test(h))age.push('font-tag');\nconst jq=h.match(/jquery[.-](\\d+\\.\\d+)/i);\nif(jq){tech.push('jQuery '+jq[1]);if(parseInt(jq[1])<3)age.push('old-jquery');}\nif(/<frameset|<frame[\\s>]/i.test(h))age.push('frames');\nif(/\\.swf\\b|shockwave-flash/i.test(h)){age.push('flash');tech.push('Flash');}\nif(/<table[^>]*width=[\"']?\\d{3,}/i.test(h)&&!at.has_viewport_meta)age.push('table-layout');\nif(/<marquee/i.test(h))age.push('marquee');\nat.tech_stack=[...new Set(tech)]; at.design_age_signals=[...new Set(age)];\n\n// Scoring 5a\nconst bd={}; let techPts=0;\nif(!at.https){bd.no_https=12;techPts+=12;}\nif(!at.has_viewport_meta||(psiAvail&&psiPerfNorm<50)){bd.not_mobile=14;techPts+=14;}\nif(psiAvail&&psiPerfNorm!==null&&psiPerfNorm<50){const sp=Math.round((50-psiPerfNorm)/50*10);if(sp>0){bd.slow_pagespeed=sp;techPts+=sp;}}\n{const lm=(!at.has_impressum?.6:0)+(!at.has_datenschutz?.4:0);if(lm>0){bd.missing_legal=Math.round(10*lm);techPts+=bd.missing_legal;}}\n{let s=0;if(!at.has_title)s+=.25;if(!at.has_meta_description)s+=.25;if(!at.has_h1)s+=.25;if(!at.has_schema_jsonld)s+=.25;if(s>0){bd.weak_seo=Math.round(8*s);techPts+=bd.weak_seo;}}\nif(age.length>0){bd.outdated_design=Math.min(8,age.length*4);techPts+=bd.outdated_design;}\n{let cm=(!at.has_phone_link?.5:0)+(!at.has_contact_form?.5:0);if(cm>0){bd.weak_contact=Math.round(6*cm);techPts+=bd.weak_contact;}}\n// Scoring 5b\nlet vizPts=0;\nconst hq=auditVisual.hero_quality,hp=auditVisual.hero_present;\nif(hq==='none'||hq==='weak'||hp===false){bd.weak_hero=12;vizPts+=12;}\nelse if(hp===null){bd.no_visual_hero=6;vizPts+=6;}\nif(auditVisual.cta_above_fold===false){bd.no_cta=8;vizPts+=8;}\nelse if(auditVisual.cta_above_fold===null){bd.no_cta_data=4;vizPts+=4;}\nif(auditVisual.visual_modernity_score!==null){const vp=Math.round((100-auditVisual.visual_modernity_score)/100*12);bd.visual_outdated=vp;vizPts+=vp;}\nelse{bd.visual_no_data=6;vizPts+=6;}\n// Scoring 5c\nlet dampener=0;\nconst reviews=Number(business.google_reviews_count||0),rating=Number(business.google_rating||0);\nconst substance=Math.min(1,reviews/50)*Math.min(1,rating/4.0);\nconst businessSubstance=Math.round(substance*100);\nif(substance<.3){bd.low_substance=-8;dampener+=8;}\nconst contactBits=(business.phone?1:0)+(business.maps_url?1:0)+(at.has_phone_link?1:0);\nconst contactability=Math.round(contactBits/3*100);\nconst score=Math.max(0,Math.min(100,Math.round(techPts+vizPts-dampener)));\nlet conf=1.0;\nif(!fetchOk)conf-=.30;if(!psiAvail)conf-=.15;\nif(warnings.includes('screenshot_failed'))conf-=.10;\nif(warnings.includes('vision_parse_failed'))conf-=.20;\nconf=Math.round(Math.max(0,Math.min(1,conf))*100)/100;\nconst args=[];\nif(bd.no_https)args.push('Keine HTTPS-Verschlüsselung');\nif(bd.not_mobile)args.push('Nicht mobiloptimiert');\nif(bd.slow_pagespeed)args.push('Schlechte Ladegeschwindigkeit');\nif(bd.missing_legal)args.push('Impressum/Datenschutz fehlt');\nif(bd.weak_seo)args.push('SEO-Grundlagen fehlen');\nif(bd.outdated_design)args.push('Veraltetes Design: '+age.join(', '));\nif(bd.weak_contact)args.push('Kein Anruf-Button/Kontaktformular');\nif(bd.weak_hero||bd.no_visual_hero)args.push('Schwacher Hero above-the-fold');\nif(bd.no_cta||bd.no_cta_data)args.push('Kein Handlungsaufruf above-the-fold');\nif(auditVisual.vs_modern_benchmark)args.push(auditVisual.vs_modern_benchmark);\nconst leadId=slug(business.name,business.address);\nconst lead={\n  schema_version:'2.0',agent:'lead_scanner',lead_id:leadId,\n  generated_at:new Date().toISOString(),\n  business:{\n    name:business.name||null,address:business.address||null,phone:business.phone||null,\n    website:business.website||null,email_guess:null,\n    google_rating:business.google_rating!=null?Number(business.google_rating):null,\n    google_reviews_count:business.google_reviews_count!=null?Number(business.google_reviews_count):null,\n    place_id:business.place_id||null,maps_url:business.maps_url||null,\n    branche:business.branche||null,ort:business.ort||null,stadtteil:null,social:[],opening_hours:null,\n  },\n  audit_technical:at,audit_visual:auditVisual,\n  score,score_breakdown:bd,\n  potential:{business_substance:businessSubstance,contactability,local_relevance:Math.min(100,reviews*2),conversion_potential:score>75?85:score>50?60:40},\n  verkaufsargumente:args,confidence:conf,warnings,\n  logs:[{ts:new Date().toISOString(),step:'audit_score_complete',status:'ok'}],\n};\ntry{const fs=require('fs');const dir=`/files/runs/${leadId}`;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(`${dir}/lead.json`,JSON.stringify(lead,null,2),'utf8');}catch(e){lead.warnings.push('file_write_failed');}\nreturn lead;\n"
+      },
+      "id": "6d5ba97e-eb9b-4e36-8626-bd5c89e6c9ac",
+      "name": "Audit & Score v2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        -1024
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function cleanUrl(value) {\n  let url = String(value || '').trim();\n\n  url = url.replace(/[\\u200B-\\u200D\\uFEFF]/g, '');\n  url = url.replace(/\\s+/g, '');\n\n  if (!url) return null;\n\n  if (!/^https?:\\/\\//i.test(url)) {\n    url = 'https://' + url;\n  }\n\n  try {\n    return new URL(url).href;\n  } catch (e) {\n    return null;\n  }\n}\n\nconst business = $json.business || {};\n\nbusiness.website = cleanUrl(business.website);\n\nreturn {\n  ...$json,\n  business\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        -1488
+      ],
+      "id": "b24e5ced-79db-4c01-ab67-858c58845499",
+      "name": "Clean Website URL"
+    },
+    {
+      "id": "webhook-agent1",
+      "name": "Webhook: agent1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -3600,
+        -928
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent1-start",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "209074d0-b133-41c8-a09c-9e18bdda8f9c"
+    },
+    {
+      "id": "webhook-resp-agent1",
+      "name": "Webhook Response: agent1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -3400,
+        -928
+      ],
+      "parameters": {
+        "options": {
+          "responseCode": 200,
+          "responseData": "={{ JSON.stringify({ok: true, agent: 'agent1', started_at: new Date().toISOString()}) }}"
+        }
+      }
+    },
+    {
+      "id": "d688a6f6-7b58-42b2-b223-150b1a2e3383",
+      "name": "Trigger Agent 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3200,
+        600
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.srv1736252.hstgr.cloud/webhook/agent2-start",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      }
+    },
+    {
+      "id": "google-url-parse-node",
+      "name": "Google URL Parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3080,
+        -928
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const item = $input.first().json;\nconst googleUrl = item.google_url || '';\nif (!googleUrl) return [{json: item}];\nconst match = googleUrl.match(/maps\\/place\\/([^\\/@?#]+)/);\nconst googleName = match ? decodeURIComponent(match[1].replace(/\\+/g, ' ')).trim() : '';\nreturn [{json: {\n  ...item,\n  branche: googleName || item.branche,\n  ort: '',\n  max_leads: 1,\n  score_threshold: 0,\n  google_name: googleName,\n}}];"
+      }
+    }
+  ],
+  "connections": {
+    "Manueller Start": {
+      "main": [
+        [
+          {
+            "node": "Suchparameter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suchparameter": {
+      "main": [
+        [
+          {
+            "node": "Google URL Parsen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Places Text Search": {
+      "main": [
+        [
+          {
+            "node": "Split: ein Betrieb pro Item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split: ein Betrieb pro Item": {
+      "main": [
+        [
+          {
+            "node": "Map -> business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map -> business": {
+      "main": [
+        [
+          {
+            "node": "Filter: hat Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: hat Website": {
+      "main": [
+        [
+          {
+            "node": "Loop je Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop je Lead": {
+      "main": [
+        [
+          {
+            "node": "Gesammelte Leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTML holen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prep fuer Audit": {
+      "main": [
+        [
+          {
+            "node": "PSI + Vision-Prep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gesammelte Leads": {
+      "main": [
+        [
+          {
+            "node": "Filter: Score >= Schwelle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Score >= Schwelle": {
+      "main": [
+        [
+          {
+            "node": "Sortieren: Score desc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sortieren: Score desc": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets (fuer mich)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aggregiere Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregiere Leads": {
+      "main": [
+        [
+          {
+            "node": "Baue Pipeline-JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baue Pipeline-JSON": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Schreibe agent1_leads.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poe Vision": {
+      "main": [
+        [
+          {
+            "node": "Merge PSI + Vision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PSI + Vision-Prep": {
+      "main": [
+        [
+          {
+            "node": "Poe Vision",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean Website URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge PSI + Vision": {
+      "main": [
+        [
+          {
+            "node": "Audit & Score v2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit & Score v2": {
+      "main": [
+        [
+          {
+            "node": "Loop je Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML holen": {
+      "main": [
+        [
+          {
+            "node": "Prep fuer Audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schreibe agent1_leads.json": {
+      "main": [
+        [
+          {
+            "node": "Trigger Agent 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Website URL": {
+      "main": [
+        [
+          {
+            "node": "Poe Vision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: agent1": {
+      "main": [
+        [
+          {
+            "node": "Suchparameter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google URL Parsen": {
+      "main": [
+        [
+          {
+            "node": "Google Places Text Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "9155043c-57e9-4f6a-87ca-2cdece68bf4a",
+  "activeVersionId": "9155043c-57e9-4f6a-87ca-2cdece68bf4a",
+  "versionCounter": 153,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-06-06T09:43:45.193Z",
+      "createdAt": "2026-06-06T09:43:45.193Z",
+      "role": "workflow:owner",
+      "workflowId": "8K3BEqjsfl21BAS9",
+      "projectId": "6uDALOsnqOHf1Gvz",
+      "project": {
+        "updatedAt": "2026-06-06T09:31:04.698Z",
+        "createdAt": "2026-06-06T09:01:54.922Z",
+        "id": "6uDALOsnqOHf1Gvz",
+        "name": "Pepe Dietrich <pepe_dietrich@icloud.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "4cfb5579-7455-432b-9ec4-3ae45d13c681"
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2026-06-06T10:35:23.364Z",
+      "createdAt": "2026-06-06T10:35:23.364Z",
+      "id": "WOLG6zr5SKTpLmpy",
+      "name": "MONEYLAN"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-06-09T08:09:29.116Z",
+    "createdAt": "2026-06-09T08:09:29.116Z",
+    "versionId": "9155043c-57e9-4f6a-87ca-2cdece68bf4a",
+    "workflowId": "8K3BEqjsfl21BAS9",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "72dbd92a-13e8-43ed-978b-d28681f19cd6",
+        "name": "Manueller Start",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -3376,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d6a1d0ed-da49-41ce-bad3-257693c86820",
+                "name": "branche",
+                "value": "={{ $json.body?.branche || $json.branche || 'Restaurant' }}",
+                "type": "string"
+              },
+              {
+                "id": "71597db5-bde2-48b1-8f68-4a0546e37541",
+                "name": "ort",
+                "value": "={{ $json.body?.ort || $json.ort || 'Leipzig-Zentrum' }}",
+                "type": "string"
+              },
+              {
+                "id": "1070db84-a2af-46fa-b36d-7419ec120cba",
+                "name": "radius_m",
+                "value": "={{ $json.body?.radius_m || $json.radius_m || 3000 }}",
+                "type": "number"
+              },
+              {
+                "id": "ba006620-58af-4ba3-907e-7a953919f067",
+                "name": "score_threshold",
+                "value": "={{ $json.body?.score_threshold ?? $json.score_threshold ?? 20 }}",
+                "type": "number"
+              },
+              {
+                "id": "60de9d2a-954f-4d7e-a15f-bb427a1ae2de",
+                "name": "max_leads",
+                "value": "={{ $json.body?.max_leads || $json.max_leads || 1 }}",
+                "type": "number"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d5f30123-69e3-47d3-aa79-f2048e81c85b",
+        "name": "Suchparameter",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -3184,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://places.googleapis.com/v1/places:searchText",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-Goog-Api-Key",
+                "value": "={{ $credentials ? '' : '' }}AIzaSyA2_IrB95ZremXFTZ_qqdhyyQ2K3LtM2h4"
+              },
+              {
+                "name": "X-Goog-FieldMask",
+                "value": "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.googleMapsUri,nextPageToken"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"textQuery\": \"{{ $json.branche }} in {{ $json.ort }}\",\n  \"languageCode\": \"de\",\n  \"maxResultCount\": {{ $json.max_leads || 5 }},\n  \"pageToken\": \"{{ $json.nextPageToken || '' }}\"\n}",
+          "options": {}
+        },
+        "id": "46ff394b-2f41-4e8f-b9b1-0bdeb4a63391",
+        "name": "Google Places Text Search",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -2976,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "places",
+          "options": {}
+        },
+        "id": "bc51ec70-ac53-4053-9cea-2112675f1fe0",
+        "name": "Split: ein Betrieb pro Item",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          -2784,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5e0097c0-fa34-47a7-b069-0c33e3dfc13f",
+                "name": "business.name",
+                "value": "={{ $json.displayName?.text || $json.displayName }}",
+                "type": "string"
+              },
+              {
+                "id": "80a6cd77-dd67-42e2-b96c-2e2cd382833e",
+                "name": "business.address",
+                "value": "={{ $json.formattedAddress }}",
+                "type": "string"
+              },
+              {
+                "id": "973bcbb9-4be9-4ed4-9670-152858488caf",
+                "name": "business.phone",
+                "value": "={{ $json.nationalPhoneNumber || null }}",
+                "type": "string"
+              },
+              {
+                "id": "b81f73d9-9879-41da-84ee-93954dc7e45d",
+                "name": "business.website",
+                "value": "={{ $json.websiteUri || '' }}",
+                "type": "string"
+              },
+              {
+                "id": "affdb3a4-3d9e-491f-af57-b2290d8c2ad0",
+                "name": "business.google_rating",
+                "value": "={{ $json.rating || null }}",
+                "type": "number"
+              },
+              {
+                "id": "142631bd-14e0-4c78-9c4c-1e299d5eb129",
+                "name": "business.google_reviews_count",
+                "value": "={{ $json.userRatingCount || null }}",
+                "type": "number"
+              },
+              {
+                "id": "7641d3f4-a7ff-48a5-a610-8858e02f5102",
+                "name": "business.place_id",
+                "value": "={{ $json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "558c3bad-5e0a-44b6-b7c6-c55a1039f4b4",
+                "name": "business.maps_url",
+                "value": "={{ $json.googleMapsUri || null }}",
+                "type": "string"
+              },
+              {
+                "id": "0d3b43e7-07af-41d7-b035-0189e09a0530",
+                "name": "business.branche",
+                "value": "={{ $('Suchparameter').item.json.branche }}",
+                "type": "string"
+              },
+              {
+                "id": "db0d9795-844b-4e83-a336-7574fbfbb53c",
+                "name": "business.ort",
+                "value": "={{ $('Suchparameter').item.json.ort }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "90d6b222-ab27-429e-b56e-ddc0eb9a7862",
+        "name": "Map -> business",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -2576,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "4cdcc9f4-2847-48b6-9277-42aa1a7876ea",
+                "leftValue": "={{ $json.business.website }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "f73a5215-7c5e-45fa-831c-2744203c2a09",
+        "name": "Filter: hat Website",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          -2384,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "c0d73ade-bcc5-4a31-8e18-2dd3d5fc94c3",
+        "name": "Loop je Lead",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2176,
+          -928
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.business.website }}",
+          "options": {
+            "redirect": {
+              "redirect": {
+                "maxRedirects": 5
+              }
+            },
+            "response": {
+              "response": {
+                "neverError": true,
+                "responseFormat": "text"
+              }
+            },
+            "timeout": 30000
+          }
+        },
+        "id": "8122d99f-c014-4449-aa46-ab8ca34c9364",
+        "name": "HTML holen",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1984,
+          -928
+        ],
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "dae0bc79-ea4c-47d1-a712-8e15c9834f0f",
+                "name": "business",
+                "value": "={{ $('Loop je Lead').item.json.business }}",
+                "type": "object"
+              },
+              {
+                "id": "5975bb3e-ba32-456e-97d7-316ae0cd9558",
+                "name": "html",
+                "value": "={{ $json.data || '' }}",
+                "type": "string"
+              },
+              {
+                "id": "d21d98a0-6bc5-4a96-9ca1-be98a3d371fa",
+                "name": "final_url",
+                "value": "={{ $('Loop je Lead').item.json.business.website }}",
+                "type": "string"
+              },
+              {
+                "id": "382be568-d596-4fc1-934e-326663009f68",
+                "name": "http_status",
+                "value": "={{ null }}",
+                "type": "string"
+              },
+              {
+                "id": "6f122854-189f-4e3b-aa32-e7f2476f7296",
+                "name": "fetch_ok",
+                "value": "={{ !!$json.data && String($json.data).length > 100 }}",
+                "type": "boolean"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "1f593e97-08de-4e21-9889-bccee2a7df8b",
+        "name": "Prep fuer Audit",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -1776,
+          -1024
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "55c71673-13fb-4620-b97e-a7b19d88e5e1",
+        "name": "Gesammelte Leads",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -1184,
+          -1104
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b2b88cdd-f36d-48e9-842f-dc0987ac2700",
+                "leftValue": "={{ $json.score }}",
+                "rightValue": "={{ $('Suchparameter').first().json.score_threshold }}",
+                "operator": {
+                  "type": "number",
+                  "operation": "gte"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "0fe1f268-b558-44cb-a6ad-3104caa821a4",
+        "name": "Filter: Score >= Schwelle",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          -976,
+          -1104
+        ]
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "score",
+                "order": "descending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "77ad53fe-7e0e-42b5-b976-0e23c3453dcb",
+        "name": "Sortieren: Score desc",
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          -784,
+          -1104
+        ]
+      },
+      {
+        "parameters": {
+          "authentication": "serviceAccount",
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1Fjw6K4MY-H3KfsM4CrZ9BAbDQ0cOKosqAGVsqqftpjc",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "LEADS"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "lead_id": "={{ $json.lead_id }}",
+              "name": "={{ $json.business.name }}",
+              "score": "={{ $json.score }}",
+              "website": "={{ $json.business.website }}",
+              "phone": "={{ $json.business.phone }}",
+              "address": "={{ $json.business.address }}",
+              "google_rating": "={{ $json.business.google_rating }}",
+              "google_reviews": "={{ $json.business.google_reviews_count }}"
+            },
+            "matchingColumns": [
+              "lead_id"
+            ],
+            "schema": [
+              {
+                "id": "lead_id",
+                "displayName": "lead_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "name",
+                "displayName": "name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "score",
+                "displayName": "score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "website",
+                "displayName": "website",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone",
+                "displayName": "phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "address",
+                "displayName": "address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "google_rating",
+                "displayName": "google_rating",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "google_reviews",
+                "displayName": "google_reviews",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "text_extrahiert",
+                "displayName": "text_extrahiert",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "e7928c30-d393-4f8f-940d-34a9336b32a5",
+        "name": "Google Sheets (fuer mich)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -576,
+          -1168
+        ],
+        "credentials": {
+          "googleApi": {
+            "id": "EsWUzcrYxH8tX93F",
+            "name": "Google Service Account account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "id": "a7d4dcca-ed8a-4b8a-8e7a-a775df690007",
+        "name": "Aggregiere Leads",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          -576,
+          -1024
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f5da1e9f-4c48-485b-b3f7-6d326ba49a4e",
+                "name": "schema_version",
+                "value": "2.0",
+                "type": "string"
+              },
+              {
+                "id": "8281b475-13b6-4492-b9c8-59fb770cffca",
+                "name": "agent",
+                "value": "lead_scanner",
+                "type": "string"
+              },
+              {
+                "id": "45f0bb95-a2f2-46ae-8fba-a4aaabe07c1f",
+                "name": "generated_at",
+                "value": "={{ $now.toISO() }}",
+                "type": "string"
+              },
+              {
+                "id": "eaf59103-ea21-4284-be52-3f089dc5e81a",
+                "name": "search",
+                "value": "={{ { branche: $('Suchparameter').first().json.branche, ort: $('Suchparameter').first().json.ort, radius_m: $('Suchparameter').first().json.radius_m } }}",
+                "type": "object"
+              },
+              {
+                "id": "98b9f797-0c42-461d-bab8-646aa6a99e17",
+                "name": "leads",
+                "value": "={{ $json.data }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "6c5df5c8-e44d-4546-9663-98826650ab6d",
+        "name": "Baue Pipeline-JSON",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -384,
+          -1024
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "write",
+          "fileName": "=/files/agent1_leads.json",
+          "options": {}
+        },
+        "id": "0c071fb5-c353-4040-ab79-bff1204355f0",
+        "name": "Schreibe agent1_leads.json",
+        "type": "n8n-nodes-base.readWriteFile",
+        "typeVersion": 1,
+        "position": [
+          32,
+          -1024
+        ],
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "jsCode": "const text = JSON.stringify($input.first().json, null, 2);\nreturn [{\n  json: { ok: true },\n  binary: {\n    data: {\n      data: Buffer.from(text).toString('base64'),\n      mimeType: 'application/json',\n      fileName: 'agent1_leads.json'\n    }\n  }\n}];",
+          "mode": "runOnceForAllItems"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -176,
+          -1024
+        ],
+        "id": "f83be8c3-8d1e-40bc-8796-1c39846fb6a4",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.poe.com/v1/chat/completions",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.vision_payload || {model:'Claude-Sonnet-4.6',temperature:0,max_tokens:50,messages:[{role:'user',content:'Antworte mit: {\"above_the_fold_score\":null,\"hero_present\":null,\"hero_quality\":null,\"cta_above_fold\":null,\"cta_text_found\":[],\"visual_modernity_score\":null,\"vs_modern_benchmark\":\"\",\"visual_findings\":[\"no_screenshot\"]}'}]} }}",
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true,
+                "responseFormat": "json"
+              }
+            },
+            "timeout": 90000
+          }
+        },
+        "id": "c573bebd-fc6a-4c69-be5b-7e3efc7f85e1",
+        "name": "Poe Vision",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          -960,
+          -1024
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "UJ5khOPRpBDsxk6m",
+            "name": "Header Auth account"
+          }
+        },
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "\n// Direkt nach Prep fuer Audit: $json = {business, html, final_url, fetch_ok, http_status}\n// PSI-Calls via fetch() intern, kein Cross-Node-Ref nötig\n\nconst b         = $json.business || {};\nconst html      = $json.html || '';\nconst finalUrl  = $json.final_url || b.website || '';\nconst fetchOk   = $json.fetch_ok !== false;\nconst httpSt    = $json.http_status ?? null;\nconst warnings  = [];\n\nconst PSI_KEY   = 'AIzaSyD5jhTAZnrT_GAQQhaYJSWLe0us4NypLHA';\n\nfunction norm(v) {\n  if (v == null || isNaN(v)) return null;\n  const n = Number(v);\n  return n <= 1 ? Math.round(n * 100) : Math.round(n);\n}\n\n// PSI fetch (async)\nasync function fetchPSI(url, strategy) {\n  if (!url) return null;\n  try {\n    const q = `url=${encodeURIComponent(url)}&strategy=${strategy}&category=performance&category=seo&category=accessibility&category=best-practices&key=${PSI_KEY}`;\n    const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${q}`);\n    return await resp.json();\n  } catch(e) { return null; }\n}\n\nconst [psiMobRaw, psiDesRaw] = await Promise.all([\n  fetchPSI(finalUrl, 'mobile'),\n  fetchPSI(finalUrl, 'desktop'),\n]);\n\nconst lhrM = psiMobRaw?.lighthouseResult || {};\nconst hasPSI = !!(lhrM?.categories?.performance?.score != null);\nif (!hasPSI) warnings.push('psi_unavailable');\n\nconst psi = {\n  performance:    norm(lhrM?.categories?.performance?.score),\n  seo:            norm(lhrM?.categories?.seo?.score),\n  accessibility:  norm(lhrM?.categories?.accessibility?.score),\n  best_practices: norm(lhrM?.categories?.['best-practices']?.score),\n  lcp_ms:  lhrM?.audits?.['largest-contentful-paint']?.numericValue ?? null,\n  cls:     lhrM?.audits?.['cumulative-layout-shift']?.numericValue ?? null,\n};\n\nconst screenshotMobile  = lhrM?.audits?.['final-screenshot']?.details?.data ?? null;\nconst lhrD              = (psiDesRaw?.lighthouseResult) || {};\nconst screenshotDesktop = lhrD?.audits?.['final-screenshot']?.details?.data ?? null;\n\nif (!screenshotMobile && !screenshotDesktop) warnings.push('screenshot_failed');\n\nconst visionPrompt =\n  'Du bist ein Conversion- und Webdesign-Experte. Bewerte die Screenshots der Startseite. ' +\n  'Website: ' + (b.website || 'unbekannt') + '. ' +\n  'Vergleiche mit modernen Restaurantseiten 2026. ' +\n  'Antworte NUR mit validem JSON (kein Markdown): ' +\n  '{\"above_the_fold_score\":0,\"hero_present\":false,\"hero_quality\":\"none|weak|ok|strong\",' +\n  '\"cta_above_fold\":false,\"cta_text_found\":[],\"visual_modernity_score\":0,' +\n  '\"vs_modern_benchmark\":\"string\",\"visual_findings\":[]}';\n\nconst visionContent = [{ type: 'text', text: visionPrompt }];\nif (screenshotDesktop) visionContent.push({ type: 'image_url', image_url: { url: screenshotDesktop } });\nif (screenshotMobile)  visionContent.push({ type: 'image_url', image_url: { url: screenshotMobile } });\n\nreturn {\n  lead_id:      $json.lead_id || '',\n  business:     b,\n  html:         html,\n  final_url:    finalUrl,\n  fetch_ok:     fetchOk,\n  http_status:  httpSt,\n  psi,\n  screenshot_mobile_b64:  screenshotMobile,\n  screenshot_desktop_b64: screenshotDesktop,\n  vision_payload: {\n    model: 'Claude-Sonnet-4.6', temperature: 0, max_tokens: 800,\n    messages: [{ role: 'user', content: visionContent }]\n  },\n  warnings,\n};\n"
+        },
+        "id": "ee483090-3139-41a8-b4e7-882e62eb5332",
+        "name": "PSI + Vision-Prep",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1584,
+          -1024
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "07964032-48a9-40ae-a684-2448fbc1830b",
+        "name": "Merge PSI + Vision",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3,
+        "position": [
+          -960,
+          -752
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "\n// Input: $json = \"Merge PSI + Vision\" Set-Node Output (oder raw chatcmpl falls Set-Node fehlschlägt)\n// PSI/Business-Daten direkt aus PSI + Vision-Prep lesen (robuster als Set-Node-Expressions)\nlet psiPrep = null;\ntry { psiPrep = $('PSI + Vision-Prep').item.json; } catch(e) {}\n\nconst business  = psiPrep?.business    || $json.business   || {};\nconst html      = psiPrep?.html        || $json.html       || '';\nconst finalUrl  = psiPrep?.final_url   || $json.final_url  || business.website || '';\nconst fetchOk   = psiPrep ? psiPrep.fetch_ok !== false : $json.fetch_ok !== false;\nconst httpStatus = psiPrep?.http_status ?? $json.http_status ?? null;\nconst psi        = psiPrep?.psi        || $json.psi        || {};\nconst warnings   = Array.isArray(psiPrep?.warnings) ? [...psiPrep.warnings]\n                 : Array.isArray($json.warnings)    ? [...$json.warnings] : [];\n\n// Vision-Raw: erst _vision_raw vom Set-Node, dann direkt aus chatcmpl\nconst visionRaw = $json._vision_raw || $json.choices?.[0]?.message?.content || '';\nlet av = null;\nif (visionRaw) {\n  try {\n    const cleaned = String(visionRaw).replace(/```json?/gi,'').replace(/```/g,'').trim();\n    const m = cleaned.match(/\\{[\\s\\S]*\\}/);\n    if (m) av = JSON.parse(m[0]);\n  } catch(_) { warnings.push('vision_parse_failed'); }\n}\nif (!av || typeof av !== 'object') { warnings.push('vision_parse_failed'); av = {}; }\n\nconst auditVisual = {\n  screenshot_desktop_url:  $json.screenshot_desktop_b64 ? 'psi_base64' : null,\n  screenshot_mobile_url:   $json.screenshot_mobile_b64  ? 'psi_base64' : null,\n  above_the_fold_score:    av.above_the_fold_score    ?? null,\n  hero_present:            av.hero_present             ?? null,\n  hero_quality:            av.hero_quality             ?? null,\n  cta_above_fold:          av.cta_above_fold           ?? null,\n  cta_text_found:          av.cta_text_found           || [],\n  visual_modernity_score:  av.visual_modernity_score   ?? null,\n  vs_modern_benchmark:     av.vs_modern_benchmark      || null,\n  visual_findings:         av.visual_findings          || [],\n};\n\nfunction norm(v) { if (v==null||isNaN(v)) return null; const n=Number(v); return n<=1?Math.round(n*100):Math.round(n); }\nfunction slug(name,addr) {\n  const plz=(String(addr||'').match(/\\b(\\d{5})\\b/)||[])[1]||'';\n  const base=String(name||'lead').toLowerCase().normalize('NFKD')\n    .replace(/[̀-ͯ]/g,'').replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')\n    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50);\n  return plz?`${base}-${plz}`:base;\n}\n\nconst h  = String(html);\nconst at = {};\nat.final_url    = finalUrl;\nat.fetch_ok     = fetchOk;\nat.http_status  = httpStatus!=null?Number(httpStatus):null;\nat.https        = /^https:/i.test(String(finalUrl||''));\nat.has_viewport_meta = /<meta[^>]+name=[\"']?viewport[\"']?[^>]*>/i.test(h);\nconst psiPerfNorm = norm(psi.performance);\nconst psiAvail    = psiPerfNorm !== null;\nat.psi_performance_mobile = psiPerfNorm;\nat.psi_seo            = norm(psi.seo);\nat.psi_accessibility  = norm(psi.accessibility);\nat.psi_best_practices = norm(psi.best_practices);\nat.psi_lcp_ms = psi.lcp_ms!=null?Number(psi.lcp_ms):null;\nat.psi_cls    = psi.cls!=null?Number(psi.cls):null;\nat.mobile_friendly = at.has_viewport_meta&&(!psiAvail||psiPerfNorm>=50);\nconst titleM=h.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);\nat.has_title=!!(titleM&&titleM[1].trim()); at.title_text=titleM?titleM[1].trim().slice(0,200):null;\nat.has_meta_description=/<meta[^>]+name=[\"']?description[\"']?[^>]*content=[\"'][^\"']{10,}/i.test(h);\nat.has_h1=/<h1[\\s>]/i.test(h); at.has_schema_jsonld=/<script[^>]+type=[\"']application\\/ld\\+json[\"']/i.test(h);\nat.has_impressum=(/impressum/i).test(h); at.has_datenschutz=(/(datenschutz|privacy)/i).test(h);\nat.has_phone_link=/href=[\"']tel:/i.test(h);\nat.has_contact_form=/<form[\\s>]/i.test(h)&&/(kontakt|contact|schreib|message)/i.test(h.toLowerCase());\nat.has_reservation_link=/(reserv|booking|tisch\\s*reserv)/i.test(h.toLowerCase());\nconst tech=[],age=[];\nif(!at.has_viewport_meta)age.push('no-viewport');\nif(/wp-content|wordpress/i.test(h))tech.push('WordPress');\nif(/wix\\.com/i.test(h))tech.push('Wix');\nif(/<font[\\s>]/i.test(h))age.push('font-tag');\nconst jq=h.match(/jquery[.-](\\d+\\.\\d+)/i);\nif(jq){tech.push('jQuery '+jq[1]);if(parseInt(jq[1])<3)age.push('old-jquery');}\nif(/<frameset|<frame[\\s>]/i.test(h))age.push('frames');\nif(/\\.swf\\b|shockwave-flash/i.test(h)){age.push('flash');tech.push('Flash');}\nif(/<table[^>]*width=[\"']?\\d{3,}/i.test(h)&&!at.has_viewport_meta)age.push('table-layout');\nif(/<marquee/i.test(h))age.push('marquee');\nat.tech_stack=[...new Set(tech)]; at.design_age_signals=[...new Set(age)];\n\n// Scoring 5a\nconst bd={}; let techPts=0;\nif(!at.https){bd.no_https=12;techPts+=12;}\nif(!at.has_viewport_meta||(psiAvail&&psiPerfNorm<50)){bd.not_mobile=14;techPts+=14;}\nif(psiAvail&&psiPerfNorm!==null&&psiPerfNorm<50){const sp=Math.round((50-psiPerfNorm)/50*10);if(sp>0){bd.slow_pagespeed=sp;techPts+=sp;}}\n{const lm=(!at.has_impressum?.6:0)+(!at.has_datenschutz?.4:0);if(lm>0){bd.missing_legal=Math.round(10*lm);techPts+=bd.missing_legal;}}\n{let s=0;if(!at.has_title)s+=.25;if(!at.has_meta_description)s+=.25;if(!at.has_h1)s+=.25;if(!at.has_schema_jsonld)s+=.25;if(s>0){bd.weak_seo=Math.round(8*s);techPts+=bd.weak_seo;}}\nif(age.length>0){bd.outdated_design=Math.min(8,age.length*4);techPts+=bd.outdated_design;}\n{let cm=(!at.has_phone_link?.5:0)+(!at.has_contact_form?.5:0);if(cm>0){bd.weak_contact=Math.round(6*cm);techPts+=bd.weak_contact;}}\n// Scoring 5b\nlet vizPts=0;\nconst hq=auditVisual.hero_quality,hp=auditVisual.hero_present;\nif(hq==='none'||hq==='weak'||hp===false){bd.weak_hero=12;vizPts+=12;}\nelse if(hp===null){bd.no_visual_hero=6;vizPts+=6;}\nif(auditVisual.cta_above_fold===false){bd.no_cta=8;vizPts+=8;}\nelse if(auditVisual.cta_above_fold===null){bd.no_cta_data=4;vizPts+=4;}\nif(auditVisual.visual_modernity_score!==null){const vp=Math.round((100-auditVisual.visual_modernity_score)/100*12);bd.visual_outdated=vp;vizPts+=vp;}\nelse{bd.visual_no_data=6;vizPts+=6;}\n// Scoring 5c\nlet dampener=0;\nconst reviews=Number(business.google_reviews_count||0),rating=Number(business.google_rating||0);\nconst substance=Math.min(1,reviews/50)*Math.min(1,rating/4.0);\nconst businessSubstance=Math.round(substance*100);\nif(substance<.3){bd.low_substance=-8;dampener+=8;}\nconst contactBits=(business.phone?1:0)+(business.maps_url?1:0)+(at.has_phone_link?1:0);\nconst contactability=Math.round(contactBits/3*100);\nconst score=Math.max(0,Math.min(100,Math.round(techPts+vizPts-dampener)));\nlet conf=1.0;\nif(!fetchOk)conf-=.30;if(!psiAvail)conf-=.15;\nif(warnings.includes('screenshot_failed'))conf-=.10;\nif(warnings.includes('vision_parse_failed'))conf-=.20;\nconf=Math.round(Math.max(0,Math.min(1,conf))*100)/100;\nconst args=[];\nif(bd.no_https)args.push('Keine HTTPS-Verschlüsselung');\nif(bd.not_mobile)args.push('Nicht mobiloptimiert');\nif(bd.slow_pagespeed)args.push('Schlechte Ladegeschwindigkeit');\nif(bd.missing_legal)args.push('Impressum/Datenschutz fehlt');\nif(bd.weak_seo)args.push('SEO-Grundlagen fehlen');\nif(bd.outdated_design)args.push('Veraltetes Design: '+age.join(', '));\nif(bd.weak_contact)args.push('Kein Anruf-Button/Kontaktformular');\nif(bd.weak_hero||bd.no_visual_hero)args.push('Schwacher Hero above-the-fold');\nif(bd.no_cta||bd.no_cta_data)args.push('Kein Handlungsaufruf above-the-fold');\nif(auditVisual.vs_modern_benchmark)args.push(auditVisual.vs_modern_benchmark);\nconst leadId=slug(business.name,business.address);\nconst lead={\n  schema_version:'2.0',agent:'lead_scanner',lead_id:leadId,\n  generated_at:new Date().toISOString(),\n  business:{\n    name:business.name||null,address:business.address||null,phone:business.phone||null,\n    website:business.website||null,email_guess:null,\n    google_rating:business.google_rating!=null?Number(business.google_rating):null,\n    google_reviews_count:business.google_reviews_count!=null?Number(business.google_reviews_count):null,\n    place_id:business.place_id||null,maps_url:business.maps_url||null,\n    branche:business.branche||null,ort:business.ort||null,stadtteil:null,social:[],opening_hours:null,\n  },\n  audit_technical:at,audit_visual:auditVisual,\n  score,score_breakdown:bd,\n  potential:{business_substance:businessSubstance,contactability,local_relevance:Math.min(100,reviews*2),conversion_potential:score>75?85:score>50?60:40},\n  verkaufsargumente:args,confidence:conf,warnings,\n  logs:[{ts:new Date().toISOString(),step:'audit_score_complete',status:'ok'}],\n};\ntry{const fs=require('fs');const dir=`/files/runs/${leadId}`;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(`${dir}/lead.json`,JSON.stringify(lead,null,2),'utf8');}catch(e){lead.warnings.push('file_write_failed');}\nreturn lead;\n"
+        },
+        "id": "6d5ba97e-eb9b-4e36-8626-bd5c89e6c9ac",
+        "name": "Audit & Score v2",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -752,
+          -1024
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "function cleanUrl(value) {\n  let url = String(value || '').trim();\n\n  url = url.replace(/[\\u200B-\\u200D\\uFEFF]/g, '');\n  url = url.replace(/\\s+/g, '');\n\n  if (!url) return null;\n\n  if (!/^https?:\\/\\//i.test(url)) {\n    url = 'https://' + url;\n  }\n\n  try {\n    return new URL(url).href;\n  } catch (e) {\n    return null;\n  }\n}\n\nconst business = $json.business || {};\n\nbusiness.website = cleanUrl(business.website);\n\nreturn {\n  ...$json,\n  business\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1536,
+          -1488
+        ],
+        "id": "b24e5ced-79db-4c01-ab67-858c58845499",
+        "name": "Clean Website URL"
+      },
+      {
+        "id": "webhook-agent1",
+        "name": "Webhook: agent1",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -3600,
+          -928
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agent1-start",
+          "responseMode": "onReceived",
+          "options": {}
+        },
+        "webhookId": "209074d0-b133-41c8-a09c-9e18bdda8f9c"
+      },
+      {
+        "id": "webhook-resp-agent1",
+        "name": "Webhook Response: agent1",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          -3400,
+          -928
+        ],
+        "parameters": {
+          "options": {
+            "responseCode": 200,
+            "responseData": "={{ JSON.stringify({ok: true, agent: 'agent1', started_at: new Date().toISOString()}) }}"
+          }
+        }
+      },
+      {
+        "id": "d688a6f6-7b58-42b2-b223-150b1a2e3383",
+        "name": "Trigger Agent 2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3200,
+          600
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://n8n.srv1736252.hstgr.cloud/webhook/agent2-start",
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true
+              }
+            },
+            "timeout": 10000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Manueller Start": {
+        "main": [
+          [
+            {
+              "node": "Suchparameter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Suchparameter": {
+        "main": [
+          [
+            {
+              "node": "Google Places Text Search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Places Text Search": {
+        "main": [
+          [
+            {
+              "node": "Split: ein Betrieb pro Item",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split: ein Betrieb pro Item": {
+        "main": [
+          [
+            {
+              "node": "Map -> business",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Map -> business": {
+        "main": [
+          [
+            {
+              "node": "Filter: hat Website",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter: hat Website": {
+        "main": [
+          [
+            {
+              "node": "Loop je Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop je Lead": {
+        "main": [
+          [
+            {
+              "node": "Gesammelte Leads",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "HTML holen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prep fuer Audit": {
+        "main": [
+          [
+            {
+              "node": "PSI + Vision-Prep",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gesammelte Leads": {
+        "main": [
+          [
+            {
+              "node": "Filter: Score >= Schwelle",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter: Score >= Schwelle": {
+        "main": [
+          [
+            {
+              "node": "Sortieren: Score desc",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sortieren: Score desc": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets (fuer mich)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Aggregiere Leads",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregiere Leads": {
+        "main": [
+          [
+            {
+              "node": "Baue Pipeline-JSON",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baue Pipeline-JSON": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Schreibe agent1_leads.json",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Poe Vision": {
+        "main": [
+          [
+            {
+              "node": "Merge PSI + Vision",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "PSI + Vision-Prep": {
+        "main": [
+          [
+            {
+              "node": "Poe Vision",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Clean Website URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge PSI + Vision": {
+        "main": [
+          [
+            {
+              "node": "Audit & Score v2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Audit & Score v2": {
+        "main": [
+          [
+            {
+              "node": "Loop je Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML holen": {
+        "main": [
+          [
+            {
+              "node": "Prep fuer Audit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schreibe agent1_leads.json": {
+        "main": [
+          [
+            {
+              "node": "Trigger Agent 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clean Website URL": {
+        "main": [
+          [
+            {
+              "node": "Poe Vision",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook: agent1": {
+        "main": [
+          [
+            {
+              "node": "Suchparameter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Pepe Dietrich",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-06-09T08:09:29.170Z",
+        "id": 225,
+        "workflowId": "8K3BEqjsfl21BAS9",
+        "versionId": "9155043c-57e9-4f6a-87ca-2cdece68bf4a",
+        "event": "activated",
+        "userId": "4cfb5579-7455-432b-9ec4-3ae45d13c681"
+      },
+      {
+        "createdAt": "2026-06-09T08:09:29.156Z",
+        "id": 224,
+        "workflowId": "8K3BEqjsfl21BAS9",
+        "versionId": "9155043c-57e9-4f6a-87ca-2cdece68bf4a",
+        "event": "deactivated",
+        "userId": "4cfb5579-7455-432b-9ec4-3ae45d13c681"
+      }
+    ]
+  }
+}

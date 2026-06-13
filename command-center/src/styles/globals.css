@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Easing */
+  --ease-out:      cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer:   cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Base */
+  --bg:          #060610;
+  --bg-panel:    #0c0c1a;
+  --bg-card:     #111122;
+  --bg-elevated: #16162a;
+
+  /* Borders */
+  --border:        rgba(255,255,255,0.06);
+  --border-dim:    rgba(255,255,255,0.03);
+  --border-focus:  rgba(255,255,255,0.14);
+  --border-active: rgba(0,212,255,0.25);
+
+  /* PDSTUDIO Brand */
+  --pd-cyan:    #00d4ff;
+  --pd-electric: #4488ff;
+  --pd-neon:    #00ffcc;
+  --pd-magenta: #e8197f;
+  --pd-orange:  #ff6b2b;
+  --pd-green:   #2ddb72;
+  --pd-red:     #f03a3a;
+  --pd-amber:   #f5a623;
+  --pd-purple:  #9b6ef3;
+  --pd-gold:    #ffd700;
+
+  /* Keep old names as aliases for backward compat */
+  --cyan:    var(--pd-cyan);
+  --magenta: var(--pd-magenta);
+  --green:   var(--pd-green);
+  --red:     var(--pd-red);
+  --amber:   var(--pd-amber);
+  --purple:  var(--pd-purple);
+
+  /* Text */
+  --text:       #c0c0d8;
+  --text-dim:   #484868;
+  --text-hi:    #eeeeff;
+  --text-muted: #383858;
+
+  --radius:    8px;
+  --radius-sm: 5px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0; padding: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Geist', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+/* Scrollbar — minimal */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* Surface panel */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Legacy alias — keeps existing components working */
+.hud-border {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* PDSTUDIO Grid — enhanced ambient */
+.grid-bg {
+  background-image:
+    radial-gradient(ellipse 100% 70% at 50% -10%, rgba(0,212,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(232,25,127,0.03) 0%, transparent 50%),
+    linear-gradient(rgba(0,212,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.018) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+  background-attachment: fixed;
+}
+
+/* Agent station glow variants */
+.station-glow-cyan    { box-shadow: 0 0 40px rgba(0,212,255,0.06) inset; }
+.station-glow-magenta { box-shadow: 0 0 40px rgba(232,25,127,0.06) inset; }
+.station-glow-green   { box-shadow: 0 0 40px rgba(45,219,114,0.06) inset; }
+.station-glow-amber   { box-shadow: 0 0 40px rgba(245,166,35,0.06) inset; }
+.station-glow-purple  { box-shadow: 0 0 40px rgba(155,110,243,0.06) inset; }
+
+/* Status colors */
+.status-idle    { color: var(--text-dim); }
+.status-running { color: var(--pd-cyan); }
+.status-done    { color: var(--pd-green); }
+.status-error   { color: var(--pd-red); }
+
+/* Neon text (kept for compat) */
+.neon-cyan    { color: var(--pd-cyan); }
+.neon-green   { color: var(--pd-green); }
+.neon-red     { color: var(--pd-red); }
+.neon-magenta { color: var(--pd-magenta); }
+
+.dot-live {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--pd-green);
+  box-shadow: 0 0 6px rgba(45,219,114,0.5);
+  display: inline-block;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+}
+
+/* Premium button base */
+.btn-pd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+.btn-pd::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Worker animation keyframes */
+@keyframes worker-bob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-2px); }
+}
+@keyframes worker-walk {
+  0%   { transform: translateX(0px) scaleX(1); }
+  25%  { transform: translateX(3px) scaleX(1); }
+  50%  { transform: translateX(6px) scaleX(1); }
+  75%  { transform: translateX(3px) scaleX(-1); }
+  100% { transform: translateX(0px) scaleX(-1); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.4; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes scan-line {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+@keyframes data-flow {
+  0%   { opacity: 0; transform: translateY(100%); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.8; }
+}
+@keyframes station-breathe {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.04) inset; }
+  50%       { box-shadow: 0 0 40px rgba(0,212,255,0.1) inset; }
+}
+
+/* Row hover */
+.row-hover { transition: background 120ms ease; }
+.row-hover:hover { background: rgba(255,255,255,0.022); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid rgba(0,212,255,0.5);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

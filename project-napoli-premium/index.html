@@ -1,0 +1,2238 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Project Napoli — Neapolitanische Pizza. Nichts dazu.</title>
+<meta name="description" content="Holzofen-Pizza nach neapolitanischer Tradition. Fior di Latte, San Marzano. Peterssteinweg 1, Leipzig.">
+<meta name="theme-color" content="#a73a1f">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Project Napoli",
+  "description": "Neapolitanische Pizza aus dem Holzofen. Authentische Zutaten, junges Konzept.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Peterssteinweg 1",
+    "postalCode": "04107",
+    "addressLocality": "Leipzig",
+    "addressCountry": "DE"
+  },
+  "telephone": "+49-152-03433491",
+  "servesCuisine": ["Italian", "Pizza", "Neapolitan"],
+  "priceRange": "€€",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "180"
+  },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Monday", "opens": "16:00", "closes": "23:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Tuesday", "opens": "16:00", "closes": "23:30" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Wednesday","Thursday"], "opens": "12:00", "closes": "23:30" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday","Saturday"], "opens": "12:00", "closes": "01:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "12:00", "closes": "22:00" }
+  ]
+}
+</script>
+
+<style>
+/* ============================================================
+   PROJECT NAPOLI — single-file premium build
+   Drenched cinnabar palette · Bricolage Grotesque + Inter
+   ============================================================ */
+
+:root {
+  /* ===== EASING ===== */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* ===== DRENCHED CINNABAR PALETTE ===== */
+  --brand:       oklch(0.48 0.160 30);    /* body — saturated cinnabar */
+  --brand-deep:  oklch(0.40 0.150 28);    /* surfaces / footer */
+  --brand-rich:  oklch(0.42 0.165 28);    /* card surfaces */
+  --brand-bright:oklch(0.62 0.180 38);    /* accent moments */
+  --brand-dark:  oklch(0.30 0.135 26);    /* hard accent — buttons text bg */
+
+  --ink:        oklch(0.97 0.018 75);     /* warm cream — body text */
+  --ink-soft:   oklch(0.88 0.022 70);     /* secondary */
+  --ink-mute:   oklch(0.78 0.030 60);     /* tertiary */
+  --ink-faint:  oklch(0.70 0.040 50);     /* dividers */
+
+  --line:       oklch(0.97 0.018 75 / 0.18);
+  --line-strong:oklch(0.97 0.018 75 / 0.35);
+
+  /* For light pop CTA */
+  --cream:      oklch(0.96 0.018 75);
+  --ink-on-cream: oklch(0.22 0.060 30);   /* deep wine-warm on cream */
+
+  /* ===== TYPE ===== */
+  --display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --sans:    "Inter", system-ui, -apple-system, sans-serif;
+  --mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  /* ===== SCALE ===== */
+  --r-sm: 4px;
+  --r-md: 10px;
+  --r-lg: 14px;
+
+  --container: 1320px;
+  --section-y-d: clamp(96px, 12vw, 160px);
+  --section-y-m: 72px;
+}
+
+* { box-sizing: border-box; }
+*::selection { background: var(--cream); color: var(--brand-dark); }
+
+html { scroll-behavior: smooth; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--brand);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; display: block; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 200ms var(--ease-out), opacity 200ms var(--ease-out);
+}
+a:hover { color: var(--cream); }
+
+button { font: inherit; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+
+/* ===== TYPOGRAPHY HELPERS ===== */
+
+.display {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+  text-wrap: balance;
+  font-variation-settings: 'opsz' 96;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.lead {
+  font-size: clamp(17px, 1.4vw, 19px);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 58ch;
+  text-wrap: pretty;
+}
+
+/* ===== CONTAINER & SECTION ===== */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 48px);
+}
+
+section {
+  padding: var(--section-y-d) 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  section { padding: var(--section-y-m) 0; }
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: oklch(0.48 0.160 30 / 0.80);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  gap: 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.nav-brand .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: inline-block;
+  margin: 0 4px 4px;
+  vertical-align: middle;
+}
+.nav-brand small {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: clamp(18px, 2.5vw, 32px);
+  list-style: none; margin: 0; padding: 0;
+}
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  letter-spacing: -0.005em;
+}
+.nav-links a:hover { color: var(--ink); }
+
+.nav-ctas { display: flex; gap: 8px; align-items: center; }
+
+.nav-cta-order {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 18px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600; font-size: 14px;
+  border: 1px solid var(--line-strong);
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out), border-color 200ms var(--ease-out);
+}
+.nav-cta-order:hover { background: oklch(0.97 0.018 75 / 0.08); border-color: var(--cream); color: var(--ink); }
+.nav-cta-order:active { transform: scale(0.97); }
+
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 18px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink-on-cream);
+  font-weight: 600; font-size: 14px;
+  letter-spacing: -0.005em;
+  border: 0;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out);
+}
+.nav-cta:hover { background: oklch(1 0 0); color: var(--ink-on-cream); }
+.nav-cta:active { transform: scale(0.97); }
+
+.nav-toggle {
+  display: none;
+  width: 40px; height: 40px;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  color: var(--ink);
+  align-items: center; justify-content: center;
+}
+@media (max-width: 960px) {
+  .nav-links, .nav-cta-order { display: none; }
+  .nav-toggle { display: inline-flex; }
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 68px 0 0 0;
+  background: var(--brand);
+  border-top: 1px solid var(--line);
+  padding: 32px clamp(20px, 5vw, 48px);
+  transform: translateY(-12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 240ms var(--ease-out), opacity 200ms var(--ease-out);
+  z-index: 49;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-menu a {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 32px;
+  letter-spacing: -0.025em;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+.mobile-menu .row {
+  display: flex; gap: 10px; margin-top: 24px;
+}
+.mobile-menu .row a { flex: 1; border: 0; padding: 0; }
+
+/* ============================================================
+   HERO — full-bleed manifesto
+   ============================================================ */
+
+.hero {
+  min-height: calc(100dvh - 68px);
+  padding-top: clamp(56px, 7vw, 96px);
+  padding-bottom: clamp(56px, 7vw, 96px);
+  display: flex; flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sun glow overlay */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -10%; right: -10%;
+  width: 70vw; height: 70vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.78 0.180 60 / 0.18) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+/* Smoke gradient bottom */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 60% 0 0 0;
+  background: linear-gradient(180deg, transparent 0%, oklch(0.40 0.150 28 / 0.3) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Rotating pizza in background */
+.hero-pizza {
+  position: absolute;
+  top: 50%;
+  right: -28vw;
+  transform: translateY(-50%);
+  width: min(120vh, 92vw);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.62;
+  filter: brightness(0.85) saturate(1.1) contrast(1.05);
+  mask-image: radial-gradient(circle at center, black 56%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle at center, black 56%, transparent 70%);
+}
+.hero-pizza img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  animation: pizza-rotate 90s linear infinite;
+  will-change: transform;
+}
+@keyframes pizza-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (max-width: 760px) {
+  .hero-pizza {
+    right: -40vw;
+    width: 130vw;
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-pizza img { animation: none; }
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+  margin-bottom: clamp(48px, 8vw, 96px);
+}
+.hero-top .eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.hero-top .eyebrow::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--line-strong);
+}
+
+.hero-top .live {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.hero-top .live .pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: inline-block;
+  position: relative;
+  animation: pulse 2s var(--ease-out) infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 oklch(0.97 0.018 75 / 0.6); }
+  100% { box-shadow: 0 0 0 9px oklch(0.97 0.018 75 / 0); }
+}
+
+.hero-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(56px, 11vw, 160px);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  margin: 0;
+  color: var(--ink);
+  text-wrap: balance;
+  font-variation-settings: 'opsz' 96;
+}
+.hero h1 .light {
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -0.03em;
+  display: block;
+  color: var(--ink-soft);
+}
+
+.hero-meta-row {
+  display: grid;
+  grid-template-columns: 6fr 4fr 4fr;
+  gap: clamp(20px, 3vw, 56px);
+  align-items: end;
+  margin-top: clamp(48px, 7vw, 96px);
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 760px) {
+  .hero-meta-row { grid-template-columns: 1fr; gap: 28px; padding-top: 24px; }
+}
+
+.hero-sub {
+  font-size: clamp(15px, 1.4vw, 17px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 38ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.hero-meta-item {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.hero-meta-item .k {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.hero-meta-item .v {
+  font-family: var(--display);
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.hero-meta-item .v.mono {
+  font-family: var(--mono);
+  font-size: clamp(15px, 1.3vw, 17px);
+  letter-spacing: 0;
+}
+
+.hero-ctas {
+  display: flex; gap: 12px; align-items: center;
+  margin-top: clamp(40px, 5vw, 56px);
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 480px) { .hero-ctas { flex-direction: column; align-items: stretch; } }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 60px;
+  padding: 0 32px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink-on-cream);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  border: 0;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+.btn-primary:hover {
+  background: oklch(1 0 0);
+  color: var(--ink-on-cream);
+  box-shadow: 0 16px 36px -10px oklch(0 0 0 / 0.25);
+}
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 60px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  border: 1.5px solid var(--line-strong);
+  transition: transform 160ms var(--ease-out), border-color 200ms var(--ease-out), background 200ms var(--ease-out);
+}
+.btn-ghost:hover { border-color: var(--cream); background: oklch(0.97 0.018 75 / 0.06); color: var(--ink); }
+.btn-ghost:active { transform: scale(0.97); }
+
+/* ============================================================
+   SHOWCASE — full-bleed cinematic
+   ============================================================ */
+
+.showcase {
+  position: relative;
+  width: 100%;
+  height: clamp(380px, 65vh, 680px);
+  overflow: hidden;
+  background: var(--brand-deep);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.showcase img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.95) contrast(1.04) saturate(1.1);
+}
+.showcase::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, oklch(0.40 0.150 28 / 0.30) 0%, transparent 30%, transparent 55%, oklch(0.40 0.150 28 / 0.85) 100%),
+    linear-gradient(90deg, oklch(0.40 0.150 28 / 0.50) 0%, transparent 40%);
+  pointer-events: none;
+}
+.showcase-text {
+  position: absolute;
+  left: clamp(20px, 5vw, 64px);
+  bottom: clamp(28px, 5vw, 56px);
+  z-index: 1;
+  max-width: 540px;
+}
+.showcase-text .eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+.showcase-text p {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Manifesto image */
+.manifesto-image {
+  margin-top: 32px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  position: relative;
+}
+.manifesto-image img {
+  width: 100%; height: auto;
+  display: block;
+  filter: brightness(0.96) contrast(1.04);
+}
+.manifesto-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, oklch(0.40 0.150 28 / 0.25) 100%);
+  pointer-events: none;
+}
+
+/* Menu signature strip */
+.menu-signature {
+  margin: 0 0 clamp(48px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+  padding: clamp(24px, 3vw, 36px);
+  background: oklch(0.97 0.018 75 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+@media (max-width: 760px) { .menu-signature { grid-template-columns: 1fr; gap: 20px; } }
+.menu-signature-img {
+  border-radius: var(--r-md);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+.menu-signature-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.04) saturate(1.05);
+}
+.menu-signature-text .eyebrow {
+  display: block;
+  margin-bottom: 10px;
+}
+.menu-signature-text h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(28px, 3.5vw, 44px);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.menu-signature-text h3 em {
+  font-style: italic; font-weight: 400; color: var(--ink-soft);
+}
+.menu-signature-text p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0 0 14px;
+  max-width: 42ch;
+}
+.menu-signature-text .meta {
+  display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap;
+}
+.menu-signature-text .price {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.menu-signature-text .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 3px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+}
+
+/* ============================================================
+   TRUST STRIP
+   ============================================================ */
+
+.trust {
+  padding: 36px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: oklch(0.45 0.155 28);
+}
+
+.trust-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.trust-item .n {
+  font-family: var(--display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: var(--ink);
+}
+.trust-item .l {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  max-width: 18ch;
+}
+
+/* ============================================================
+   MANIFESTO — what we do
+   ============================================================ */
+
+.manifesto-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 920px) { .manifesto-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+.manifesto-side h2 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(40px, 6vw, 80px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 16px 0 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.manifesto-side h2 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+.manifesto-body p {
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 56ch;
+  margin: 0 0 22px;
+  text-wrap: pretty;
+}
+.manifesto-body p:first-of-type {
+  font-size: clamp(18px, 1.5vw, 21px);
+  color: var(--ink);
+}
+
+.manifesto-list {
+  margin: 36px 0 0;
+  padding: 28px 0 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+}
+@media (max-width: 600px) { .manifesto-list { grid-template-columns: 1fr; } }
+.manifesto-item {
+  padding: 0 24px 0 0;
+  border-right: 1px solid var(--line);
+}
+.manifesto-item:last-child { border-right: 0; padding-right: 0; }
+@media (max-width: 600px) {
+  .manifesto-item { padding: 18px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+  .manifesto-item:last-child { border-bottom: 0; }
+}
+.manifesto-item .k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.manifesto-item .v {
+  font-family: var(--display);
+  font-size: clamp(18px, 1.5vw, 21px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+/* ============================================================
+   SIGNATURE MENU
+   ============================================================ */
+
+.menu-section {
+  background: var(--brand-deep);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.menu-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: end;
+  margin-bottom: clamp(56px, 7vw, 96px);
+}
+@media (max-width: 760px) {
+  .menu-head { grid-template-columns: 1fr; gap: 24px; align-items: start; }
+}
+
+.menu-head h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(56px, 10vw, 140px);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  margin: 16px 0 0;
+  color: var(--ink);
+  text-wrap: balance;
+  font-variation-settings: 'opsz' 96;
+}
+.menu-head h2 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+/* Menu spread */
+.menu-spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 4vw, 56px) clamp(48px, 7vw, 120px);
+}
+@media (max-width: 760px) { .menu-spread { grid-template-columns: 1fr; } }
+
+.menu-group {
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+.menu-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.menu-group-head h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.018em;
+  margin: 0;
+  color: var(--ink);
+}
+.menu-group-head span {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.dish {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+}
+.dish-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  line-height: 1.2;
+  margin: 0 0 5px;
+}
+.dish-name em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.dish-desc {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin: 0;
+  max-width: 42ch;
+}
+.dish-price {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+.dish-tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 2px 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.menu-note {
+  margin-top: clamp(48px, 6vw, 72px);
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.menu-note p { margin: 0; font-size: 14px; color: var(--ink-soft); max-width: 60ch; }
+
+/* ============================================================
+   ORDER / DELIVERY
+   ============================================================ */
+
+.order {
+  background: var(--brand-rich);
+}
+.order-head {
+  margin-bottom: clamp(40px, 5vw, 64px);
+  max-width: 720px;
+}
+.order-head h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(40px, 6vw, 80px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 16px 0 16px;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.order-head h2 em { font-style: italic; font-weight: 400; color: var(--ink-soft); }
+.order-head .lead { max-width: 56ch; }
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 760px) { .order-grid { grid-template-columns: 1fr; } }
+
+.order-card {
+  background: oklch(0.97 0.018 75 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 240ms var(--ease-out), border-color 240ms var(--ease-out), background 240ms var(--ease-out);
+}
+.order-card:hover {
+  border-color: var(--cream);
+  background: oklch(0.97 0.018 75 / 0.08);
+  transform: translateY(-2px);
+}
+
+.order-card .partner {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.order-card h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.order-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.order-card .go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.order-card:hover .go svg { transform: translateX(4px); }
+.order-card .go svg { transition: transform 200ms var(--ease-out); }
+
+/* ============================================================
+   HOURS
+   ============================================================ */
+
+.hours-section {
+  background: var(--brand-deep);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: 4fr 8fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 920px) { .hours-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+.hours-head h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(40px, 5.5vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 16px 0 16px;
+  color: var(--ink);
+}
+.hours-head h2 em { font-style: italic; font-weight: 400; color: var(--ink-soft); }
+.hours-head .lead { max-width: 36ch; }
+
+.hours-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--line);
+}
+.hours-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.hours-row.today {
+  background: oklch(0.97 0.018 75 / 0.04);
+  padding: 18px 14px;
+  margin: 0 -14px;
+}
+.hours-row .day {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.hours-row .marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.hours-row.today .marker { color: var(--ink); }
+.hours-row .time {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   INSTAGRAM CALLOUT
+   ============================================================ */
+
+.social-section {
+  text-align: center;
+}
+.social-section .eyebrow { display: inline-block; margin-bottom: 18px; }
+.social-section h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(48px, 8vw, 96px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  margin: 0 0 32px;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.social-section h2 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.social-section .handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  transition: all 220ms var(--ease-out);
+}
+.social-section .handle:hover {
+  background: var(--cream);
+  color: var(--ink-on-cream);
+  border-color: var(--cream);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+
+.faq-head {
+  margin-bottom: clamp(40px, 5vw, 64px);
+  display: flex; align-items: end; justify-content: space-between; gap: 32px; flex-wrap: wrap;
+}
+.faq-head h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(40px, 5.5vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 16px 0 0;
+  color: var(--ink);
+}
+.faq-head h2 em { font-style: italic; font-weight: 400; color: var(--ink-soft); }
+
+.faq-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 64px;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 760px) { .faq-list { grid-template-columns: 1fr; gap: 0; } }
+
+.faq { border-bottom: 1px solid var(--line); }
+.faq summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 22px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  transition: opacity 180ms var(--ease-out);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: '+';
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 24px;
+  color: var(--ink);
+  flex-shrink: 0;
+  transition: transform 240ms var(--ease-out);
+}
+.faq[open] summary::after { content: '−'; }
+.faq summary:hover { opacity: 0.7; }
+.faq-body {
+  padding: 0 0 24px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+
+.contact-section {
+  background: var(--brand-deep);
+  border-top: 1px solid var(--line);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 920px) { .contact-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+.contact-side h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 16px 0 24px;
+  color: var(--ink);
+}
+.contact-side h2 em { font-style: italic; font-weight: 400; color: var(--ink-soft); }
+.contact-side > p { color: var(--ink-soft); font-size: 17px; max-width: 50ch; margin-bottom: 36px; }
+
+.contact-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+@media (max-width: 600px) { .contact-block { grid-template-columns: 1fr; } }
+
+.contact-cell .key {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.contact-cell .val {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.contact-cell .val.mono {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.contact-cell .val a { color: var(--ink); border-bottom: 1px solid var(--line-strong); padding-bottom: 1px; }
+.contact-cell .val a:hover { color: var(--cream); border-bottom-color: var(--cream); }
+
+.map-card {
+  background: oklch(0.97 0.018 75 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.map-card h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.018em;
+  margin: 0;
+  color: var(--ink);
+}
+.map-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.map-card .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+footer {
+  background: oklch(0.32 0.140 26);
+  border-top: 1px solid var(--line);
+  padding: 80px 0 32px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 64px;
+}
+@media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+
+.footer-brand {
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.footer-brand small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-top: 10px;
+  font-weight: 400;
+}
+
+.footer-tag { color: var(--ink-soft); font-size: 14px; max-width: 36ch; line-height: 1.55; margin-bottom: 16px; }
+
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  transition: all 200ms var(--ease-out);
+}
+.footer-social:hover { background: var(--cream); color: var(--ink-on-cream); border-color: var(--cream); }
+
+.footer-col h4 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 18px;
+}
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { color: var(--ink-soft); font-size: 14px; }
+.footer-col a:hover { color: var(--ink); }
+.footer-col p { color: var(--ink-soft); font-size: 14px; line-height: 1.55; margin: 0 0 6px; }
+.footer-col p strong { color: var(--ink); font-weight: 500; }
+
+.footer-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-bottom p {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  margin: 0;
+}
+.footer-bottom .demo {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+}
+
+/* ============================================================
+   REVEALS
+   ============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+@media (hover: none) {
+  .order-card:hover { transform: none; }
+  .order-card:hover .go svg { transform: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#top" class="nav-brand">
+      project<span class="dot"></span>napoli
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#manifest">Konzept</a></li>
+      <li><a href="#karte">Karte</a></li>
+      <li><a href="#bestellen">Bestellen</a></li>
+      <li><a href="#zeiten">Zeiten</a></li>
+      <li><a href="#anfahrt">Anfahrt</a></li>
+    </ul>
+
+    <div class="nav-ctas">
+      <a href="tel:+4915203433491" class="nav-cta-order">Anrufen</a>
+      <a href="#bestellen" class="nav-cta">Bestellen</a>
+    </div>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Menü">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#manifest">Konzept</a>
+    <a href="#karte">Karte</a>
+    <a href="#bestellen">Bestellen</a>
+    <a href="#zeiten">Zeiten</a>
+    <a href="#anfahrt">Anfahrt</a>
+    <div class="row">
+      <a href="tel:+4915203433491" class="nav-cta-order">Anrufen</a>
+      <a href="#bestellen" class="nav-cta">Bestellen</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <div class="hero-pizza" aria-hidden="true">
+    <img src="images/pizza-burrata.jpg" alt="" loading="eager">
+  </div>
+  <div class="container">
+
+    <div class="hero-top">
+      <span class="eyebrow">Neapolitanisch · Leipzig</span>
+      <span class="live"><span class="pulse"></span>Heute geöffnet</span>
+    </div>
+
+    <div class="hero-main">
+      <h1 class="reveal in">
+        Neapolitanische&nbsp;Pizza.
+        <span class="light">Nichts dazu.</span>
+      </h1>
+    </div>
+
+    <div class="hero-meta-row reveal in">
+      <p class="hero-sub">
+        Holzofen, Fior di Latte, San Marzano. Frisch gemacht, in 90 Sekunden gebacken,
+        am Tisch oder zu Ihnen nach Hause.
+      </p>
+
+      <div class="hero-meta-item">
+        <span class="k">Bewertung</span>
+        <span class="v">4,9 ★ <small style="font-size:13px;color:var(--ink-mute);font-family:var(--mono);font-weight:400;">/ 180 Reviews</small></span>
+      </div>
+
+      <div class="hero-meta-item">
+        <span class="k">Adresse</span>
+        <span class="v">Peterssteinweg 1<br>04107 Leipzig</span>
+      </div>
+    </div>
+
+    <div class="hero-ctas reveal in">
+      <a href="#bestellen" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h6v6H9z"/></svg>
+        Pizza bestellen
+      </a>
+      <a href="tel:+4915203433491" class="btn-ghost">
+        Direkt anrufen
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2 16 16 0 01-16-16 2 2 0 012-2z"/></svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SHOWCASE — Holzofen cinematic
+     ============================================================ -->
+<section class="showcase" aria-hidden="true">
+  <img src="images/hero.jpg" alt="Neapolitanische Pizza im Holzofen mit Flammen, Project Napoli Leipzig" loading="lazy">
+  <div class="showcase-text">
+    <span class="eyebrow">Holzofen · 450°C</span>
+    <p>Zweiundvierzig Sekunden. Mehr braucht eine ehrliche Pizza nicht.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TRUST STRIP
+     ============================================================ -->
+<section class="trust" style="padding: 36px 0;">
+  <div class="container">
+    <div class="trust-row">
+      <div class="trust-item">
+        <span class="n">4,9</span>
+        <span class="l">aus 180 Reviews</span>
+      </div>
+      <div class="trust-item">
+        <span class="n">90s</span>
+        <span class="l">im Holzofen</span>
+      </div>
+      <div class="trust-item">
+        <span class="n">25+</span>
+        <span class="l">Pizza-Sorten</span>
+      </div>
+      <div class="trust-item">
+        <span class="n">7</span>
+        <span class="l">Tage geöffnet</span>
+      </div>
+      <div class="trust-item">
+        <span class="n">€6,50</span>
+        <span class="l">ab Marinara</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MANIFESTO
+     ============================================================ -->
+<section id="manifest">
+  <div class="container">
+    <div class="manifesto-grid">
+
+      <div class="manifesto-side">
+        <span class="eyebrow">Konzept</span>
+        <h2 class="reveal">
+          Pizza aus Neapel,
+          <em>auf Leipziger Art.</em>
+        </h2>
+        <div class="manifesto-image reveal">
+          <img src="images/dough.jpg" alt="Hände formen Pizza-Teig auf Marmortheke, Project Napoli" loading="lazy">
+        </div>
+      </div>
+
+      <div class="manifesto-body reveal">
+        <p>
+          Im Holzofen bei 450 Grad. In neunzig Sekunden fertig. Der Teig zwei Tage
+          geführt, der Mozzarella am Morgen aus dem Wasser. So macht man Pizza in Neapel —
+          und so machen wir sie auch auf dem Peterssteinweg.
+        </p>
+        <p>
+          Wir verzichten auf alles, was nicht hineingehört. Keine vorgefertigten Saucen,
+          keine geschmolzenen Käseimitate, keine fertigen Beläge. Nur das, was eine
+          gute Pizza braucht — und das in der besten Qualität, die wir bekommen können.
+        </p>
+        <p>
+          Mittendrin in der Südvorstadt, fußläufig zur Uni, dem Augustusplatz und der
+          Innenstadt. Im Lokal, zur Abholung, zum Liefern.
+        </p>
+
+        <div class="manifesto-list">
+          <div class="manifesto-item">
+            <div class="k">Teig</div>
+            <div class="v">48 Stunden geführt, handgeformt.</div>
+          </div>
+          <div class="manifesto-item">
+            <div class="k">Mozzarella</div>
+            <div class="v">Fior di Latte, täglich frisch.</div>
+          </div>
+          <div class="manifesto-item">
+            <div class="k">Tomaten</div>
+            <div class="v">San Marzano D.O.P., aus Kampanien.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     KARTE
+     ============================================================ -->
+<section id="karte" class="menu-section">
+  <div class="container">
+
+    <div class="menu-head">
+      <div>
+        <span class="eyebrow" style="display:block; margin-bottom:18px;">Die Karte</span>
+        <h2 class="reveal">
+          25&nbsp;Pizzen,
+          <em>1&nbsp;Holzofen.</em>
+        </h2>
+      </div>
+      <div>
+        <a href="https://www.project-napoli-leipzig.de/" target="_blank" rel="noopener" class="btn-ghost" style="height: 48px; font-size: 14px;">
+          Vollständige Karte
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="menu-signature reveal">
+      <div class="menu-signature-img">
+        <img src="images/pizza-burrata.jpg" alt="Burrata Pistacchio — die Signature-Pizza von Project Napoli" loading="lazy">
+      </div>
+      <div class="menu-signature-text">
+        <span class="eyebrow">House Signature</span>
+        <h3>Burrata <em>Pistacchio.</em></h3>
+        <p>
+          Cremige Burrata, Pistazienpesto, Salame nostrano, frischer Basilikum.
+          Die Pizza, für die unsere Gäste wiederkommen.
+        </p>
+        <div class="meta">
+          <span class="price">14,50 €</span>
+          <span class="tag">House</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-spread">
+
+      <div class="menu-group">
+        <div class="menu-group-head">
+          <h3>Klassiker</h3>
+          <span>Tradition</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Marinara <em>· vegan</em></p>
+            <p class="dish-desc">San Marzano, Knoblauch, Oregano, Olivenöl. Mehr nicht.</p>
+          </div>
+          <span class="dish-price">6,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Margherita</p>
+            <p class="dish-desc">Tomate, Fior di Latte, Basilikum, Olivenöl.</p>
+          </div>
+          <span class="dish-price">7,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Diavola</p>
+            <p class="dish-desc">Tomate, Mozzarella, scharfe Salami, Chili.</p>
+          </div>
+          <span class="dish-price">10,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Quattro Formaggi</p>
+            <p class="dish-desc">Vier Käse — von süß bis kräftig.</p>
+          </div>
+          <span class="dish-price">9,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Capricciosa</p>
+            <p class="dish-desc">Schinken, Artischocken, Champignons, Oliven.</p>
+          </div>
+          <span class="dish-price">11,50 €</span>
+        </div>
+
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-group-head">
+          <h3>Signature</h3>
+          <span>Specials</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Burrata Pistacchio <span class="dish-tag">House</span></p>
+            <p class="dish-desc">Cremige Burrata, Pistazienpesto, Salame nostrano.</p>
+          </div>
+          <span class="dish-price">14,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Burrata e Verdure</p>
+            <p class="dish-desc">Grillgemüse, Burrata, Olivenöl.</p>
+          </div>
+          <span class="dish-price">13,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Bufala e Pistacchio</p>
+            <p class="dish-desc">Büffelmozzarella, Pistazie, Mortadella.</p>
+          </div>
+          <span class="dish-price">13,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">BBQ Chicken</p>
+            <p class="dish-desc">Hähnchen, BBQ-Sauce, rote Zwiebel, Mozzarella.</p>
+          </div>
+          <span class="dish-price">11,50 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Birne Gorgonzola <span class="dish-tag">vegetarisch</span></p>
+            <p class="dish-desc">Karamellisierte Birne, Gorgonzola, Walnuss, Honig.</p>
+          </div>
+          <span class="dish-price">11,90 €</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="menu-note">
+      <p>
+        Außerdem auf der Karte: 9 Pasta-Klassiker (10—13 €), Antipasti, Wein, Peroni
+        und unser süßer Klassiker — die Sweet Pizza Nutella.
+      </p>
+      <a href="#bestellen" class="btn-primary" style="height: 52px; font-size: 14px;">
+        Jetzt bestellen
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     ORDER / DELIVERY
+     ============================================================ -->
+<section id="bestellen" class="order">
+  <div class="container">
+
+    <div class="order-head">
+      <span class="eyebrow">Bestellen</span>
+      <h2 class="reveal">
+        In 30&nbsp;Minuten <em>bei Ihnen.</em>
+      </h2>
+      <p class="lead">
+        Holzofen-Pizza, fertig zum Mitnehmen oder direkt nach Hause. Wählen Sie Ihren
+        Lieferpartner — oder rufen Sie kurz an.
+      </p>
+    </div>
+
+    <div class="order-grid">
+
+      <a href="https://wolt.com/en/deu/leipzig/restaurant/debobo" target="_blank" rel="noopener" class="order-card">
+        <span class="partner">Lieferdienst</span>
+        <h3>Wolt</h3>
+        <p>Über Wolt bestellen — schnelle Lieferung, App-Tracking, kontaktlose Übergabe.</p>
+        <span class="go">
+          Auf Wolt öffnen
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a href="https://www.project-napoli-leipzig.de/" target="_blank" rel="noopener" class="order-card">
+        <span class="partner">Direkt</span>
+        <h3>Online bestellen</h3>
+        <p>Auf project-napoli-leipzig.de direkt bestellen — auch zur Abholung im Lokal.</p>
+        <span class="go">
+          Zur Bestellung
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a href="tel:+4915203433491" class="order-card">
+        <span class="partner">Telefon</span>
+        <h3>Anrufen</h3>
+        <p>0152 03433491 — direkt sprechen, Pizza bestellen oder Abholung vereinbaren.</p>
+        <span class="go">
+          Jetzt anrufen
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     ZEITEN
+     ============================================================ -->
+<section id="zeiten" class="hours-section">
+  <div class="container">
+    <div class="hours-grid">
+
+      <div class="hours-head">
+        <span class="eyebrow">Öffnungszeiten</span>
+        <h2 class="reveal">
+          Wir sind da.
+          <em>Sieben Tage.</em>
+        </h2>
+        <p class="lead">
+          Freitag und Samstag bis ein Uhr nachts. Mittwoch bis Sonntag schon ab Mittag.
+        </p>
+      </div>
+
+      <div class="hours-list" id="hoursList">
+        <div class="hours-row" data-day="1">
+          <span class="day">Montag</span>
+          <span class="marker"></span>
+          <span class="time">16:00 — 23:00</span>
+        </div>
+        <div class="hours-row" data-day="2">
+          <span class="day">Dienstag</span>
+          <span class="marker"></span>
+          <span class="time">16:00 — 23:30</span>
+        </div>
+        <div class="hours-row" data-day="3">
+          <span class="day">Mittwoch</span>
+          <span class="marker"></span>
+          <span class="time">12:00 — 23:30</span>
+        </div>
+        <div class="hours-row" data-day="4">
+          <span class="day">Donnerstag</span>
+          <span class="marker"></span>
+          <span class="time">12:00 — 23:30</span>
+        </div>
+        <div class="hours-row" data-day="5">
+          <span class="day">Freitag</span>
+          <span class="marker"></span>
+          <span class="time">12:00 — 01:00</span>
+        </div>
+        <div class="hours-row" data-day="6">
+          <span class="day">Samstag</span>
+          <span class="marker"></span>
+          <span class="time">12:00 — 01:00</span>
+        </div>
+        <div class="hours-row" data-day="0">
+          <span class="day">Sonntag</span>
+          <span class="marker"></span>
+          <span class="time">12:00 — 22:00</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SOCIAL CALLOUT
+     ============================================================ -->
+<section class="social-section">
+  <div class="container">
+    <span class="eyebrow">Im Feed</span>
+    <h2 class="reveal">
+      Jeden Tag eine&nbsp;Pizza.
+      <em>Oder zwei.</em>
+    </h2>
+    <a href="https://www.instagram.com/projectnapoli/" target="_blank" rel="noopener" class="handle">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="3" width="18" height="18" rx="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+      </svg>
+      @projectnapoli
+    </a>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+     ============================================================ -->
+<section>
+  <div class="container">
+
+    <div class="faq-head">
+      <div>
+        <span class="eyebrow">Häufige Fragen</span>
+        <h2 class="reveal">
+          Wir machen es <em>kurz.</em>
+        </h2>
+      </div>
+    </div>
+
+    <div class="faq-list">
+
+      <details class="faq">
+        <summary>Kann ich vor Ort essen?</summary>
+        <div class="faq-body">
+          Ja, Walk-Ins sind willkommen. An Wochenenden empfehlen wir, kurz unter
+          0152 03433491 anzurufen — gerade abends ab 19 Uhr ist es oft voll.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Liefert ihr auch?</summary>
+        <div class="faq-body">
+          Über Wolt direkt zu Ihnen nach Hause. Oder online bei
+          project-napoli-leipzig.de — beides möglich.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Habt ihr vegetarisch / vegan?</summary>
+        <div class="faq-body">
+          Klar. Die Marinara ist von Hause aus vegan. Margherita ohne Käse auch.
+          Bei den Signature-Pizzen gibt es mehrere vegetarische Optionen.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Sind eure Pizzen wirklich neapolitanisch?</summary>
+        <div class="faq-body">
+          Ja. Holzofen bei 450 Grad, dünner Boden, leichte Rand-Cornicione, in 90 Sekunden
+          fertig. Teig 48 Stunden geführt. So macht man es in Neapel.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Habt ihr glutenfrei?</summary>
+        <div class="faq-body">
+          Aktuell führen wir keine glutenfreien Pizzen, da wir die Reinheit in der
+          offenen Holzofen-Küche nicht garantieren können. Sprechen Sie uns gerne an.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Was kostet eine Pizza im Schnitt?</summary>
+        <div class="faq-body">
+          Die Klassiker zwischen 6,50 € (Marinara) und 11,50 € (Capricciosa). Signature-
+          Pizzen mit Burrata bis 14,50 €. Pasta zwischen 10 € und 13 €.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Wo kann ich parken?</summary>
+        <div class="faq-body">
+          Wir liegen am Peterssteinweg, direkt an der Tram. Parkhäuser im Umkreis:
+          Petersbogen (350 m), Hauptbahnhof Promenaden (10 Min Fußweg).
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Können wir Anlässe ausrichten?</summary>
+        <div class="faq-body">
+          Geburtstage und kleinere Feiern bis ca. 20 Personen, gern auf Anfrage.
+          Schreiben Sie uns auf Insta oder rufen Sie an.
+        </div>
+      </details>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+     ============================================================ -->
+<section id="anfahrt" class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div class="contact-side">
+        <span class="eyebrow">Anfahrt &amp; Kontakt</span>
+        <h2 class="reveal">
+          Peterssteinweg&nbsp;1.
+          <em>Mitten in der Südvorstadt.</em>
+        </h2>
+        <p>Vier Minuten zu Fuß vom Augustusplatz. Direkt an der Tramhaltestelle „Roßplatz".</p>
+
+        <div class="contact-block">
+          <div class="contact-cell">
+            <div class="key">Adresse</div>
+            <div class="val">Peterssteinweg 1<br>04107 Leipzig</div>
+          </div>
+          <div class="contact-cell">
+            <div class="key">Telefon</div>
+            <div class="val mono"><a href="tel:+4915203433491">0152 · 03433491</a></div>
+          </div>
+          <div class="contact-cell">
+            <div class="key">Heute</div>
+            <div class="val mono" id="todayHours">12:00 — 23:30</div>
+          </div>
+          <div class="contact-cell">
+            <div class="key">Social</div>
+            <div class="val mono"><a href="https://www.instagram.com/projectnapoli/" target="_blank" rel="noopener">@projectnapoli</a></div>
+          </div>
+        </div>
+
+        <a href="tel:+4915203433491" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2 16 16 0 01-16-16 2 2 0 012-2z"/></svg>
+          Jetzt anrufen
+        </a>
+      </div>
+
+      <div class="map-card">
+        <h3>Anfahrt</h3>
+        <p>
+          <strong style="color: var(--ink); font-weight: 500;">Tram:</strong>
+          Linien 10, 11 — Haltestelle „Roßplatz", 2 Minuten Fußweg.
+        </p>
+        <p>
+          <strong style="color: var(--ink); font-weight: 500;">Zu Fuß vom Augustusplatz:</strong>
+          4 Minuten durch die Grimmaische Straße.
+        </p>
+        <p>
+          <strong style="color: var(--ink); font-weight: 500;">Mit dem Auto:</strong>
+          Innerhalb der Innenstadt, Parkhäuser: Petersbogen (350 m).
+        </p>
+        <a class="link" href="https://maps.google.com/?q=Project+Napoli+Peterssteinweg+1+Leipzig" target="_blank" rel="noopener">
+          In Google Maps öffnen
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+
+      <div>
+        <div class="footer-brand">
+          project<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ink);margin:0 4px 6px;vertical-align:middle;"></span>napoli
+          <small>Neapolitanisch · Leipzig</small>
+        </div>
+        <p class="footer-tag">
+          Holzofen-Pizza nach neapolitanischer Tradition.
+          Peterssteinweg 1, 04107 Leipzig.
+        </p>
+        <a href="https://www.instagram.com/projectnapoli/" target="_blank" rel="noopener" class="footer-social">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+          </svg>
+          @projectnapoli
+        </a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Besuch</h4>
+        <ul>
+          <li>
+            <p><strong>Peterssteinweg 1</strong></p>
+            <p style="font-size:13px;color:var(--ink-mute);">04107 Leipzig</p>
+          </li>
+          <li>
+            <p><strong>0152 03433491</strong></p>
+            <p style="font-size:13px;color:var(--ink-mute);">Bestellung &amp; Telefon</p>
+          </li>
+          <li>
+            <p><strong>Mo — So</strong></p>
+            <p style="font-size:13px;color:var(--ink-mute);">Siehe Öffnungszeiten</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Erleben</h4>
+        <ul>
+          <li><a href="#manifest">Konzept</a></li>
+          <li><a href="#karte">Speisekarte</a></li>
+          <li><a href="#bestellen">Bestellen</a></li>
+          <li><a href="#zeiten">Öffnungszeiten</a></li>
+          <li><a href="#anfahrt">Anfahrt</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="#impressum" id="footImpressum">Impressum</a></li>
+          <li><a href="#datenschutz" id="footDatenschutz">Datenschutz</a></li>
+          <li><a href="#agb" id="footAGB">AGB</a></li>
+          <li><a href="#anfahrt">Kontakt</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Project Napoli · Peterssteinweg 1, 04107 Leipzig</p>
+      <span class="demo">Demo · Konzept-Vorschau · noindex</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPT
+     ============================================================ -->
+<script>
+(() => {
+  // ===== Mobile menu =====
+  const navToggle = document.getElementById('navToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  navToggle?.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  mobileMenu?.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => mobileMenu.classList.remove('open'))
+  );
+
+  // ===== Scroll reveals =====
+  const reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '-10% 0px -10% 0px', threshold: 0.1 });
+    reveals.forEach(el => io.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('in'));
+  }
+
+  // ===== Hours: highlight today =====
+  const todayDay = new Date().getDay(); // 0=Sunday, 1=Monday, ...
+  const todayRow = document.querySelector(`.hours-row[data-day="${todayDay}"]`);
+  if (todayRow) {
+    todayRow.classList.add('today');
+    todayRow.querySelector('.marker').textContent = '· Heute';
+  }
+  // Update "today" time in contact section
+  const todayHoursEl = document.getElementById('todayHours');
+  if (todayHoursEl && todayRow) {
+    todayHoursEl.textContent = todayRow.querySelector('.time').textContent;
+  }
+
+  // ===== Legal modals =====
+  const legal = {
+    impressum: {
+      title: 'Impressum',
+      body: `<p><strong>Project Napoli</strong><br>Peterssteinweg 1<br>04107 Leipzig</p>
+             <p><strong>Telefon:</strong> 0152 03433491</p>
+             <p>Verantwortlich für den Inhalt gemäß § 55 Abs. 2 RStV: der Inhaber.</p>
+             <p>Sie können uns auch über unsere Social-Media-Kanäle erreichen:
+             <a href="https://www.instagram.com/projectnapoli/" target="_blank" rel="noopener">@projectnapoli</a> auf Instagram.</p>
+             <p style="font-size:12px;color:var(--ink-mute);"><em>Hinweis: Diese Seite ist eine Konzept-Vorschau. Die rechtlich vollständigen Angaben werden vor Live-Schaltung ergänzt.</em></p>`
+    },
+    datenschutz: {
+      title: 'Datenschutz',
+      body: `<p>Wir nehmen den Schutz Ihrer persönlichen Daten ernst und behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften (DSGVO) sowie dieser Datenschutzerklärung.</p>
+             <p><strong>1. Verantwortlich</strong><br>Project Napoli, Peterssteinweg 1, 04107 Leipzig.</p>
+             <p><strong>2. Externe Lieferdienste</strong><br>Beim Klick auf Bestelloptionen werden Sie zu unseren Partnern (Wolt, project-napoli-leipzig.de) weitergeleitet. Es gelten deren Datenschutzbestimmungen.</p>
+             <p><strong>3. Ihre Rechte</strong><br>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung sowie Datenübertragbarkeit.</p>
+             <p style="font-size:12px;color:var(--ink-mute);"><em>Stand: Konzept-Vorschau.</em></p>`
+    },
+    agb: {
+      title: 'AGB',
+      body: `<p><strong>Allgemeine Geschäftsbedingungen — Project Napoli</strong></p>
+             <p><strong>§ 1 Geltungsbereich</strong><br>Diese AGB gelten für alle Verträge zwischen Project Napoli und seinen Gästen.</p>
+             <p><strong>§ 2 Bestellungen über Lieferdienste</strong><br>Für Bestellungen über externe Partner (Wolt etc.) gelten zusätzlich deren AGB.</p>
+             <p><strong>§ 3 Abholung</strong><br>Bestellungen zur Abholung sind nach Bestätigung der Bereitstellungszeit verbindlich.</p>
+             <p style="font-size:12px;color:var(--ink-mute);"><em>Stand: Konzept-Vorschau.</em></p>`
+    }
+  };
+
+  function openLegal(key) {
+    const data = legal[key];
+    if (!data) return;
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;z-index:200;background:oklch(0.20 0.080 28 / 0.85);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity 240ms cubic-bezier(0.23,1,0.32,1);';
+    modal.innerHTML = `
+      <div style="background:var(--brand-rich);border:1px solid var(--line-strong);border-radius:var(--r-lg);max-width:640px;width:100%;max-height:85vh;overflow:auto;padding:36px 32px;transform:translateY(8px);transition:transform 280ms cubic-bezier(0.23,1,0.32,1);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;gap:24px;">
+          <h2 style="font-family:var(--display);font-weight:600;font-size:36px;letter-spacing:-0.025em;margin:0;color:var(--ink);">${data.title}</h2>
+          <button class="legal-close" style="width:36px;height:36px;border-radius:50%;background:transparent;border:1px solid var(--line-strong);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg>
+          </button>
+        </div>
+        <div style="color:var(--ink-soft);font-size:14.5px;line-height:1.65;">${data.body}</div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    requestAnimationFrame(() => {
+      modal.style.opacity = '1';
+      modal.querySelector('div').style.transform = 'translateY(0)';
+    });
+    const close = () => {
+      modal.style.opacity = '0';
+      modal.querySelector('div').style.transform = 'translateY(8px)';
+      setTimeout(() => modal.remove(), 240);
+    };
+    modal.querySelector('.legal-close').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function esc(e) {
+      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
+    });
+  }
+
+  ['Impressum', 'Datenschutz', 'AGB'].forEach(k => {
+    document.getElementById('foot' + k)?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openLegal(k.toLowerCase());
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

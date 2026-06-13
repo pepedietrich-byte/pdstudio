@@ -1,0 +1,2 @@
+- [Offene Punkte Pipeline-Bau](project_open_items.md) — Agent 1 Test, Supabase, Dedup; alle offenen Fragen → yes; am Ende gemeinsam klären
+- [Credential Issues](../CREDENTIAL_ISSUES.md) — Oxylabs OXY credential falsch; PageSpeed API nicht aktiviert; Google Sheets Tabs fehlen

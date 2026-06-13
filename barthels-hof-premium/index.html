@@ -1,0 +1,2575 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Barthels Hof — Sächsische Küche im letzten Durchgangshof Leipzigs</title>
+<meta name="description" content="Seit 1747 sächsisch gekocht. Familienbetrieb im historischen Barthels Hof, Hainstraße 1, Leipzig. Reservieren, Speisekarte, Veranstaltungen.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Gasthaus Barthels Hof",
+  "description": "Sächsisch-traditionelles Gasthaus seit 1747 im letzten erhaltenen Durchgangshof Leipzigs.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Hainstraße 1",
+    "postalCode": "04109",
+    "addressLocality": "Leipzig",
+    "addressCountry": "DE"
+  },
+  "telephone": "+49-341-141310",
+  "servesCuisine": ["Sächsisch", "Regional", "Deutsch"],
+  "priceRange": "€€",
+  "openingHoursSpecification": [{
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "opens": "11:30",
+    "closes": "22:00"
+  }]
+}
+</script>
+
+<style>
+/* ============================================================
+   BARTHELS HOF — Single-file premium build
+   Saxon Court palette · Bodoni Moda + Inter · OKLCH throughout
+   ============================================================ */
+
+:root {
+  /* ===== EASING (Emil custom curves) ===== */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* ===== COLOR — Saxon Court (warm dark drenched) ===== */
+  /* OKLCH for all */
+  --bg:        oklch(0.16 0.012 60);    /* warm near-black */
+  --bg-deeper: oklch(0.12 0.010 60);    /* hero / footer */
+  --bg-raised: oklch(0.20 0.013 55);    /* card surfaces */
+  --bg-border: oklch(0.30 0.014 55 / 0.5);
+
+  --ink:        oklch(0.96 0.018 80);    /* warm bone — body text */
+  --ink-soft:   oklch(0.78 0.018 75);    /* secondary */
+  --ink-mute:   oklch(0.58 0.016 70);    /* tertiary */
+  --ink-faint:  oklch(0.42 0.014 65);    /* dividers, faint */
+
+  --gold:       oklch(0.78 0.135 78);    /* warm gold accent */
+  --gold-deep:  oklch(0.62 0.140 65);    /* hover state */
+  --gold-soft:  oklch(0.78 0.135 78 / 0.18); /* tint surfaces */
+
+  --burgundy:   oklch(0.40 0.130 25);    /* single accent moment */
+
+  /* ===== TYPE ===== */
+  --serif: "Bodoni Moda", "Times New Roman", Georgia, serif;
+  --sans:  "Inter", system-ui, -apple-system, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, monospace;
+
+  /* ===== SCALE ===== */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+
+  --container: 1320px;
+  --section-y-d: clamp(96px, 12vw, 160px);
+  --section-y-m: 72px;
+}
+
+* { box-sizing: border-box; }
+*::selection { background: var(--gold); color: var(--bg); }
+
+html { scroll-behavior: smooth; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; display: block; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 200ms var(--ease-out);
+}
+a:hover { color: var(--gold); }
+
+button { font: inherit; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+
+/* ===== TYPOGRAPHY ===== */
+
+.display {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.lead {
+  font-size: clamp(17px, 1.4vw, 19px);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 58ch;
+  text-wrap: pretty;
+}
+
+.body { color: var(--ink-soft); max-width: 65ch; }
+
+/* ===== CONTAINER & SECTION ===== */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 48px);
+}
+
+section {
+  padding: var(--section-y-d) 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  section { padding: var(--section-y-m) 0; }
+}
+
+/* ===== TOP NAV ===== */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: oklch(0.16 0.012 60 / 0.78);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.4);
+  transition: background 200ms var(--ease-out);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.nav-brand small {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.5vw, 36px);
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  letter-spacing: -0.005em;
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out);
+}
+.nav-cta:hover { background: var(--gold-deep); color: var(--bg); }
+.nav-cta:active { transform: scale(0.97); }
+
+.nav-mobile-toggle {
+  display: none;
+  width: 40px; height: 40px;
+  background: transparent;
+  border: 1px solid var(--bg-border);
+  border-radius: var(--r-md);
+  color: var(--ink);
+  align-items: center; justify-content: center;
+}
+
+@media (max-width: 920px) {
+  .nav-links, .nav-cta { display: none; }
+  .nav-mobile-toggle { display: inline-flex; }
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 68px 0 0 0;
+  background: var(--bg);
+  border-top: 1px solid var(--bg-border);
+  padding: 32px clamp(20px, 5vw, 48px);
+  transform: translateY(-12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 240ms var(--ease-out), opacity 200ms var(--ease-out);
+  z-index: 49;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-menu a {
+  font-family: var(--serif);
+  font-size: 28px;
+  padding: 14px 0;
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.35);
+}
+.mobile-menu .nav-cta { display: inline-flex; margin-top: 18px; width: max-content; height: 48px; padding: 0 24px; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero {
+  padding-top: clamp(72px, 8vw, 120px);
+  padding-bottom: clamp(96px, 10vw, 140px);
+  min-height: calc(100dvh - 68px);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Atmospheric backdrop — radial warm glow */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 20% 100%, oklch(0.62 0.140 65 / 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 20%, oklch(0.40 0.130 25 / 0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.hero::after {
+  /* Subtle grain via repeating gradient */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 1px, oklch(0.96 0.018 80 / 0.008) 1px, oklch(0.96 0.018 80 / 0.008) 2px);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: end;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+@media (max-width: 920px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 56px; }
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.hero-eyebrow::after {
+  content: '';
+  width: 56px;
+  height: 1px;
+  background: oklch(0.78 0.135 78 / 0.4);
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(48px, 8vw, 96px);
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  margin: 0 0 32px;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.hero h1 .roman {
+  font-style: normal;
+  font-weight: 500;
+  display: block;
+}
+
+.hero-sub {
+  font-size: clamp(17px, 1.5vw, 21px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 0 48px;
+  text-wrap: pretty;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  border: 0;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+  box-shadow: 0 0 0 1px oklch(0.78 0.135 78 / 0.0);
+}
+.btn-primary:hover {
+  background: var(--gold-deep);
+  color: var(--bg);
+  box-shadow: 0 0 0 1px oklch(0.78 0.135 78 / 0.35), 0 12px 28px -8px oklch(0.62 0.140 65 / 0.3);
+}
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  border: 1px solid oklch(0.78 0.135 78 / 0.3);
+  transition: transform 160ms var(--ease-out), border-color 200ms var(--ease-out), background 200ms var(--ease-out);
+}
+.btn-ghost:hover { border-color: var(--gold); background: oklch(0.78 0.135 78 / 0.06); color: var(--ink); }
+.btn-ghost:active { transform: scale(0.97); }
+
+/* Hero side meta panel */
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 36px 0 36px 36px;
+  border-left: 1px solid oklch(0.78 0.135 78 / 0.18);
+}
+@media (max-width: 920px) {
+  .hero-meta { border-left: 0; padding: 0; border-top: 1px solid oklch(0.78 0.135 78 / 0.18); padding-top: 40px; }
+}
+
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hero-meta-item .key {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.hero-meta-item .val {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.hero-meta-item .val.mono {
+  font-family: var(--mono);
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+/* ============================================================
+   SHOWCASE — full-bleed cinematic image
+   ============================================================ */
+
+.showcase {
+  position: relative;
+  width: 100%;
+  height: clamp(360px, 60vh, 640px);
+  overflow: hidden;
+  background: var(--bg-deeper);
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+.showcase img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.95) contrast(1.02);
+}
+.showcase::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, oklch(0.12 0.010 60 / 0.35) 0%, transparent 30%, transparent 60%, oklch(0.12 0.010 60 / 0.85) 100%),
+    linear-gradient(90deg, oklch(0.12 0.010 60 / 0.45) 0%, transparent 35%);
+  pointer-events: none;
+}
+.showcase-text {
+  position: absolute;
+  left: clamp(20px, 5vw, 64px);
+  bottom: clamp(28px, 5vw, 56px);
+  z-index: 1;
+  max-width: 520px;
+}
+.showcase-text .eyebrow {
+  display: block;
+  margin-bottom: 14px;
+}
+.showcase-text p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Story image */
+.story-image-wrap {
+  position: sticky;
+  top: 100px;
+  margin-top: 32px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+.story-image-wrap img {
+  width: 100%; height: auto;
+  display: block;
+  filter: brightness(0.92);
+}
+
+/* Space tile background image */
+.space-tile.with-image {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  isolation: isolate;
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+}
+.space-tile.with-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, oklch(0.10 0.010 60 / 0.4) 0%, transparent 30%, oklch(0.10 0.010 60 / 0.85) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+.space-tile.with-image .badge,
+.space-tile.with-image h3,
+.space-tile.with-image p,
+.space-tile.with-image .stat { position: relative; z-index: 1; }
+.space-tile.with-image h3 { color: oklch(0.97 0.018 80); }
+
+/* ============================================================
+   TRUST STRIP
+   ============================================================ */
+
+.trust {
+  padding: 32px 0;
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5);
+  background: oklch(0.14 0.012 60);
+}
+
+.trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.trust-item strong {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--gold);
+}
+
+/* ============================================================
+   GESCHICHTE — editorial
+   ============================================================ */
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(48px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 920px) {
+  .story-grid { grid-template-columns: 1fr; gap: 48px; }
+}
+
+.story-side .eyebrow { margin-bottom: 24px; display: block; }
+.story-side h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.story-side h2 .roman {
+  font-style: normal;
+  font-weight: 500;
+}
+
+.story-body p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 60ch;
+  margin: 0 0 22px;
+  text-wrap: pretty;
+}
+.story-body p:first-of-type::first-letter {
+  font-family: var(--serif);
+  font-size: 4.2em;
+  float: left;
+  line-height: 0.92;
+  padding: 8px 12px 0 0;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* Year markers */
+.story-years {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 48px;
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+.story-year {
+  padding: 28px 24px 24px 0;
+  border-right: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+.story-year:last-child { border-right: 0; padding-right: 0; }
+.story-year .y {
+  font-family: var(--serif);
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.story-year .y small {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  vertical-align: super;
+}
+.story-year .l {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+@media (max-width: 600px) {
+  .story-years { grid-template-columns: 1fr; }
+  .story-year { border-right: 0; border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5); padding: 20px 0; }
+  .story-year:last-child { border-bottom: 0; }
+}
+
+/* ============================================================
+   SIGNATURE MENU (editorial typographic — no photos)
+   ============================================================ */
+
+.menu-section {
+  background: var(--bg-deeper);
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+
+.menu-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 32px;
+  align-items: end;
+  margin-bottom: clamp(56px, 7vw, 96px);
+}
+@media (max-width: 760px) {
+  .menu-head { grid-template-columns: 1fr; gap: 20px; align-items: start; }
+}
+
+.menu-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--ink);
+}
+.menu-head h2 .roman { font-style: normal; font-weight: 500; }
+
+.menu-head .sub {
+  color: var(--ink-soft);
+  font-size: 16px;
+  max-width: 38ch;
+  padding-bottom: 12px;
+}
+
+.menu-head-cta {
+  padding-bottom: 12px;
+}
+
+/* Menu spread */
+.menu-spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 80px) clamp(48px, 7vw, 120px);
+}
+@media (max-width: 760px) { .menu-spread { grid-template-columns: 1fr; } }
+
+.menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.menu-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid oklch(0.78 0.135 78 / 0.2);
+}
+.menu-group-head h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--gold);
+}
+.menu-group-head span {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.dish {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+}
+.dish-name {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  line-height: 1.25;
+  margin: 0 0 4px;
+}
+.dish-name em {
+  font-style: italic;
+  font-weight: 400;
+}
+.dish-desc {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin: 0;
+  max-width: 42ch;
+}
+.dish-price {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.menu-note {
+  margin-top: clamp(48px, 6vw, 72px);
+  padding-top: 32px;
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.menu-note p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-mute);
+  max-width: 60ch;
+}
+
+/* ============================================================
+   RAUME — historic spaces (typographic bento)
+   ============================================================ */
+
+.spaces-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  margin-top: 56px;
+}
+@media (max-width: 920px) { .spaces-grid { grid-template-columns: 1fr; } }
+
+.space-tile {
+  background: var(--bg-raised);
+  border: 1px solid oklch(0.30 0.014 55 / 0.4);
+  border-radius: var(--r-lg);
+  padding: clamp(28px, 3vw, 40px);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 240ms var(--ease-out), transform 240ms var(--ease-out);
+}
+.space-tile:hover { border-color: oklch(0.78 0.135 78 / 0.4); transform: translateY(-2px); }
+
+/* Bento sizing */
+.space-tile.large { grid-column: span 7; min-height: 380px; }
+.space-tile.medium { grid-column: span 5; min-height: 380px; }
+.space-tile.wide { grid-column: span 8; min-height: 240px; }
+.space-tile.narrow { grid-column: span 4; min-height: 240px; }
+
+@media (max-width: 920px) {
+  .space-tile.large, .space-tile.medium, .space-tile.wide, .space-tile.narrow {
+    grid-column: 1 / -1;
+    min-height: 220px;
+  }
+}
+
+.space-tile .badge {
+  position: absolute;
+  top: clamp(20px, 2.5vw, 32px); right: clamp(20px, 2.5vw, 32px);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.space-tile h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(24px, 2.8vw, 36px);
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  margin: 0 0 14px;
+  color: var(--ink);
+  max-width: 14ch;
+}
+.space-tile.large h3 { font-size: clamp(32px, 3.4vw, 48px); }
+.space-tile h3 em { font-style: italic; color: var(--gold); }
+
+.space-tile p {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 38ch;
+}
+
+.space-tile .stat {
+  margin-top: clamp(24px, 4vw, 48px);
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.space-tile .stat > div { display: flex; flex-direction: column; gap: 4px; }
+.space-tile .stat .num {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+  line-height: 1;
+}
+.space-tile .stat .lbl {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Decorative gradient sweep on large tile */
+.space-tile.large::after,
+.space-tile.feature::after {
+  content: '';
+  position: absolute;
+  right: -40%; bottom: -40%;
+  width: 75%; height: 75%;
+  background: radial-gradient(circle, oklch(0.62 0.140 65 / 0.14) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   RESERVATION — premium form
+   ============================================================ */
+
+.reserve-section {
+  background:
+    radial-gradient(ellipse 80% 60% at 80% 20%, oklch(0.62 0.140 65 / 0.08) 0%, transparent 60%),
+    var(--bg-deeper);
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+
+.reserve-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 920px) { .reserve-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+.reserve-intro h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: -0.022em;
+  margin: 16px 0 24px;
+  color: var(--ink);
+}
+.reserve-intro h2 .roman { font-style: normal; font-weight: 500; }
+.reserve-intro .lead { margin-bottom: 32px; }
+
+.reserve-quick {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.reserve-quick li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.reserve-quick svg { flex-shrink: 0; color: var(--gold); margin-top: 3px; }
+
+/* Form */
+.reserve-card {
+  background: var(--bg-raised);
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  border-radius: var(--r-lg);
+  padding: clamp(28px, 3.5vw, 44px);
+  position: relative;
+  overflow: hidden;
+}
+.reserve-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 40% at 100% 0%, oklch(0.78 0.135 78 / 0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.form-step {
+  display: flex; flex-direction: column; gap: 22px;
+  position: relative; z-index: 1;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+.field {
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+.field label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.input,
+.field input,
+.field select,
+.field textarea {
+  background: oklch(0.14 0.012 60);
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: var(--sans);
+  transition: border-color 180ms var(--ease-out), background 180ms var(--ease-out);
+  width: 100%;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: oklch(0.16 0.012 60);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--ink-mute); }
+.field select {
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23a89970' stroke-width='1.5' d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+/* Party-size picker */
+.party-picker {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+@media (max-width: 600px) { .party-picker { grid-template-columns: repeat(4, 1fr); } }
+
+.party-btn {
+  height: 48px;
+  border-radius: var(--r-md);
+  background: oklch(0.14 0.012 60);
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 180ms var(--ease-out);
+  display: flex; align-items: center; justify-content: center;
+}
+.party-btn:hover { border-color: oklch(0.78 0.135 78 / 0.4); }
+.party-btn:active { transform: scale(0.97); }
+.party-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+
+/* Time slot picker */
+.time-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+@media (max-width: 600px) { .time-picker { grid-template-columns: repeat(4, 1fr); } }
+
+.time-btn {
+  height: 40px;
+  border-radius: var(--r-md);
+  background: oklch(0.14 0.012 60);
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 180ms var(--ease-out);
+}
+.time-btn:hover { border-color: oklch(0.78 0.135 78 / 0.4); }
+.time-btn:active { transform: scale(0.97); }
+.time-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+
+.form-submit {
+  height: 56px;
+  width: 100%;
+  background: var(--gold);
+  color: var(--bg);
+  border: 0;
+  border-radius: var(--r-md);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin-top: 12px;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.form-submit:hover { background: var(--gold-deep); color: var(--bg); }
+.form-submit:active { transform: scale(0.985); }
+.form-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.form-mini {
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* Success state */
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 24px 8px;
+}
+.form-success.show { display: block; animation: fadeUp 480ms var(--ease-out) both; }
+.form-success .check {
+  width: 56px; height: 56px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: oklch(0.78 0.135 78 / 0.16);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+}
+.form-success h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+.form-success p {
+  font-size: 15px;
+  color: var(--ink-soft);
+  max-width: 36ch;
+  margin: 0 auto 24px;
+  line-height: 1.55;
+}
+.form-success .summary {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  background: oklch(0.14 0.012 60);
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  border-radius: var(--r-md);
+  padding: 16px 22px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.form-success .summary strong { color: var(--gold); font-weight: 500; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FAMILIE
+   ============================================================ */
+
+.family {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: center;
+}
+@media (max-width: 760px) { .family { grid-template-columns: 1fr; } }
+
+.family-text h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.022em;
+  margin: 16px 0 24px;
+  color: var(--ink);
+}
+.family-text h2 .roman { font-style: normal; font-weight: 500; }
+.family-text p { font-size: 17px; line-height: 1.6; color: var(--ink-soft); max-width: 50ch; }
+
+.family-card {
+  background: var(--bg-raised);
+  border: 1px solid oklch(0.30 0.014 55 / 0.4);
+  border-radius: var(--r-lg);
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.family-card .quote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.family-card .quote::before { content: '„'; color: var(--gold); margin-right: 4px; }
+.family-card .quote::after { content: '"'; color: var(--gold); margin-left: 4px; }
+.family-card .attr {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+
+.events-section {
+  background: var(--bg-deeper);
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+
+.events-head { margin-bottom: clamp(40px, 5vw, 64px); }
+.events-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 5.5vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.022em;
+  margin: 16px 0 16px;
+  color: var(--ink);
+}
+.events-head h2 .roman { font-style: normal; font-weight: 500; }
+.events-head .sub { color: var(--ink-soft); font-size: 17px; max-width: 60ch; }
+
+.events-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.event-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: clamp(20px, 3vw, 40px);
+  align-items: center;
+  padding: clamp(28px, 3vw, 36px) 0;
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  transition: padding-left 240ms var(--ease-out);
+}
+.event-row:last-child { border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5); }
+.event-row:hover { padding-left: 12px; }
+.event-row .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+}
+.event-row h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+.event-row p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  margin: 0;
+  max-width: 56ch;
+}
+.event-row .arrow {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft);
+  transition: all 200ms var(--ease-out);
+  flex-shrink: 0;
+}
+.event-row:hover .arrow { border-color: var(--gold); background: var(--gold); color: var(--bg); transform: rotate(-45deg); }
+
+@media (max-width: 600px) {
+  .event-row { grid-template-columns: 1fr auto; gap: 16px; }
+  .event-row .num { grid-column: 1 / -1; }
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+
+.faq-head { margin-bottom: clamp(40px, 5vw, 64px); display: flex; align-items: end; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+.faq-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.022em;
+  margin: 16px 0 0;
+  color: var(--ink);
+}
+.faq-head h2 .roman { font-style: normal; font-weight: 500; }
+
+.faq-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 64px;
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+@media (max-width: 760px) { .faq-list { grid-template-columns: 1fr; gap: 0; } }
+
+.faq {
+  border-bottom: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+.faq summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 22px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  transition: color 180ms var(--ease-out);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: '+';
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--gold);
+  flex-shrink: 0;
+  transition: transform 240ms var(--ease-out);
+}
+.faq[open] summary::after { content: '−'; }
+.faq summary:hover { color: var(--gold); }
+.faq-body {
+  padding: 0 0 24px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+/* ============================================================
+   KONTAKT
+   ============================================================ */
+
+.contact-section {
+  background: var(--bg-deeper);
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+@media (max-width: 920px) { .contact-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+.contact-side h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 5.5vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.022em;
+  margin: 16px 0 24px;
+  color: var(--ink);
+}
+.contact-side h2 .roman { font-style: normal; font-weight: 500; }
+.contact-side > p { color: var(--ink-soft); font-size: 17px; max-width: 48ch; margin-bottom: 36px; }
+
+.contact-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+@media (max-width: 600px) { .contact-block { grid-template-columns: 1fr; } }
+
+.contact-cell .key {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.contact-cell .val {
+  font-family: var(--serif);
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.contact-cell .val.mono {
+  font-family: var(--mono);
+  font-size: 15px;
+  letter-spacing: 0;
+}
+.contact-cell .val a { color: var(--ink); border-bottom: 1px solid oklch(0.78 0.135 78 / 0.3); padding-bottom: 1px; }
+.contact-cell .val a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* Map placeholder */
+.map-card {
+  background: var(--bg-raised);
+  border: 1px solid oklch(0.30 0.014 55 / 0.5);
+  border-radius: var(--r-lg);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.map-card h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+.map-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.map-card .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+.map-card .link:hover { color: var(--gold-deep); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+footer {
+  background: oklch(0.10 0.010 60);
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  padding: 80px 0 32px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 64px;
+}
+@media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+
+.footer-brand {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-style: italic;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.footer-brand small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 6px;
+  font-style: normal;
+}
+.footer-tag { color: var(--ink-mute); font-size: 14px; max-width: 36ch; line-height: 1.55; }
+
+.footer-col h4 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 18px;
+}
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { color: var(--ink-soft); font-size: 14px; }
+.footer-col a:hover { color: var(--ink); }
+.footer-col p { color: var(--ink-soft); font-size: 14px; line-height: 1.55; margin: 0 0 6px; }
+.footer-col p strong { color: var(--ink); font-weight: 500; }
+
+.footer-bottom {
+  border-top: 1px solid oklch(0.30 0.014 55 / 0.5);
+  padding-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-bottom p {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  margin: 0;
+}
+.footer-bottom .demo {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 4px 10px;
+  border: 1px solid oklch(0.30 0.014 55 / 0.6);
+  border-radius: var(--r-sm);
+}
+
+/* ============================================================
+   SCROLL REVEALS
+   ============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   HOVER GUARDS (touch devices)
+   ============================================================ */
+
+@media (hover: none) {
+  .space-tile:hover { transform: none; }
+  .event-row:hover { padding-left: 0; }
+  .event-row:hover .arrow { transform: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#top" class="nav-brand">
+      Barthels Hof <small>Anno 1747</small>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#geschichte">Geschichte</a></li>
+      <li><a href="#speisen">Speisekarte</a></li>
+      <li><a href="#raeume">Räume</a></li>
+      <li><a href="#events">Veranstaltungen</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+
+    <a href="#reservierung" class="nav-cta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Reservieren
+    </a>
+
+    <button class="nav-mobile-toggle" id="navToggle" aria-label="Menü öffnen">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#geschichte">Geschichte</a>
+    <a href="#speisen">Speisekarte</a>
+    <a href="#raeume">Räume</a>
+    <a href="#events">Veranstaltungen</a>
+    <a href="#kontakt">Kontakt</a>
+    <a href="#reservierung" class="nav-cta">Tisch reservieren</a>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span class="eyebrow">Seit Anno 1747 — Leipzig</span>
+        </div>
+
+        <h1 class="reveal in">
+          Sächsisch gekocht
+          <span class="roman">im letzten Durchgangshof Leipzigs.</span>
+        </h1>
+
+        <p class="hero-sub reveal in">
+          Familiengeführtes Gasthaus mitten in der Altstadt. Regional frische Küche,
+          historische Räume, ein Innenhof unter freiem Himmel. Geöffnet 365 Tage im Jahr.
+        </p>
+
+        <div class="hero-ctas reveal in">
+          <a href="#reservierung" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Tisch reservieren
+          </a>
+          <a href="#speisen" class="btn-ghost">
+            Speisekarte ansehen
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <aside class="hero-meta reveal in">
+        <div class="hero-meta-item">
+          <span class="key">Adresse</span>
+          <span class="val">Hainstraße 1<br>04109 Leipzig</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="key">Geöffnet</span>
+          <span class="val mono">Täglich · 11:30 — 22:00</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="key">Reservierung</span>
+          <span class="val mono"><a href="tel:+493411413100">0341 · 14 13 10</a></span>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SHOWCASE — cinematic full-bleed
+     ============================================================ -->
+<section class="showcase" aria-hidden="true">
+  <img src="images/hero.jpg" alt="Historischer Hauptgastraum des Barthels Hof in Leipzig, candlelit" loading="lazy">
+  <div class="showcase-text">
+    <span class="eyebrow">Anno 1747</span>
+    <p>„Hier verbindet sich ein Stück Leipziger Geschichte mit der kulinarischen Vielfalt der Region."</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TRUST STRIP
+     ============================================================ -->
+<section class="trust" style="padding: 32px 0;">
+  <div class="container">
+    <div class="trust-row">
+      <span class="trust-item"><strong>1747</strong> Gegründet</span>
+      <span class="trust-item"><strong>500+</strong> Jahre Sächsische Küche</span>
+      <span class="trust-item"><strong>365</strong> Tage geöffnet</span>
+      <span class="trust-item"><strong>3</strong> Generationen Familie Grahl</span>
+      <span class="trust-item"><strong>Green Table</strong> Ausgezeichnet</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     GESCHICHTE
+     ============================================================ -->
+<section id="geschichte">
+  <div class="container">
+    <div class="story-grid">
+
+      <div class="story-side">
+        <span class="eyebrow">Geschichte</span>
+        <h2 class="reveal">
+          Ein Haus,
+          <span class="roman">das Leipzig</span>
+          baute.
+        </h2>
+        <div class="story-image-wrap reveal">
+          <img src="images/courtyard.jpg" alt="Barocker Innenhof des Barthels Hof in der Dämmerung" loading="lazy">
+        </div>
+      </div>
+
+      <div class="story-body reveal">
+        <p>
+          Zwischen 1747 und 1750 errichtet vom Architekten George Werner für den
+          Leipziger Kaufmann Gottfried Barthel. Ein Bank- und Handelshaus mit Magazinen
+          über mehrere Stockwerke — und ein Hof, durch den Händler der ältesten
+          deutschen Warenmesse hindurchgingen.
+        </p>
+        <p>
+          Heute ist der barocke Komplex zwischen Markt und Kleiner Fleischergasse der
+          letzte erhaltene Durchgangshof der Stadt. Die Renaissance-Fassade vom Haus
+          „Zur goldenen Schlange" wurde während des Ausbaus an die Innenseite des Hofs
+          versetzt — sie ist dort bis heute zu sehen.
+        </p>
+        <p>
+          Nach der Sanierung unter Denkmalschutz wurde das Gasthaus 1997 neu eröffnet.
+          Seit über 500 Jahren wird hier sächsisch gekocht. Heute führen Evelyn,
+          Torsten und Tobias Grahl das Haus — mit der Liebe zum Detail einer Familie,
+          die weiß, was ihr anvertraut wurde.
+        </p>
+
+        <div class="story-years">
+          <div class="story-year">
+            <div class="y">1747</div>
+            <div class="l">Grundstein gelegt — vom Architekten George Werner</div>
+          </div>
+          <div class="story-year">
+            <div class="y">1870</div>
+            <div class="l">Die heutige neobarocke Sandsteinfassade entsteht</div>
+          </div>
+          <div class="story-year">
+            <div class="y">1997</div>
+            <div class="l">Sanierung abgeschlossen, Gasthaus neu eröffnet</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SIGNATURE MENU
+     ============================================================ -->
+<section id="speisen" class="menu-section">
+  <div class="container">
+
+    <div class="menu-head">
+      <div>
+        <span class="eyebrow" style="display:block; margin-bottom:18px;">Die Karte</span>
+        <h2 class="reveal">
+          Was uns
+          <span class="roman">groß</span>
+          gemacht hat.
+        </h2>
+      </div>
+      <p class="sub">
+        Ein Querschnitt aus der vollen Karte. Saisonal angepasst, jeden Tag frisch
+        zubereitet — von der Küche der Familie Grahl.
+      </p>
+      <div class="menu-head-cta">
+        <a href="https://www.barthels-hof.de/speisekarte.php" class="btn-ghost" target="_blank" rel="noopener">
+          Vollständige Karte
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="menu-spread">
+
+      <div class="menu-group">
+        <div class="menu-group-head">
+          <h3>Sächsische Klassiker</h3>
+          <span>Tradition</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Leipziger Rinderroulade</p>
+            <p class="dish-desc">Mit Gemüsestäbchen, Schmand und hausgemachtem Apfelrotkohl.</p>
+          </div>
+          <span class="dish-price">26,00 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Sächsischer Sauerbraten <em>vom Rind</em></p>
+            <p class="dish-desc">In Rotweinjus geschmort. Mit Klößen und Apfelrotkohl.</p>
+          </div>
+          <span class="dish-price">26,60 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Knusprige Schweinshaxe</p>
+            <p class="dish-desc">Mit hausgemachtem Sauerkraut und sächsischen Kartoffelklößen.</p>
+          </div>
+          <span class="dish-price">21,90 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Mutzbraten <em>wie zu Luthers Zeiten</em></p>
+            <p class="dish-desc">Gespießt, würzig gekräutert. Mit Kümmelsoße und Senfschaum.</p>
+          </div>
+          <span class="dish-price">26,10 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Sächsische Kartoffelsuppe</p>
+            <p class="dish-desc">Mit geschnippelter Wurst und Kräuterkrusteln. Als Tasse oder Eintopf.</p>
+          </div>
+          <span class="dish-price">ab 7,80 €</span>
+        </div>
+
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-group-head">
+          <h3>Vegetarisch &amp; Saisonal</h3>
+          <span>Frisch</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Leipziger Allerlei</p>
+            <p class="dish-desc">Gemüse, Spargel, Flusskrebsschwänze und Morcheln in Sahnesoße.</p>
+          </div>
+          <span class="dish-price">28,90 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Zucchini-Gemüseschiffchen</p>
+            <p class="dish-desc">Mit Ziegenfrischkäse gefüllt, Kräuterkartoffeln dazu.</p>
+          </div>
+          <span class="dish-price">19,80 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Barthels Linsenburger</p>
+            <p class="dish-desc">Vegetarisch, mit Kartoffelecken und Kräuter-Dip.</p>
+          </div>
+          <span class="dish-price">16,30 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Bandnudeln mit Ziegenfrischkäse</p>
+            <p class="dish-desc">Tomatisierte Bandnudeln, Ziegenfrischkäse-Praline, Kürbiskernen.</p>
+          </div>
+          <span class="dish-price">18,90 €</span>
+        </div>
+
+        <div class="dish">
+          <div>
+            <p class="dish-name">Original Leipziger Lerche</p>
+            <p class="dish-desc">Mit Beerenragout und Kaffeeeis. Das Traditionsgebäck der Stadt.</p>
+          </div>
+          <span class="dish-price">10,20 €</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="menu-note">
+      <p>
+        Tischempfehlung: Ur-Krostitzer Schwarzbier aus der Region, Riesling vom
+        Meißner Kapitelberg, oder ein Blauer Zweigelt aus Saale-Unstrut.
+      </p>
+      <a href="#reservierung" class="btn-primary">Tisch reservieren</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     RAUME — historic spaces
+     ============================================================ -->
+<section id="raeume">
+  <div class="container">
+
+    <div style="max-width: 780px;">
+      <span class="eyebrow" style="display:block; margin-bottom:18px;">Räume</span>
+      <h2 class="display reveal" style="font-style: italic; font-size: clamp(40px, 5.5vw, 72px); font-weight: 400; margin: 0;">
+        Räume <span class="roman">mit</span> Geschichte.
+      </h2>
+      <p class="lead" style="margin-top: 28px;">
+        Vom barocken Hauptraum bis zum Innenhof unter freiem Himmel. Vier Räumlichkeiten,
+        jede mit eigenem Charakter — für jeden Anlass die richtige Atmosphäre.
+      </p>
+    </div>
+
+    <div class="spaces-grid">
+
+      <div class="space-tile large reveal">
+        <span class="badge">Hauptraum</span>
+        <h3>Im Herzen <em>des Hofes</em></h3>
+        <p>
+          Der Hauptgastraum unter den barocken Gewölben. Holzdielen, weiße Tischwäsche,
+          dezentes Kerzenlicht. Für das tägliche Mittag- und Abendessen, für spontane
+          Treffen und langsame Abende.
+        </p>
+        <div class="stat">
+          <div>
+            <span class="num">~80</span>
+            <span class="lbl">Plätze</span>
+          </div>
+          <div>
+            <span class="num">365</span>
+            <span class="lbl">Tage geöffnet</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-tile medium feature reveal">
+        <span class="badge">Innenhof</span>
+        <h3>Unter freiem <em>Himmel</em></h3>
+        <p>
+          Der historische Durchgangshof mit großzügigem Freisitz. Die ursprüngliche
+          Renaissance-Fassade als Kulisse. Im Sommer mit hausgemachter Bowle.
+        </p>
+        <div class="stat">
+          <div>
+            <span class="num">Mai—</span>
+            <span class="lbl">Saison Sept.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-tile wide reveal with-image" style="background-image: url('images/banquet.jpg');">
+        <span class="badge">Historischer Saal</span>
+        <h3>Bankett &amp; <em>Hochzeit</em></h3>
+        <p>
+          Großzügiger Saal für festliche Anlässe, Geschäftsessen und Familienfeiern.
+          Auf Wunsch mit eigenem Menü und persönlicher Betreuung.
+        </p>
+      </div>
+
+      <div class="space-tile narrow reveal">
+        <span class="badge">Stuben</span>
+        <h3>Private <em>Dining</em></h3>
+        <p>
+          Kleinere Stuben für Geschäftsessen und private Runden bis ca. 20 Personen.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     RESERVATION
+     ============================================================ -->
+<section id="reservierung" class="reserve-section">
+  <div class="container">
+    <div class="reserve-grid">
+
+      <div class="reserve-intro">
+        <span class="eyebrow">Reservieren</span>
+        <h2 class="reveal">
+          Tisch
+          <span class="roman">in zwei</span>
+          Minuten.
+        </h2>
+        <p class="lead">
+          Schnell, ohne Account, ohne Umwege. Wählen Sie Tag, Uhrzeit und Personenzahl.
+          Bestätigung folgt direkt im Anschluss per E-Mail.
+        </p>
+
+        <ul class="reserve-quick">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            Geöffnet täglich von 11:30 bis 22:00 Uhr — auch sonn- und feiertags.
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2 16 16 0 01-16-16 2 2 0 012-2z"/></svg>
+            Größere Gruppen ab 10 Personen: bitte telefonisch unter 0341 14 13 10.
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Hainstraße 1, 04109 Leipzig — direkt am Markt.
+          </li>
+        </ul>
+      </div>
+
+      <div class="reserve-card">
+        <form id="reserveForm" class="form-step" novalidate>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="rDate">Datum</label>
+              <input type="date" id="rDate" required>
+            </div>
+            <div class="field">
+              <label for="rOccasion">Anlass</label>
+              <select id="rOccasion">
+                <option value="regular">Tisch im Restaurant</option>
+                <option value="family">Familienessen</option>
+                <option value="business">Geschäftsessen</option>
+                <option value="celebration">Geburtstag / Feier</option>
+                <option value="wedding">Hochzeit / Bankett</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Uhrzeit</label>
+            <div class="time-picker" id="timePicker">
+              <button type="button" class="time-btn" data-time="11:30">11:30</button>
+              <button type="button" class="time-btn" data-time="12:00">12:00</button>
+              <button type="button" class="time-btn" data-time="12:30">12:30</button>
+              <button type="button" class="time-btn" data-time="13:00">13:00</button>
+              <button type="button" class="time-btn" data-time="13:30">13:30</button>
+              <button type="button" class="time-btn" data-time="14:00">14:00</button>
+              <button type="button" class="time-btn" data-time="18:00">18:00</button>
+              <button type="button" class="time-btn" data-time="18:30">18:30</button>
+              <button type="button" class="time-btn active" data-time="19:00">19:00</button>
+              <button type="button" class="time-btn" data-time="19:30">19:30</button>
+              <button type="button" class="time-btn" data-time="20:00">20:00</button>
+              <button type="button" class="time-btn" data-time="20:30">20:30</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Personen</label>
+            <div class="party-picker" id="partyPicker">
+              <button type="button" class="party-btn" data-party="1">1</button>
+              <button type="button" class="party-btn active" data-party="2">2</button>
+              <button type="button" class="party-btn" data-party="3">3</button>
+              <button type="button" class="party-btn" data-party="4">4</button>
+              <button type="button" class="party-btn" data-party="5">5</button>
+              <button type="button" class="party-btn" data-party="6">6</button>
+              <button type="button" class="party-btn" data-party="7">7</button>
+              <button type="button" class="party-btn" data-party="8+">8+</button>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="rName">Name</label>
+              <input type="text" id="rName" placeholder="Vor- und Nachname" required>
+            </div>
+            <div class="field">
+              <label for="rPhone">Telefon</label>
+              <input type="tel" id="rPhone" placeholder="0341 …" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="rEmail">E-Mail</label>
+            <input type="email" id="rEmail" placeholder="ihre.adresse@…" required>
+          </div>
+
+          <div class="field">
+            <label for="rNote">Wunsch (optional)</label>
+            <textarea id="rNote" rows="2" placeholder="Innenhof bevorzugt, Allergien, Anlass …"></textarea>
+          </div>
+
+          <button type="submit" class="form-submit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Reservierung anfragen
+          </button>
+          <p class="form-mini">Antwort per E-Mail in der Regel innerhalb von zwei Stunden.</p>
+        </form>
+
+        <div class="form-success" id="reserveSuccess">
+          <div class="check">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>
+          </div>
+          <h3>Vielen Dank.</h3>
+          <p>Ihre Anfrage ist eingegangen. Sie erhalten in Kürze eine Bestätigung per E-Mail.</p>
+          <div class="summary" id="reserveSummary"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAMILIE
+     ============================================================ -->
+<section>
+  <div class="container">
+    <div class="family">
+
+      <div class="family-text">
+        <span class="eyebrow">Die Gastgeber</span>
+        <h2 class="reveal">
+          Familie <span class="roman">Grahl.</span>
+        </h2>
+        <p>
+          Evelyn, Torsten und Tobias Grahl führen den Barthels Hof als
+          familienbetriebenes Gasthaus. Drei Generationen, die das Haus in der
+          Hainstraße als das verstehen, was es ist: einer der letzten Orte in Leipzig,
+          an dem Geschichte, Küche und Gastfreundschaft zusammenfallen.
+        </p>
+      </div>
+
+      <div class="family-card reveal">
+        <p class="quote">
+          Wir kochen das, was die Region hergibt — und das jeden Tag im Jahr.
+          Frische, Qualität, und Zeit fürs Gespräch sind die einzigen Standards,
+          die wir nicht verhandeln.
+        </p>
+        <span class="attr">Familie Grahl · Gastgeber seit 1997</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     EVENTS
+     ============================================================ -->
+<section class="events-section">
+  <div class="container">
+
+    <div class="events-head">
+      <span class="eyebrow">Veranstaltungen</span>
+      <h2 class="reveal">
+        Für die Anlässe,
+        <span class="roman">die zählen.</span>
+      </h2>
+      <p class="sub">
+        Vom Geschäftsessen über die Hochzeit bis zum Familienjubiläum: Räumlichkeiten,
+        Menü und Service auf Wunsch komplett auf Ihren Anlass abgestimmt.
+      </p>
+    </div>
+
+    <div class="events-list">
+
+      <a href="#reservierung" class="event-row">
+        <span class="num">01</span>
+        <div>
+          <h3>Hochzeiten &amp; private Feiern</h3>
+          <p>Festsaal mit historischer Atmosphäre, eigenes Menü, persönliche Betreuung von der Begrüßung bis zum letzten Gang.</p>
+        </div>
+        <span class="arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a href="#reservierung" class="event-row">
+        <span class="num">02</span>
+        <div>
+          <h3>Geschäftsessen &amp; Tagungen</h3>
+          <p>Diskrete Räume, klare Akustik, anpassbare Menülängen — vom kurzen Mittag bis zum vollen Abend.</p>
+        </div>
+        <span class="arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a href="#reservierung" class="event-row">
+        <span class="num">03</span>
+        <div>
+          <h3>Familienessen wie zu Luthers Zeiten</h3>
+          <p>Ein Konzept fürs gemeinsame Tafeln. Sächsische Klassiker, große Schüsseln, lange Tische.</p>
+        </div>
+        <span class="arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a href="#reservierung" class="event-row">
+        <span class="num">04</span>
+        <div>
+          <h3>Saisonale Anlässe</h3>
+          <p>Valentinstag, Ostern, Weihnachten, Silvester — mit eigenem Menü und besonderen Räumen.</p>
+        </div>
+        <span class="arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+     ============================================================ -->
+<section>
+  <div class="container">
+
+    <div class="faq-head">
+      <div>
+        <span class="eyebrow">Häufige Fragen</span>
+        <h2 class="reveal">
+          Bevor Sie <span class="roman">anrufen.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="faq-list">
+
+      <details class="faq">
+        <summary>Wie reserviere ich einen Tisch?</summary>
+        <div class="faq-body">
+          Online über das Formular oben oder telefonisch unter 0341 14 13 10.
+          Größere Runden ab 10 Personen bitte direkt telefonisch.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Sind Sie auch sonn- und feiertags geöffnet?</summary>
+        <div class="faq-body">
+          Ja. Geöffnet täglich von 11:30 bis 22:00 Uhr — auch an allen Sonn- und Feiertagen.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Bieten Sie vegetarische Optionen?</summary>
+        <div class="faq-body">
+          Ja. Auf der Karte stehen mehrere durchgehend vegetarische Hauptgerichte —
+          vom Linsenburger über Zucchini-Schiffchen bis zu Pasta mit Ziegenfrischkäse.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Wie groß sind die Räumlichkeiten?</summary>
+        <div class="faq-body">
+          Der Hauptraum bietet etwa 80 Plätze. Für Hochzeiten, Bankette oder private
+          Runden stehen zusätzlich der historische Saal und kleinere Stuben sowie
+          der Innenhof zur Verfügung.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Gibt es einen Außenbereich?</summary>
+        <div class="faq-body">
+          Ja — der historische Innenhof mit großzügigem Freisitz und Renaissance-Fassade
+          ist von Mai bis September geöffnet.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Wo kann ich parken?</summary>
+        <div class="faq-body">
+          Wir liegen direkt in der Leipziger Innenstadt-Fußgängerzone.
+          Parkhäuser im Umkreis von 200 Metern: Marktgalerie, Petersbogen.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Veranstalten Sie auch Hochzeiten?</summary>
+        <div class="faq-body">
+          Ja — von kleinen Hochzeitsessen bis zu großen Festen im historischen Saal.
+          Bitte sprechen Sie uns für ein persönliches Gespräch direkt an.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Gibt es Gutscheine?</summary>
+        <div class="faq-body">
+          Ja, Gutscheine für ein Essen oder einen Betrag Ihrer Wahl sind erhältlich.
+          Gerne telefonisch oder vor Ort.
+        </div>
+      </details>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     KONTAKT
+     ============================================================ -->
+<section id="kontakt" class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div class="contact-side">
+        <span class="eyebrow">Anfahrt &amp; Kontakt</span>
+        <h2 class="reveal">
+          Hainstraße 1, <span class="roman">04109 Leipzig.</span>
+        </h2>
+        <p>Direkt am Leipziger Markt, fußläufig zur Thomaskirche, in der Altstadt-Fußgängerzone.</p>
+
+        <div class="contact-block">
+          <div class="contact-cell">
+            <div class="key">Adresse</div>
+            <div class="val">Hainstraße 1<br>04109 Leipzig</div>
+          </div>
+          <div class="contact-cell">
+            <div class="key">Öffnungszeiten</div>
+            <div class="val mono">Mo–So<br>11:30 — 22:00</div>
+          </div>
+          <div class="contact-cell">
+            <div class="key">Telefon</div>
+            <div class="val mono"><a href="tel:+493411413100">0341 · 14 13 10</a></div>
+          </div>
+          <div class="contact-cell">
+            <div class="key">Fax</div>
+            <div class="val mono">0341 · 14 13 120</div>
+          </div>
+        </div>
+
+        <a href="#reservierung" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Jetzt reservieren
+        </a>
+      </div>
+
+      <div class="map-card">
+        <h3>Anfahrt</h3>
+        <p>
+          <strong style="color: var(--ink); font-weight: 500;">Mit der Straßenbahn:</strong>
+          Linien 1, 4, 7, 12, 14, 15 — Haltestelle „Markt", 2 Minuten Fußweg.
+        </p>
+        <p>
+          <strong style="color: var(--ink); font-weight: 500;">Zu Fuß vom Hauptbahnhof:</strong>
+          Etwa 10 Minuten durch die Goethestraße / Brühl.
+        </p>
+        <p>
+          <strong style="color: var(--ink); font-weight: 500;">Mit dem Auto:</strong>
+          Innenstadt-Fußgängerzone — bitte Parkhäuser nutzen: Marktgalerie, Petersbogen.
+        </p>
+        <a class="link" href="https://maps.google.com/?q=Barthels+Hof+Hainstraße+1+Leipzig" target="_blank" rel="noopener">
+          In Google Maps öffnen
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+
+      <div>
+        <div class="footer-brand">
+          Barthels Hof
+          <small>Anno 1747 · Leipzig</small>
+        </div>
+        <p class="footer-tag">
+          Familiengeführtes Gasthaus im letzten Durchgangshof Leipzigs.
+          Sächsische Küche seit über 500 Jahren.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Besuch</h4>
+        <ul>
+          <li>
+            <p><strong>Hainstraße 1</strong></p>
+            <p style="font-size:13px;color:var(--ink-mute);">04109 Leipzig</p>
+          </li>
+          <li>
+            <p><strong>Mo — So</strong></p>
+            <p style="font-size:13px;color:var(--ink-mute);">11:30 bis 22:00 Uhr</p>
+          </li>
+          <li>
+            <p><strong>0341 14 13 10</strong></p>
+            <p style="font-size:13px;color:var(--ink-mute);">Telefonische Reservierung</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Erleben</h4>
+        <ul>
+          <li><a href="#geschichte">Geschichte</a></li>
+          <li><a href="#speisen">Speisekarte</a></li>
+          <li><a href="#raeume">Räumlichkeiten</a></li>
+          <li><a href="#events">Veranstaltungen</a></li>
+          <li><a href="#reservierung">Reservierung</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="#impressum" id="footImpressum">Impressum</a></li>
+          <li><a href="#datenschutz" id="footDatenschutz">Datenschutz</a></li>
+          <li><a href="#agb" id="footAGB">AGB</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Gasthaus Barthels Hof · Inhaber: Torsten Grahl · Hainstraße 1, 04109 Leipzig</p>
+      <span class="demo">Demo · Konzept-Vorschau · noindex</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPT
+     ============================================================ -->
+<script>
+(() => {
+  // ===== Mobile menu =====
+  const navToggle = document.getElementById('navToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  navToggle?.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu?.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => mobileMenu.classList.remove('open'))
+  );
+
+  // ===== Scroll reveals =====
+  const reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '-10% 0px -10% 0px', threshold: 0.1 });
+    reveals.forEach(el => io.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('in'));
+  }
+
+  // ===== Party picker =====
+  const partyPicker = document.getElementById('partyPicker');
+  partyPicker?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.party-btn');
+    if (!btn) return;
+    partyPicker.querySelectorAll('.party-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+
+  // ===== Time picker =====
+  const timePicker = document.getElementById('timePicker');
+  timePicker?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.time-btn');
+    if (!btn) return;
+    timePicker.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+
+  // ===== Reservation form =====
+  const form = document.getElementById('reserveForm');
+  const success = document.getElementById('reserveSuccess');
+  const summary = document.getElementById('reserveSummary');
+
+  // Set min date today
+  const dateInput = document.getElementById('rDate');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+    dateInput.value = today;
+  }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    const name  = document.getElementById('rName').value.trim();
+    const email = document.getElementById('rEmail').value.trim();
+    const phone = document.getElementById('rPhone').value.trim();
+    if (!name || !email || !phone) {
+      form.querySelectorAll('input[required]').forEach(i => {
+        if (!i.value.trim()) i.style.borderColor = '#c75050';
+      });
+      return;
+    }
+
+    const date  = document.getElementById('rDate').value;
+    const time  = timePicker?.querySelector('.time-btn.active')?.dataset.time || '19:00';
+    const party = partyPicker?.querySelector('.party-btn.active')?.dataset.party || '2';
+    const occ   = document.getElementById('rOccasion');
+    const occLbl = occ.options[occ.selectedIndex].text;
+
+    const dateNice = new Date(date).toLocaleDateString('de-DE', {
+      weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+    });
+
+    summary.innerHTML = `
+      <span><strong>${dateNice}</strong> · ${time} Uhr</span>
+      <span><strong>${party}</strong> Personen · ${occLbl}</span>
+      <span style="color: var(--ink-mute); font-size: 12px;">${name} · ${email}</span>
+    `;
+
+    form.style.display = 'none';
+    success.classList.add('show');
+
+    // Scroll into view smoothly
+    success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // Reset border on input
+  form?.querySelectorAll('input, textarea').forEach(i => {
+    i.addEventListener('input', () => { i.style.borderColor = ''; });
+  });
+
+  // ===== Legal placeholder dialogs =====
+  const legalContent = {
+    impressum: {
+      title: 'Impressum',
+      body: `<p><strong>Gasthaus Barthels Hof</strong><br>Inhaber: Torsten Grahl<br>Hainstraße 1<br>04109 Leipzig</p>
+             <p><strong>Telefon:</strong> 0341 / 14 13 10<br><strong>Fax:</strong> 0341 / 14 13 120</p>
+             <p><strong>Steuernummer:</strong> 231/225/08048<br><strong>USt-IdNr.:</strong> auf Anfrage<br><strong>Handelsregister:</strong> auf Anfrage</p>
+             <p>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV: Torsten Grahl, Anschrift wie oben.</p>`
+    },
+    datenschutz: {
+      title: 'Datenschutz',
+      body: `<p>Wir nehmen den Schutz Ihrer persönlichen Daten ernst und behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften (DSGVO) sowie dieser Datenschutzerklärung.</p>
+             <p><strong>1. Verantwortlich</strong><br>Gasthaus Barthels Hof, Torsten Grahl, Hainstraße 1, 04109 Leipzig.</p>
+             <p><strong>2. Reservierungsformular</strong><br>Bei einer Reservierungsanfrage erheben wir Name, E-Mail und Telefonnummer ausschließlich zur Bearbeitung Ihrer Anfrage. Die Daten werden nicht an Dritte weitergegeben.</p>
+             <p><strong>3. Ihre Rechte</strong><br>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung sowie Datenübertragbarkeit gemäß DSGVO.</p>
+             <p><em>Stand der Datenschutzerklärung: Konzept-Vorschau.</em></p>`
+    },
+    agb: {
+      title: 'AGB',
+      body: `<p><strong>Allgemeine Geschäftsbedingungen — Gasthaus Barthels Hof</strong></p>
+             <p><strong>§ 1 Geltungsbereich</strong><br>Diese AGB gelten für alle Verträge zwischen dem Gasthaus Barthels Hof und seinen Gästen.</p>
+             <p><strong>§ 2 Reservierungen</strong><br>Reservierungen werden in Textform (online oder telefonisch) bestätigt. Bei Ausbleiben ohne Absage behalten wir uns vor, eine Ausfallpauschale geltend zu machen.</p>
+             <p><strong>§ 3 Veranstaltungen</strong><br>Für Hochzeiten, Bankette und private Feiern gelten gesonderte Vereinbarungen, die mit der Reservierung dokumentiert werden.</p>
+             <p><strong>§ 4 Stornierung</strong><br>Stornierungen sind bis 24 Stunden vor dem reservierten Termin kostenfrei. Bei Veranstaltungen gelten gesonderte Fristen.</p>
+             <p><em>Stand: Konzept-Vorschau.</em></p>`
+    }
+  };
+
+  function openLegal(key) {
+    const data = legalContent[key];
+    if (!data) return;
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;z-index:200;background:oklch(0.10 0.010 60 / 0.85);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity 240ms cubic-bezier(0.23,1,0.32,1);';
+    modal.innerHTML = `
+      <div style="background:var(--bg-raised);border:1px solid var(--bg-border);border-radius:var(--r-lg);max-width:640px;width:100%;max-height:85vh;overflow:auto;padding:36px 32px;transform:translateY(8px);transition:transform 280ms cubic-bezier(0.23,1,0.32,1);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;gap:24px;">
+          <h2 style="font-family:var(--serif);font-weight:500;font-size:32px;letter-spacing:-0.02em;margin:0;color:var(--ink);">${data.title}</h2>
+          <button class="legal-close" style="width:36px;height:36px;border-radius:50%;background:transparent;border:1px solid var(--bg-border);color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg>
+          </button>
+        </div>
+        <div style="color:var(--ink-soft);font-size:14.5px;line-height:1.65;">${data.body}</div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    requestAnimationFrame(() => {
+      modal.style.opacity = '1';
+      modal.querySelector('div').style.transform = 'translateY(0)';
+    });
+
+    const close = () => {
+      modal.style.opacity = '0';
+      modal.querySelector('div').style.transform = 'translateY(8px)';
+      setTimeout(() => modal.remove(), 240);
+    };
+    modal.querySelector('.legal-close').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function esc(e) {
+      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
+    });
+  }
+
+  ['Impressum', 'Datenschutz', 'AGB'].forEach(k => {
+    document.getElementById('foot' + k)?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openLegal(k.toLowerCase());
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
