@@ -137,10 +137,30 @@ app.get('/health', (_req, res) => {
 app.get('/run-a2/:runId/status', requireAuth, (req, res) => {
   const { runId } = req.params
   const summary = readSummary(runId)
-  if (!summary) {
-    return res.status(404).json({ error: 'Run not found', run_id: runId })
+  const logTail = readLogTail(runId)
+
+  // If a summary file exists, the run has finished (success or failure)
+  if (summary) {
+    return res.json({ ...summary, log_tail: logTail })
   }
-  return res.json({ ...summary, log_tail: readLogTail(runId) })
+
+  // No summary yet — check if there's a log file or it's actively running
+  const hasLog = !!logTail
+  const isActive = activeRun?.runId === runId
+
+  if (isActive || hasLog) {
+    return res.json({
+      run_id:   runId,
+      status:   'running',
+      mode:     isActive ? activeRun.mode : 'unknown',
+      started_at: isActive ? activeRun.startedAt : null,
+      log_tail: logTail,
+      message:  'Run still in progress. Keep polling.',
+    })
+  }
+
+  // No log, no summary, not active → never existed
+  return res.status(404).json({ error: 'Run not found', run_id: runId })
 })
 
 // Main run endpoint
@@ -196,6 +216,10 @@ app.post('/run-a2', requireAuth, async (req, res) => {
   const promptFile = join(RUNNER_PATH, 'tmp', `${runId}.md`)
   writeFileSync(promptFile, prompt || '', 'utf8')
 
+  // ── Async mode: respond immediately, run in background
+  //    Triggered via ?async=1 query param OR { async: true } in body
+  const isAsync = req.query.async === '1' || req.query.async === 'true' || req.body.async === true
+
   // ── Set active lock
   if (mode !== 'analyze') {
     activeRun = { runId, startedAt: new Date().toISOString(), mode }
@@ -222,9 +246,35 @@ app.post('/run-a2', requireAuth, async (req, res) => {
     PATH: process.env.PATH || '/usr/local/bin:/usr/bin:/bin',
   }
 
-  console.log(`[RUN] ${runId} mode=${mode} site=${siteDir || 'auto'} branch=${branch}`)
+  console.log(`[RUN] ${runId} mode=${mode} site=${siteDir || 'auto'} branch=${branch} async=${isAsync}`)
 
-  // ── Spawn runner
+  // ── ASYNC MODE: respond immediately, run in background
+  if (isAsync) {
+    res.status(202).json({
+      run_id:        runId,
+      status:        'started',
+      mode:          mode,
+      site_dir:      siteDir,
+      lead_name:     metadata.lead_name || '',
+      started_at:    new Date().toISOString(),
+      poll_url:      `/run-a2/${runId}/status`,
+      message:       'Run started in background. Poll status endpoint for progress.',
+    })
+
+    // Fire and forget — clean up state when done
+    spawnRunner(runId, scriptEnv).then(() => {
+      if (mode !== 'analyze') activeRun = null
+      try { unlinkSync(promptFile) } catch {}
+      console.log(`[RUN] ${runId} completed (async)`)
+    }).catch(err => {
+      if (mode !== 'analyze') activeRun = null
+      try { unlinkSync(promptFile) } catch {}
+      console.error(`[RUN] ${runId} async spawn error:`, err)
+    })
+    return
+  }
+
+  // ── SYNC MODE (legacy): spawn runner and wait
   const { timedOut, code, spawnError } = await spawnRunner(runId, scriptEnv)
 
   // ── Release lock
