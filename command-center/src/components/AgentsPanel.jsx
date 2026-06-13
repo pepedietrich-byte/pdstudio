@@ -143,19 +143,30 @@ function A3Panel({ lead }) {
   )
 }
 
-// ─── A4 Writer Panel ─────────────────────────────────────────────────────────
+// ─── A4 Writer Panel — Demo-Vorstellung ──────────────────────────────────────
+const A4_CONTEXTS = [
+  { id: 'demo_intro',      label: 'Demo vorstellen',     desc: 'Erste Kontaktaufnahme — du zeigst was du gebaut hast' },
+  { id: 'demo_followup',   label: 'Follow-up',           desc: 'Keine Antwort — Erinnerung mit konkreter Frage' },
+  { id: 'demo_after_call', label: 'Nach Telefonat',      desc: 'Zusammenfassung + nächster Schritt' },
+  { id: 'demo_objection',  label: 'Einwand: schon Website', desc: 'Sachliche Antwort, kein Wettkampf' },
+  { id: 'demo_interest',   label: 'Interesse gezeigt',   desc: 'Call vorschlagen für Details' },
+]
+
 function A4Panel({ lead }) {
   const [state, setState] = useState('idle')
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [channel, setChannel] = useState('email')
+  const [context, setContext] = useState('demo_intro')
   const agent = AGENT_META[4]
+  const demoUrl = lead?.demo_url || lead?.build?.demo_url
 
   async function run() {
     if (state === 'building') return
+    if (!demoUrl) { setError('Demo-URL fehlt — erst A2 ausführen'); setState('error'); return }
     setState('building'); setError(''); setResult(null)
     try {
-      const r = await triggerWriter(lead, { channel })
+      const r = await triggerWriter({ ...lead, demo_url: demoUrl }, { channel, context })
       setResult(r); setState(r.error ? 'error' : 'done')
       if (r.error) setError(r.error)
     } catch (e) { setState('error'); setError(e.message) }
@@ -169,31 +180,61 @@ function A4Panel({ lead }) {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-1 mb-3">
-        {['email', 'sms', 'whatsapp', 'call_script'].map(c => (
-          <button key={c} onClick={() => setChannel(c)}
-            className="py-1.5 text-[11px] rounded capitalize"
-            style={{
-              background: channel === c ? `${agent.color}20` : 'rgba(255,255,255,0.03)',
-              border: `1px solid ${channel === c ? agent.color : 'rgba(255,255,255,0.08)'}`,
-              color: channel === c ? agent.color : '#9ca3b5',
-            }}>{c === 'call_script' ? 'Script' : c}</button>
-        ))}
+      {!demoUrl && (
+        <div className="mb-3 p-2 rounded text-xs" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.25)', color: '#f5a623' }}>
+          ⚠ Keine Demo-URL — erst A2 ausführen damit Pepe was zum Vorstellen hat
+        </div>
+      )}
+
+      {/* Context selector — was für eine Email/Nachricht */}
+      <div className="mb-2">
+        <label className="text-[10px] block mb-1.5 uppercase tracking-widest" style={{ color: '#6b7a90' }}>Anlass</label>
+        <select value={context} onChange={e => setContext(e.target.value)}
+          className="w-full py-1.5 px-2 text-xs rounded"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: '#e8edf4' }}>
+          {A4_CONTEXTS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+        </select>
+        <div className="text-[10px] mt-1" style={{ color: '#6b7a90' }}>
+          {A4_CONTEXTS.find(c => c.id === context)?.desc}
+        </div>
       </div>
-      <button onClick={run} disabled={state === 'building'}
+
+      {/* Channel selector */}
+      <div className="mb-3">
+        <label className="text-[10px] block mb-1.5 uppercase tracking-widest" style={{ color: '#6b7a90' }}>Kanal</label>
+        <div className="grid grid-cols-4 gap-1">
+          {['email', 'sms', 'whatsapp', 'call_script'].map(c => (
+            <button key={c} onClick={() => setChannel(c)}
+              className="py-1.5 text-[11px] rounded capitalize"
+              style={{
+                background: channel === c ? `${agent.color}20` : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${channel === c ? agent.color : 'rgba(255,255,255,0.08)'}`,
+                color: channel === c ? agent.color : '#9ca3b5',
+              }}>{c === 'call_script' ? 'Script' : c === 'whatsapp' ? 'WhatsApp' : c.toUpperCase()}</button>
+          ))}
+        </div>
+      </div>
+
+      <button onClick={run} disabled={state === 'building' || !demoUrl}
         className="w-full py-2.5 rounded font-medium text-sm flex items-center justify-center gap-2"
         style={{
           background: state === 'building' ? 'rgba(245,166,35,0.15)' : `linear-gradient(135deg, ${agent.color}, #d18816)`,
-          color: '#fff', opacity: state === 'building' ? 0.7 : 1,
+          color: '#fff', opacity: (state === 'building' || !demoUrl) ? 0.5 : 1,
+          cursor: (state === 'building' || !demoUrl) ? 'not-allowed' : 'pointer',
         }}>
-        {state === 'building' ? <><Loader2 size={14} className="animate-spin" /> Schreibe...</> : <><PenTool size={14} /> Text schreiben</>}
+        {state === 'building' ? <><Loader2 size={14} className="animate-spin" /> Schreibe...</> : <><PenTool size={14} /> Demo-Nachricht schreiben</>}
       </button>
+
       {result && (
         <ResultBox color={agent.color}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2" style={{ color: state === 'done' ? '#39ff88' : '#ef4444' }}>
               {state === 'done' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
-              <span className="font-medium text-xs">{result.channel} · {result.word_count} Wörter</span>
+              <span className="font-medium text-xs">
+                {result.channel === 'call_script' ? 'Script' : result.channel?.toUpperCase()} · {result.word_count} Wörter
+                {result.char_count !== undefined && result.channel === 'sms' && ` · ${result.char_count} Zeichen`}
+                {!result.contains_demo_url && result.demo_url && <span style={{ color: '#f5a623' }}> · ⚠ Demo-URL fehlt</span>}
+              </span>
             </div>
             <button onClick={copyText} className="text-[10px] flex items-center gap-1 px-2 py-1 rounded"
               style={{ background: 'rgba(255,255,255,0.06)', color: '#9ca3b5' }}>
@@ -201,10 +242,10 @@ function A4Panel({ lead }) {
             </button>
           </div>
           {result.subject && (
-            <div className="text-xs"><span style={{ color: '#6b7a90' }}>Betreff: </span><span style={{ color: '#e8edf4' }}>{result.subject}</span></div>
+            <div className="text-xs"><span style={{ color: '#6b7a90' }}>Betreff: </span><span style={{ color: '#e8edf4', fontWeight: 600 }}>{result.subject}</span></div>
           )}
           {result.body && (
-            <pre className="text-xs whitespace-pre-wrap p-2 rounded font-sans" style={{ background: 'rgba(0,0,0,0.25)', color: '#cbd5e1', lineHeight: 1.6 }}>{result.body}</pre>
+            <pre className="text-xs whitespace-pre-wrap p-3 rounded font-sans" style={{ background: 'rgba(0,0,0,0.3)', color: '#e8edf4', lineHeight: 1.65, maxHeight: 400, overflowY: 'auto' }}>{result.body}</pre>
           )}
           {error && <div className="text-xs" style={{ color: '#ef4444' }}>{error}</div>}
         </ResultBox>
