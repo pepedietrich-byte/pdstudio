@@ -239,7 +239,23 @@ fi
 
 git fetch origin "$BRANCH" 2>&1 | tail -3
 git checkout "$BRANCH"   2>&1 | tail -3
+
+# Stash any uncommitted changes from previous interrupted runs before rebase
+STASHED=false
+if [ -n "$(git status --porcelain)" ]; then
+  log "Found uncommitted changes — stashing before pull"
+  git stash push -u -m "runner-auto-stash-${RUN_ID}" 2>&1 | tail -2
+  STASHED=true
+fi
+
 git pull --rebase origin "$BRANCH" 2>&1 | tail -5
+
+# Restore the stashed changes
+if [ "$STASHED" = true ]; then
+  log "Restoring stashed changes"
+  git stash pop 2>&1 | tail -3 || log "⚠ stash pop had conflicts — keeping remote version"
+fi
+
 logok "Repo up to date"
 
 # ─── RESOLVE SITE DIR ─────────────────────────────────────────────────────────
