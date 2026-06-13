@@ -1,47 +1,98 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Rocket, ExternalLink, Loader2, CheckCircle2, AlertCircle, Server } from 'lucide-react'
+import {
+  Rocket, ExternalLink, Loader2, CheckCircle2, AlertCircle,
+  Server, ChevronRight, Sparkles, Info,
+} from 'lucide-react'
 import { triggerVpsBuild, updateBuildMetadata } from '../lib/n8n'
 import { markSiteFresh } from '../lib/sites'
+import { BUILD_STYLES, STYLE_ORDER, recommendStyle, getStylePromptBlock } from '../lib/buildStyles'
 
-// Build-Style Optionen (Pepe wählt im UI)
-const STYLES = [
-  { id: 'restaurant-premium', label: 'Restaurant · Premium',   desc: 'Klassisch elegant, drenched Farben, dunkle Surfaces' },
-  { id: 'cafe-warm',          label: 'Café · Warm',             desc: 'Helle warme Töne, Vintage, einladend' },
-  { id: 'bar-dark',           label: 'Bar · Dark Luxury',       desc: 'Tiefe Töne, Gold, Cocktailbar-Atmosphäre' },
-  { id: 'bistro-modern',      label: 'Bistro · Modern',         desc: 'Clean, Sans-Serif, viel Whitespace' },
-]
+// ─── Style Card ──────────────────────────────────────────────────────────────
+function StyleCard({ style, selected, recommended, onSelect }) {
+  return (
+    <button
+      onClick={() => onSelect(style.id)}
+      className="text-left rounded-lg overflow-hidden transition-all relative"
+      style={{
+        background: selected ? 'rgba(155,110,243,0.08)' : 'rgba(255,255,255,0.02)',
+        border: `1px solid ${selected ? 'rgba(155,110,243,0.6)' : 'rgba(255,255,255,0.08)'}`,
+        boxShadow: selected ? '0 0 24px rgba(155,110,243,0.18)' : 'none',
+      }}
+    >
+      {/* Color preview bar */}
+      <div
+        className="h-16 relative overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${style.color_primary} 0%, ${style.color_accent} 100%)`,
+        }}
+      >
+        <div className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.3) 0%, transparent 60%)',
+          }} />
+        {selected && (
+          <div className="absolute top-2 right-2 rounded-full p-0.5"
+            style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <CheckCircle2 size={14} style={{ color: '#fff' }} />
+          </div>
+        )}
+        {recommended && (
+          <div className="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest"
+            style={{ background: 'rgba(0,0,0,0.5)', color: '#fff' }}>
+            empfohlen
+          </div>
+        )}
+      </div>
 
-const COLOR_DIRECTIONS = [
-  { id: 'auto',          label: 'Auto (passend zum Style)' },
-  { id: 'drenched-warm', label: 'Drenched · Warm Erdfarben' },
-  { id: 'drenched-cool', label: 'Drenched · Tiefer Blau-Ton' },
-  { id: 'gold-dark',     label: 'Gold + Tiefes Schwarz' },
-  { id: 'cinnabar',      label: 'Cinnabar (wie Project Napoli)' },
-  { id: 'cream-soft',    label: 'Creme + Soft Pastel' },
-]
+      {/* Info */}
+      <div className="p-3">
+        <div className="flex items-baseline justify-between mb-1">
+          <span className="text-sm font-bold" style={{ color: '#e8edf4' }}>{style.name}</span>
+          <span className="text-[9px] uppercase tracking-widest font-mono" style={{ color: '#6b7a90' }}>
+            {style.fonts[0].split(' ')[0]}
+          </span>
+        </div>
+        <div className="text-[10px] italic mb-2" style={{ color: '#9b6ef3' }}>{style.tagline}</div>
+        <div className="text-[10px] leading-relaxed" style={{ color: '#9ca3b5' }}>{style.description}</div>
+        <div className="text-[9px] mt-2 font-mono" style={{ color: '#6b7a90' }}>
+          {style.image_slots.length} Image-Slots · Pflicht
+        </div>
+      </div>
+    </button>
+  )
+}
 
+// ─── Main Panel ──────────────────────────────────────────────────────────────
 export default function VpsBuildPanel({ lead }) {
-  const [open, setOpen]   = useState(false)
-  const [state, setState] = useState('idle') // idle | building | done | error
+  const recommended = useMemo(() => recommendStyle(lead?.cuisine || ''), [lead])
+  const [styleId, setStyleId]   = useState(recommended)
+  const [quality, setQuality]   = useState('premium')
+  const [reservationMode, setReservationMode] = useState(
+    /bar|cocktail|brunch|café|cafe/i.test(lead?.cuisine || '') ? 'contact' :
+    /lieferando|wolt|delivery/i.test(lead?.website_url || '') ? 'ordering' :
+    'reservation'
+  )
+
+  const [state, setState]   = useState('idle')
   const [result, setResult] = useState(null)
-  const [error, setError] = useState('')
-  const [opts, setOpts]   = useState({
-    style: 'restaurant-premium',
-    colorDirection: 'auto',
-    quality: 'premium',
-  })
+  const [error, setError]   = useState('')
 
   async function build() {
     if (state === 'building') return
     setState('building'); setError(''); setResult(null)
     try {
-      const r = await triggerVpsBuild(lead, opts)
+      const r = await triggerVpsBuild(lead, {
+        style: styleId,
+        colorDirection: BUILD_STYLES[styleId].palette_brief.split(/[.,]/)[0],
+        quality,
+        reservation_mode: reservationMode,
+        style_prompt: getStylePromptBlock(styleId),
+      })
       setResult(r)
       setState(r.deploy_status === 'success' ? 'done' : 'error')
       if (r.deploy_status === 'success' && r.demo_url) {
         markSiteFresh(lead.lead_id, r.demo_url)
-        // Persist metadata into BUILD sheet so the site survives reload
         try {
           await updateBuildMetadata(lead.lead_id, {
             demo_url:      r.demo_url,
@@ -49,7 +100,7 @@ export default function VpsBuildPanel({ lead }) {
             deploy_status: r.deploy_status,
             site_dir:      r.site_dir || `sites/${lead.lead_id}`,
             run_id:        r.run_id,
-            source:        'a2-vps-builder',
+            source:        `a2-vps-${styleId}`,
             kind:          'build',
           })
         } catch (e) { console.warn('BUILD meta persist failed', e) }
@@ -71,104 +122,113 @@ export default function VpsBuildPanel({ lead }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
     >
+      {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <div style={{ color: '#9b6ef3' }}><Server size={20} /></div>
+          <div style={{ color: '#9b6ef3' }}><Server size={22} /></div>
           <div>
             <div className="text-base font-semibold" style={{ color: '#e8edf4' }}>VPS Builder · Agent 2</div>
-            <div className="text-xs" style={{ color: '#6b7a90' }}>Autonomer Build auf Hostinger VPS · Claude Code → Vercel</div>
+            <div className="text-xs" style={{ color: '#6b7a90' }}>
+              5 Design-Varianten · Autonom auf Hostinger VPS · Claude Code → Vercel
+            </div>
           </div>
         </div>
-        <button
-          onClick={() => setOpen(o => !o)}
-          className="text-xs px-2 py-1 rounded transition-colors"
-          style={{ background: 'rgba(155,110,243,0.12)', color: '#c5a5ff' }}
-        >
-          {open ? 'Optionen ausblenden' : 'Optionen ▾'}
-        </button>
       </div>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="space-y-4 mb-4">
-              <div>
-                <label className="text-xs block mb-2" style={{ color: '#6b7a90', letterSpacing: '0.12em' }}>STYLE</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {STYLES.map(s => (
-                    <button
-                      key={s.id}
-                      onClick={() => setOpts(o => ({ ...o, style: s.id }))}
-                      className="text-left p-3 rounded transition-all"
-                      style={{
-                        background: opts.style === s.id ? 'rgba(155,110,243,0.15)' : 'rgba(255,255,255,0.02)',
-                        border: `1px solid ${opts.style === s.id ? 'rgba(155,110,243,0.5)' : 'rgba(255,255,255,0.06)'}`,
-                      }}
-                    >
-                      <div className="text-sm font-medium" style={{ color: '#e8edf4' }}>{s.label}</div>
-                      <div className="text-xs mt-1" style={{ color: '#6b7a90' }}>{s.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+      {/* Style Picker — 5 Cards */}
+      <div className="mb-5">
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-[10px] uppercase tracking-widest font-bold" style={{ color: '#6b7a90' }}>
+            Design-Variante
+          </label>
+          <div className="flex items-center gap-1 text-[10px]" style={{ color: '#9ca3b5' }}>
+            <Info size={10} />
+            Empfohlen für „{lead?.cuisine || '—'}": <span style={{ color: '#9b6ef3', fontWeight: 600 }}>{BUILD_STYLES[recommended].name}</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {STYLE_ORDER.map(id => (
+            <StyleCard
+              key={id}
+              style={BUILD_STYLES[id]}
+              selected={styleId === id}
+              recommended={id === recommended}
+              onSelect={setStyleId}
+            />
+          ))}
+        </div>
+      </div>
 
-              <div>
-                <label className="text-xs block mb-2" style={{ color: '#6b7a90', letterSpacing: '0.12em' }}>FARB-DIRECTION</label>
-                <select
-                  value={opts.colorDirection}
-                  onChange={e => setOpts(o => ({ ...o, colorDirection: e.target.value }))}
-                  className="w-full p-2 rounded text-sm"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#e8edf4' }}
-                >
-                  {COLOR_DIRECTIONS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                </select>
-              </div>
+      {/* Other options */}
+      <div className="grid grid-cols-2 gap-3 mb-5">
+        <div>
+          <label className="text-[10px] uppercase tracking-widest mb-2 block" style={{ color: '#6b7a90' }}>Reservierungs-Logik</label>
+          <div className="flex gap-1">
+            {[
+              { id: 'reservation', label: 'Tisch', desc: 'Reservierung als CTA' },
+              { id: 'ordering',    label: 'Bestellen', desc: 'Lieferando/Wolt' },
+              { id: 'contact',     label: 'Anfrage', desc: 'Kontakt-Form' },
+            ].map(opt => (
+              <button
+                key={opt.id}
+                onClick={() => setReservationMode(opt.id)}
+                className="flex-1 py-2 rounded text-[11px] font-medium"
+                title={opt.desc}
+                style={{
+                  background: reservationMode === opt.id ? 'rgba(155,110,243,0.2)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${reservationMode === opt.id ? 'rgba(155,110,243,0.5)' : 'rgba(255,255,255,0.06)'}`,
+                  color: reservationMode === opt.id ? '#c5a5ff' : '#9ca3b5',
+                }}>
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="text-[10px] uppercase tracking-widest mb-2 block" style={{ color: '#6b7a90' }}>Qualitäts-Niveau</label>
+          <div className="flex gap-1">
+            {[
+              { id: 'standard', label: 'Standard',  desc: '~5 Min, kürzerer Build' },
+              { id: 'premium',  label: 'Premium',   desc: '~10 Min, volle Tiefe' },
+            ].map(opt => (
+              <button
+                key={opt.id}
+                onClick={() => setQuality(opt.id)}
+                className="flex-1 py-2 rounded text-[11px] font-medium"
+                title={opt.desc}
+                style={{
+                  background: quality === opt.id ? 'rgba(155,110,243,0.2)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${quality === opt.id ? 'rgba(155,110,243,0.5)' : 'rgba(255,255,255,0.06)'}`,
+                  color: quality === opt.id ? '#c5a5ff' : '#9ca3b5',
+                }}>
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-              <div>
-                <label className="text-xs block mb-2" style={{ color: '#6b7a90', letterSpacing: '0.12em' }}>QUALITÄT</label>
-                <div className="flex gap-2">
-                  {['standard', 'premium'].map(q => (
-                    <button
-                      key={q}
-                      onClick={() => setOpts(o => ({ ...o, quality: q }))}
-                      className="flex-1 py-2 rounded text-sm font-medium transition-all"
-                      style={{
-                        background: opts.quality === q ? 'rgba(155,110,243,0.18)' : 'rgba(255,255,255,0.02)',
-                        border: `1px solid ${opts.quality === q ? 'rgba(155,110,243,0.5)' : 'rgba(255,255,255,0.06)'}`,
-                        color: opts.quality === q ? '#c5a5ff' : '#6b7a90',
-                      }}
-                    >
-                      {q === 'premium' ? 'Premium (volle Qualität)' : 'Standard (schneller)'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      {/* Build button */}
       <button
         onClick={build}
-        disabled={state === 'building'}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded font-medium transition-all"
+        disabled={state === 'building' || !lead?.lead_id}
+        className="w-full flex items-center justify-center gap-2 py-3 rounded font-semibold transition-all"
         style={{
-          background: state === 'building' ? 'rgba(155,110,243,0.15)' : 'linear-gradient(135deg, #9b6ef3, #7a4fd5)',
-          color: state === 'building' ? '#c5a5ff' : '#fff',
-          opacity: state === 'building' ? 0.7 : 1,
-          cursor: state === 'building' ? 'not-allowed' : 'pointer',
+          background: state === 'building'
+            ? 'rgba(155,110,243,0.15)'
+            : `linear-gradient(135deg, ${BUILD_STYLES[styleId].color_primary}, ${BUILD_STYLES[styleId].color_accent})`,
+          color: '#fff',
+          opacity: (state === 'building' || !lead?.lead_id) ? 0.5 : 1,
+          cursor: (state === 'building' || !lead?.lead_id) ? 'not-allowed' : 'pointer',
         }}
       >
         {state === 'building' && <Loader2 size={18} className="animate-spin" />}
         {state !== 'building' && <Rocket size={18} />}
-        {state === 'building' ? 'Build läuft auf VPS...' : 'Build & Deploy auf VPS'}
+        {state === 'building' ? 'Build läuft auf VPS...' : `Build "${BUILD_STYLES[styleId].name}" auf VPS`}
+        <ChevronRight size={16} style={{ opacity: 0.6 }} />
       </button>
 
+      {/* Result */}
       <AnimatePresence>
         {result && (
           <motion.div
@@ -184,6 +244,8 @@ export default function VpsBuildPanel({ lead }) {
               {state === 'done' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
               <span className="font-medium">
                 {state === 'done' ? 'Live deployed' : 'Build/Deploy fehlgeschlagen'}
+                {' · '}
+                <span style={{ color: '#9b6ef3' }}>{BUILD_STYLES[styleId].name}</span>
               </span>
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs" style={{ color: '#9ca3b5' }}>
@@ -193,13 +255,9 @@ export default function VpsBuildPanel({ lead }) {
               <div>Dauer: <span style={{ color: '#e8edf4' }}>{result.duration_s}s</span></div>
             </div>
             {result.demo_url && (
-              <a
-                href={result.demo_url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <a href={result.demo_url} target="_blank" rel="noopener noreferrer"
                 className="mt-3 flex items-center gap-2 text-sm font-medium"
-                style={{ color: '#39ff88' }}
-              >
+                style={{ color: '#39ff88' }}>
                 <ExternalLink size={14} />
                 {result.demo_url}
               </a>
@@ -210,9 +268,13 @@ export default function VpsBuildPanel({ lead }) {
       </AnimatePresence>
 
       {state === 'idle' && (
-        <div className="mt-3 text-xs" style={{ color: '#6b7a90' }}>
-          Der Runner pullt das Repo, lässt Claude Code die Site bauen, baut npm, committet und deployt auf Vercel — komplett autonom.
-          Erwartete Dauer: 1-3 Min ohne Claude · 5-10 Min mit Claude-Generierung.
+        <div className="mt-3 flex items-start gap-2 text-xs" style={{ color: '#6b7a90' }}>
+          <Sparkles size={12} className="flex-shrink-0 mt-0.5" style={{ color: '#9b6ef3' }} />
+          <span>
+            Jede Variante hat <strong>pflicht-Bildslots</strong> — keine leeren Container mehr.
+            Skills: taste-skill · emil-kowalski · impeccable.
+            Erwartete Dauer: 5–10 Min mit Claude Code auf VPS.
+          </span>
         </div>
       )}
     </motion.div>
