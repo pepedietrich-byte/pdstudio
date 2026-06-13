@@ -273,7 +273,10 @@ export async function triggerVpsBuild(lead, buildOptions = {}) {
       quality:         buildOptions.quality         || 'premium',
       imageSource:     buildOptions.imageSource     || 'unsplash',
       reservation_mode: buildOptions.reservation_mode || 'reservation',
-      style_prompt:    buildOptions.style_prompt    || '', // full style block from buildStyles.js
+      style_prompt:    buildOptions.style_prompt    || '',
+      // Stufe 3: Concept + Animation Block ans n8n weiterreichen
+      concept_block:   buildOptions.concept_block   || '',
+      animation_block: buildOptions.animation_block || '',
     },
     images:         lead.images || [],
   }

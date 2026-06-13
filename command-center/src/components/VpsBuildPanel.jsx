@@ -12,7 +12,8 @@ import { recommendStyleForCategory } from '../lib/categoryIntelligence'
 import { detectCategory, getCategory, isStyleForbiddenForCategory } from '../lib/categoryIntelligence'
 import { scoreAssetBatch } from '../lib/assetScore'
 import { runPreBuildGate } from '../lib/preBuildGate'
-import { generateConcept } from '../lib/conceptArchitect'
+import { generateConcept, describeConceptForPrompt } from '../lib/conceptArchitect'
+import { getAnimationBlock } from '../lib/animationLibrary'
 import { ensureHeroAvailable } from '../lib/poeImageGen'
 import AssetQualityPanel from './AssetQualityPanel'
 import FactCheckPanel from './FactCheckPanel'
@@ -194,6 +195,10 @@ export default function VpsBuildPanel({ lead }) {
     setBuildResult(null)
 
     try {
+      // Stufe 3: liefere Concept + Animation Block fürs n8n A2
+      const conceptBlock   = concept ? describeConceptForPrompt(concept) : ''
+      const animationBlock = getAnimationBlock(styleId, concept?.animation_concept || '')
+
       const r = await triggerVpsBuild(
         {
           ...lead,
@@ -208,6 +213,8 @@ export default function VpsBuildPanel({ lead }) {
           quality,
           reservation_mode: reservationMode,
           style_prompt: getStylePromptBlock(styleId),
+          concept_block:   conceptBlock,
+          animation_block: animationBlock,
         }
       )
       setBuildResult(r)

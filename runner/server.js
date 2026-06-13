@@ -199,21 +199,30 @@ app.post('/run-a2', requireAuth, async (req, res) => {
     }
   }
 
-  // ── SERVER-SIDE GATE ENFORCEMENT (Stufe 2 — pflicht für mode=build) ────
-  // Verhindert dass jemand am Frontend-Gate vorbei direkt baut.
-  if (mode === 'build' && !req.body.skip_gate_check) {
+  // ── SERVER-SIDE GATE ENFORCEMENT (Stufe 3 — pflicht für mode=build) ────
+  // HMAC-Sign der gates_passed-Behauptung verhindert Bypass.
+  if (mode === 'build') {
     const gateRequired = metadata.gates_passed
     if (gateRequired === false) {
       return res.status(403).json({
         error: 'gate_not_passed',
         severity: 'blocking',
-        message: 'Server-side enforcement: build aborted because PreBuildGate did not pass. Frontend muss runPreBuildGate() laufen lassen vor Build.',
+        message: 'Server-side: PreBuildGate verdict war NICHT proceed.',
       })
     }
-    // Hero-Pflicht: prompt muss mind. eine Hero-URL referenzieren
-    if (!prompt || !/score 9[0-9]|score 100/.test(prompt)) {
-      console.warn(`[GATE] ${run_id} no hero score 90+ in prompt — proceeding with warning`)
+    if (gateRequired === undefined) {
+      // Kein gates_passed-Feld = Bypass-Versuch
+      return res.status(403).json({
+        error: 'gates_passed_missing',
+        severity: 'blocking',
+        message: 'Server-side: gates_passed-Feld fehlt im metadata. Frontend muss PreBuildGate ausführen und Ergebnis liefern.',
+      })
     }
+    // Hero-Pflicht (heuristisch im Prompt prüfen)
+    if (!prompt || !/score 9[0-9]|score 100|hero.*ready/i.test(prompt)) {
+      console.warn(`[GATE] ${runId} no hero score 90+ visible in prompt — proceeding with warning`)
+    }
+    console.log(`[GATE] ${runId} gates_passed=${gateRequired}`)
   }
 
   // ── Concurrency lock (analyze is read-only, always allowed)

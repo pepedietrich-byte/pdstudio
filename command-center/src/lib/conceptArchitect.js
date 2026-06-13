@@ -196,6 +196,57 @@ function hashSeed(str) {
  * generateConcept({ lead, gate_report, requested_style })
  * Liefert das individuelle Concept-Brief für A6/A7.
  */
+// ─── Layout-Variant Snippets (echte React-Patterns) ────────────────────────
+// Anti-Template: Concept-Architect injiziert konkrete Layout-Patterns
+// Verhindert dass alle Sites identisch sind.
+const LAYOUT_VARIANT_SNIPPETS = {
+  // Hero-Layouts (jeder Style hat seine eigenen)
+  cinnabar: {
+    full_bleed_burger: { hero: 'flex items-center min-h-screen', headline_pos: 'left', img_pos: 'bg' },
+    split_burger_text: { hero: 'grid grid-cols-1 md:grid-cols-2 min-h-screen', headline_pos: 'left-text', img_pos: 'right' },
+    centered_with_marquee: { hero: 'flex flex-col items-center min-h-screen', headline_pos: 'center', img_pos: 'bg', marquee_top: true },
+    rotating_disc: { hero: 'relative min-h-screen flex items-center', headline_pos: 'left', img_pos: 'rotating-bg', rotate_animation: true },
+    cinematic_oven: { hero: 'flex flex-col-reverse min-h-screen', headline_pos: 'top', img_pos: 'bottom-full' },
+    showcase_strip: { hero: 'grid grid-rows-2 min-h-screen', headline_pos: 'overlay-bottom', img_pos: 'showcase-strip' },
+  },
+  obsidian: {
+    dark_cinematic_bowl: { hero: 'flex flex-col min-h-screen justify-end', headline_pos: 'bottom-left', img_pos: 'bg-gradient' },
+    minimalist_counter: { hero: 'flex flex-col items-center min-h-screen pt-32', headline_pos: 'top-small', img_pos: 'center-large' },
+    editorial_vertical: { hero: 'min-h-screen px-8 md:px-24 py-20 grid grid-cols-1 md:grid-cols-12', headline_pos: 'col-span-7', img_pos: 'col-span-5', numbered: true },
+    omakase_plating: { hero: 'flex items-center min-h-screen px-12', headline_pos: 'right', img_pos: 'left' },
+    chef_counter: { hero: 'grid grid-rows-2 min-h-screen', headline_pos: 'top-overlay', img_pos: 'full-width' },
+    dim_cocktail: { hero: 'flex items-end min-h-screen', headline_pos: 'bottom', img_pos: 'bg-dark' },
+    bar_interior_wide: { hero: 'flex flex-col justify-end min-h-screen', headline_pos: 'bottom-left-small', img_pos: 'bg-wide' },
+    bottle_shelf: { hero: 'flex items-center min-h-screen', headline_pos: 'center-overlay', img_pos: 'bg-shelf' },
+  },
+  atelier: {
+    editorial_full_bleed: { hero: 'min-h-screen flex items-center px-12', headline_pos: 'left-massive', img_pos: 'bg-cream' },
+    magazine_split: { hero: 'grid grid-rows-2 min-h-screen', headline_pos: 'bottom-massive', img_pos: 'top-half' },
+    minimal_portrait: { hero: 'min-h-screen flex items-center justify-center', headline_pos: 'overlay-portrait', img_pos: 'portrait-center' },
+    hero_full_bleed: { hero: 'min-h-screen flex items-center', headline_pos: 'left-light', img_pos: 'bg' },
+    bread_full_bleed: { hero: 'min-h-screen flex flex-col justify-center px-12', headline_pos: 'left-serif', img_pos: 'bg-warm' },
+    baker_hands: { hero: 'grid grid-cols-2 min-h-screen', headline_pos: 'right', img_pos: 'left-portrait' },
+  },
+  terrain: {
+    hero_lifestyle: { hero: 'min-h-screen grid grid-cols-1 md:grid-cols-12 px-8 py-16', headline_pos: 'col-span-7', img_pos: 'col-span-5 rotate-1' },
+    spit_close: { hero: 'flex items-center min-h-screen', headline_pos: 'right-italic', img_pos: 'left-polaroid' },
+    wrap_split: { hero: 'grid grid-cols-1 md:grid-cols-2 min-h-screen items-center', headline_pos: 'left-warm', img_pos: 'right-rotate' },
+    curry_close: { hero: 'flex flex-col-reverse md:flex-row items-center min-h-screen', headline_pos: 'right-serif-italic', img_pos: 'left-large' },
+    tandoor_flame: { hero: 'min-h-screen flex items-end', headline_pos: 'bottom-overlay', img_pos: 'bg-flame' },
+  },
+  neon: {
+    full_bleed_burger: { hero: 'min-h-screen flex flex-col justify-between p-8', headline_pos: 'top-uppercase', img_pos: 'bottom-bg' },
+    split_burger_text: { hero: 'grid grid-cols-1 md:grid-cols-2 min-h-screen', headline_pos: 'left-bold-uppercase', img_pos: 'right-pop' },
+    centered_with_marquee: { hero: 'min-h-screen flex flex-col items-center justify-center', headline_pos: 'center-massive', img_pos: 'top-marquee', marquee_top: true },
+    hero_energy: { hero: 'min-h-screen flex items-center px-8', headline_pos: 'right-glitch', img_pos: 'left-pop' },
+  },
+}
+
+function getLayoutSnippet(styleId, compositionId) {
+  const styleVariants = LAYOUT_VARIANT_SNIPPETS[styleId] || {}
+  return styleVariants[compositionId] || { hero: 'flex items-center min-h-screen', headline_pos: 'center', img_pos: 'bg' }
+}
+
 export function generateConcept({ lead = {}, gate_report = null, requested_style = null } = {}) {
   const categoryId = lead.category_id || gate_report?.summary?.category || 'general'
   const recipe = CONCEPT_RECIPES[categoryId] || CONCEPT_RECIPES.general
@@ -230,11 +281,13 @@ export function generateConcept({ lead = {}, gate_report = null, requested_style
     signature_products: cat.signature_products,
     category_keywords:  [...cat.keywords_de, ...cat.keywords_en].slice(0, 10),
 
-    // Anti-Template-Marker (verhindert dass alle Builds identisch sind)
+    // Anti-Template-Marker mit ECHTEN Layout-Snippets (kein nur Text mehr)
     anti_template: {
-      hero_layout:  chosenHero.id,
-      seed_used:    seed,
+      hero_layout:    chosenHero.id,
+      seed_used:      seed,
       composition_options: recipe.hero_compositions.map(h => h.id),
+      // Konkrete React-Snippet-Anweisungen für Claude:
+      layout_snippet: getLayoutSnippet(styleFinal, chosenHero.id),
     },
   }
 }
@@ -272,7 +325,16 @@ ${concept.asset_requirements.map(a =>
 NO-GO-REGELN:
 ${concept.no_go_rules.map(n => `  ✗ ${n}`).join('\n')}
 
-ANTI-TEMPLATE: Hero-Layout "${concept.anti_template.hero_layout}" gewählt (von ${concept.anti_template.composition_options.length} Optionen).
-Diese Site darf NICHT identisch wie andere ${concept.category_id}-Sites aussehen — diese Konkrete Hero-Composition muss durchgezogen werden.
+ANTI-TEMPLATE: Hero-Layout "${concept.anti_template.hero_layout}" (seed ${concept.anti_template.seed_used}) gewählt aus ${concept.anti_template.composition_options.length} Optionen.
+
+KONKRETE LAYOUT-INSTRUKTIONEN für Hero (PFLICHT, nicht interpretieren):
+  - Hero-Container className: ${concept.anti_template.layout_snippet?.hero || 'flex items-center min-h-screen'}
+  - Headline-Position:        ${concept.anti_template.layout_snippet?.headline_pos || 'center'}
+  - Image-Position:           ${concept.anti_template.layout_snippet?.img_pos || 'bg'}
+  ${concept.anti_template.layout_snippet?.rotate_animation ? '- Hero-Image ROTIERT slow (CSS: animation: spin 90s linear infinite)' : ''}
+  ${concept.anti_template.layout_snippet?.marquee_top ? '- Marquee-Strip ÜBER Hero zeigen (specials, hours, signature dish)' : ''}
+  ${concept.anti_template.layout_snippet?.numbered ? '- Numbered Sections (01., 02., ...) im Editorial-Stil' : ''}
+
+Diese Site MUSS visuell anders aussehen als andere ${concept.category_id}-Sites — auch wenn gleicher Style.
 `.trim()
 }

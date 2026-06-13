@@ -39,9 +39,35 @@ function countMatches(html, pattern) {
 }
 
 async function fetchUrl(url) {
+  // 1. Plain static fetch
   const r = await fetch(url, { method: 'GET', redirect: 'follow', headers: { 'User-Agent': 'PDSTUDIO-Audit/1.0' } })
-  const text = await r.text()
-  return { status: r.status, ok: r.ok, text, finalUrl: r.url }
+  const staticText = await r.text()
+
+  // 2. Versuche zusätzlich via microlink HTML (rendert SPAs)
+  // microlink-API: https://api.microlink.io?url=...&meta=false&data.html=true
+  let renderedText = ''
+  try {
+    const renderUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&data.html=true&meta=false`
+    const mr = await fetch(renderUrl, { signal: AbortSignal.timeout(20000) })
+    if (mr.ok) {
+      const md = await mr.json()
+      renderedText = md?.data?.html || ''
+    }
+  } catch { /* fallback to static */ }
+
+  // 3. Wenn rendered ist length > static → SPA wurde rendered
+  const finalText = (renderedText && renderedText.length > staticText.length * 1.5)
+    ? renderedText
+    : staticText
+
+  return {
+    status: r.status, ok: r.ok,
+    text: finalText,
+    static_size: staticText.length,
+    rendered_size: renderedText.length,
+    is_rendered: renderedText.length > 0 && finalText === renderedText,
+    finalUrl: r.url,
+  }
 }
 
 export default async function handler(req, res) {
@@ -76,6 +102,9 @@ export default async function handler(req, res) {
   }
 
   audit.checks.http_status_ok = { passed: fetchResult.ok, detail: `HTTP ${fetchResult.status}` }
+  audit.rendered = fetchResult.is_rendered
+  audit.static_size = fetchResult.static_size
+  audit.rendered_size = fetchResult.rendered_size
   if (!fetchResult.ok) {
     audit.problems.push({ severity: 'critical', code: 'http_error', message: `HTTP ${fetchResult.status}` })
   }

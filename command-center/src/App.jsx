@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { RefreshCw, Cpu, Users, Globe, Activity, Wifi, WifiOff, TrendingUp } from 'lucide-react'
+import { RefreshCw, Cpu, Users, Globe, Activity, Wifi, WifiOff, TrendingUp, Rocket } from 'lucide-react'
+import QuickBuildMobile from './components/QuickBuildMobile'
 import { getLeadStage, getConfidence } from './lib/sheets'
 import { useSheetData } from './hooks/useSheetData'
 import { useExecutions } from './hooks/useExecutions'
@@ -22,6 +23,7 @@ import { TwinProvider, TwinVoiceOrb, TwinConversationPanel, TwinStatusIndicator,
 import { getAllLeadResults } from './hooks/useLeadResults'
 
 const TABS = [
+  { id: 'quick',      label: 'Quick',      icon: Rocket },
   { id: 'control',    label: 'Control',    icon: Cpu },
   { id: 'leads',      label: 'Leads',      icon: Users },
   { id: 'sites',      label: 'Sites',      icon: Globe },
@@ -292,6 +294,12 @@ function App() {
               initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.18, ease: EASE }}>
               <ExecutionsView executions={executions} stop={stop} stopping={stopping} refresh={refreshExec} />
+            </motion.div>
+          ) : activeTab === 'quick' ? (
+            <motion.div key="quick"
+              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: EASE }}>
+              <QuickBuildMobile />
             </motion.div>
           ) : null}
         </AnimatePresence>
