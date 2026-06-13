@@ -215,6 +215,24 @@ export async function triggerFactCheck(lead) {
   return r.json()
 }
 
+// Poll runner status via API proxy (no CORS issues)
+async function pollRunnerStatus(runId, onProgress) {
+  const PROXY = '/api/runner-status'  // Vercel proxy to VPS runner
+  const start = Date.now()
+  const TIMEOUT_MS = 25 * 60 * 1000  // 25 min worst case
+  while (Date.now() - start < TIMEOUT_MS) {
+    await new Promise(r => setTimeout(r, 20000))  // poll every 20s
+    try {
+      const r = await fetch(`${PROXY}?run_id=${encodeURIComponent(runId)}`)
+      if (!r.ok) continue
+      const d = await r.json()
+      onProgress?.(d)
+      if (['success', 'failed', 'warning', 'timeout'].includes(d.status)) return d
+    } catch { /* keep polling */ }
+  }
+  return { status: 'timeout', error: 'frontend poll timeout' }
+}
+
 export async function triggerVpsBuild(lead, buildOptions = {}) {
   if (!lead?.lead_id || !lead?.business_name) {
     throw new Error('lead_id und business_name sind Pflicht')
@@ -234,14 +252,17 @@ export async function triggerVpsBuild(lead, buildOptions = {}) {
     specials:       lead.specials || '',
     price_range:    lead.price_range || lead.priceRange || '€€',
     build_options: {
-      style:          buildOptions.style          || 'restaurant-premium',
-      colorDirection: buildOptions.colorDirection || 'auto',
-      quality:        buildOptions.quality        || 'premium',
-      imageSource:    buildOptions.imageSource    || 'unsplash',
+      style:           buildOptions.style           || 'cinnabar',
+      colorDirection:  buildOptions.colorDirection  || 'auto',
+      quality:         buildOptions.quality         || 'premium',
+      imageSource:     buildOptions.imageSource     || 'unsplash',
+      reservation_mode: buildOptions.reservation_mode || 'reservation',
+      style_prompt:    buildOptions.style_prompt    || '', // full style block from buildStyles.js
     },
     images:         lead.images || [],
   }
 
+  // 1. Trigger via n8n webhook — async pattern returns run_id immediately
   const r = await fetch(VPS_BUILDER_WEBHOOK, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -249,7 +270,21 @@ export async function triggerVpsBuild(lead, buildOptions = {}) {
   })
 
   if (!r.ok) throw new Error(`Runner HTTP ${r.status}: ${await r.text()}`)
-  return r.json()
+  const started = await r.json()
+  const runId = started.run_id
+
+  // 2. If started/running response (async pattern), poll runner status
+  if (started.status === 'started' || started.status === 'running' || started.build_status === 'running') {
+    const final = await pollRunnerStatus(runId, buildOptions.onProgress)
+    return {
+      ...started,
+      ...final,
+      run_id: runId,
+    }
+  }
+
+  // 3. Sync response (legacy)
+  return started
 }
 
 export async function triggerPipelineFromUrl(websiteUrl) {
