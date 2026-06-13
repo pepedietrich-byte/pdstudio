@@ -12,6 +12,7 @@ import {
 import { getLeadStage, getConfidence, getScoreBreakdown } from '../lib/sheets'
 import { triggerAgent, triggerWebsiteBuild, isWebhookConfigured } from '../lib/n8n'
 import VpsBuildPanel from './VpsBuildPanel'
+import AgentsPanel from './AgentsPanel'
 import { AGENTS } from '../lib/agents'
 import { JOB_STATUS, JOB_STATUS_COLOR, JOB_STATUS_LABEL } from '../lib/status'
 import { useLeadResults } from '../hooks/useLeadResults'
@@ -1320,7 +1321,12 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
             )}
 
             {/* Runner Mode — VPS Builder, vollautonom */}
-            {a2Mode === 'runner' && <VpsBuildPanel lead={lead} />}
+            {a2Mode === 'runner' && (
+              <div className="space-y-4">
+                <VpsBuildPanel lead={lead} />
+                <AgentsPanel lead={lead} />
+              </div>
+            )}
 
             {/* A7 Fallback */}
             {a2Mode === 'fallback' && (

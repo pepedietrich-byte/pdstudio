@@ -70,6 +70,112 @@ const VPS_BUILDER_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT2_VPS_WEBHOOK ||
   `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent2-build`
 
+// ─── A3 Polish Agent ─────────────────────────────────────────────────────────
+const A3_POLISH_WEBHOOK =
+  import.meta.env.VITE_N8N_AGENT3_POLISH_WEBHOOK ||
+  `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent3-polish`
+
+export async function triggerPolish(lead, polishOptions = {}) {
+  if (!lead?.lead_id) throw new Error('lead_id ist Pflicht')
+  const payload = {
+    lead_id:       lead.lead_id,
+    business_name: lead.business_name || lead.name,
+    cuisine:       lead.cuisine || '',
+    atmosphere:    lead.atmosphere || '',
+    demo_url:      lead.demo_url || lead.build?.demo_url || '',
+    site_slug:     lead.site_slug || '',
+    polish_options: {
+      level: polishOptions.level || 'normal', // light | normal | deep
+      focus: polishOptions.focus || 'images', // images | typography | color | layout | all
+    },
+  }
+  const r = await fetch(A3_POLISH_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!r.ok) throw new Error(`A3 HTTP ${r.status}: ${await r.text()}`)
+  return r.json()
+}
+
+// ─── A4 Human Writer ─────────────────────────────────────────────────────────
+const A4_WRITER_WEBHOOK =
+  import.meta.env.VITE_N8N_AGENT4_WRITE_WEBHOOK ||
+  `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent4-write`
+
+export async function triggerWriter(lead, writerOptions = {}) {
+  if (!lead?.lead_id) throw new Error('lead_id ist Pflicht')
+  const payload = {
+    lead_id:        lead.lead_id,
+    business_name:  lead.business_name || lead.name,
+    address:        lead.address || '',
+    website_url:    lead.website_url || lead.website || '',
+    google_rating:  lead.google_rating || lead.rating || '',
+    google_reviews_count: lead.google_reviews_count || lead.reviews || '',
+    special_note:   lead.special_note || '',
+    demo_url:       lead.demo_url || lead.build?.demo_url || '',
+    channel:        writerOptions.channel || 'email',  // email | sms | whatsapp | call_script
+    context:        writerOptions.context || 'cold_outreach',
+    tone:           writerOptions.tone    || 'direct',
+  }
+  const r = await fetch(A4_WRITER_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!r.ok) throw new Error(`A4 HTTP ${r.status}: ${await r.text()}`)
+  return r.json()
+}
+
+// ─── A5 Pricing Agent ─────────────────────────────────────────────────────────
+const A5_PRICING_WEBHOOK =
+  import.meta.env.VITE_N8N_AGENT5_PRICE_WEBHOOK ||
+  `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent5-price`
+
+export async function triggerPricing(lead) {
+  if (!lead?.lead_id) throw new Error('lead_id ist Pflicht')
+  const payload = {
+    lead_id:        lead.lead_id,
+    business_name:  lead.business_name || lead.name,
+    google_rating:  lead.google_rating || lead.rating || '',
+    google_reviews_count: lead.google_reviews_count || lead.reviews || '',
+    score:          lead.score || lead.audit_score || 0,
+    price_range:    lead.price_range || lead.priceRange || '€€',
+    cuisine:        lead.cuisine || '',
+  }
+  const r = await fetch(A5_PRICING_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!r.ok) throw new Error(`A5 HTTP ${r.status}: ${await r.text()}`)
+  return r.json()
+}
+
+// ─── A6 Fact Checker ─────────────────────────────────────────────────────────
+const A6_FACT_WEBHOOK =
+  import.meta.env.VITE_N8N_AGENT6_CHECK_WEBHOOK ||
+  `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent6-check`
+
+export async function triggerFactCheck(lead) {
+  if (!lead?.lead_id) throw new Error('lead_id ist Pflicht')
+  const payload = {
+    lead_id:       lead.lead_id,
+    business_name: lead.business_name || lead.name,
+    website_url:   lead.website_url || lead.website || '',
+    phone:         lead.phone || '',
+    email:         lead.email || '',
+    address:       lead.address || '',
+  }
+  const r = await fetch(A6_FACT_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!r.ok) throw new Error(`A6 HTTP ${r.status}: ${await r.text()}`)
+  return r.json()
+}
+
 export async function triggerVpsBuild(lead, buildOptions = {}) {
   if (!lead?.lead_id || !lead?.business_name) {
     throw new Error('lead_id und business_name sind Pflicht')
