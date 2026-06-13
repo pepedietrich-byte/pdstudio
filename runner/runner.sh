@@ -481,11 +481,8 @@ if [ "$REQUIRES_DEPLOY" = "1" ]; then
     printf '{"projectId":"%s","orgId":"%s"}\n' "$PROJECT_ID" "$ORG_ID" > "$VERCEL_JSON"
     logok "Vercel project linked: ${PROJECT_NAME} (${PROJECT_ID})"
 
-    # Commit the .vercel/project.json so future runs don't re-create
-    cd "$REPO_PATH"
-    git add "${SITE_ABS}/.vercel/project.json"
-    git commit -m "Link ${PROJECT_NAME} to Vercel project ${PROJECT_ID}" 2>/dev/null || true
-    git push origin "$BRANCH" 2>&1 | tail -2 || true
+    # The .vercel/project.json stays local-only (it's gitignored by Vercel CLI convention).
+    # Future runs will fetch the project again via the API — that's fine, idempotent.
     cd "$SITE_ABS"
   fi
 
