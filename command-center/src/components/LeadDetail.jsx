@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { getLeadStage, getConfidence, getScoreBreakdown } from '../lib/sheets'
 import { triggerAgent, triggerWebsiteBuild, isWebhookConfigured } from '../lib/n8n'
+import VpsBuildPanel from './VpsBuildPanel'
 import { AGENTS } from '../lib/agents'
 import { JOB_STATUS, JOB_STATUS_COLOR, JOB_STATUS_LABEL } from '../lib/status'
 import { useLeadResults } from '../hooks/useLeadResults'
@@ -44,7 +45,7 @@ function safeScore(n) { return (+n >= 60) ? '#2ddb72' : (+n >= 40) ? '#f5a623' :
 const A2_MODES = {
   manual:  { id: 'manual',  label: 'Manual Mode',      note: 'Prompt kopieren → Claude Code lokal starten', color: '#9b6ef3', status: 'manual_claude_code_required' },
   remote:  { id: 'remote',  label: 'Remote / Desktop', note: 'Prompt für Claude Code Remote / Handy-Start', color: '#00d4ff', status: 'remote_claude_code_ready' },
-  runner:  { id: 'runner',  label: 'Runner (VPS)',      note: 'Server führt claude -p aus — noch konfiguriert', color: '#f5a623', status: 'runner_not_configured' },
+  runner:  { id: 'runner',  label: 'Runner (VPS)',      note: 'Vollautomatisch — git → claude → build → vercel', color: '#9b6ef3', status: 'ready' },
   fallback:{ id: 'fallback',label: 'A7 API Fallback',  note: 'Schnell, schwächerer Output — kein Claude Code', color: '#52526b', status: 'api_builder_fallback' },
 }
 
@@ -1318,25 +1319,8 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
               </div>
             )}
 
-            {/* Runner Mode */}
-            {a2Mode === 'runner' && (
-              <div className="p-3 rounded font-mono text-[10px]"
-                style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.2)', color: '#f5a623' }}>
-                <div className="font-bold mb-1">runner_not_configured</div>
-                <div className="opacity-80 leading-relaxed">
-                  Runner-Mode: Server führt <code className="px-1 rounded" style={{ background: 'rgba(0,0,0,0.3)' }}>claude -p &lt;prompt&gt;</code> aus.
-                  Benötigt: VPS + Claude Code installiert + HTTP-Wrapper + n8n-Webhook.
-                  Vorbereitung: Prompt unten kopieren — sobald Runner aktiv ist, wird er ihn direkt verarbeiten.
-                </div>
-                <button
-                  onClick={copyPrompt}
-                  className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded font-mono text-[9px] font-bold"
-                  style={{ background: 'rgba(245,166,35,0.1)', color: '#f5a623', border: '1px solid rgba(245,166,35,0.3)' }}
-                >
-                  <Copy size={8} /> Prompt für Runner vorbereiten
-                </button>
-              </div>
-            )}
+            {/* Runner Mode — VPS Builder, vollautonom */}
+            {a2Mode === 'runner' && <VpsBuildPanel lead={lead} />}
 
             {/* A7 Fallback */}
             {a2Mode === 'fallback' && (

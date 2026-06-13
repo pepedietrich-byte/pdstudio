@@ -63,6 +63,50 @@ export async function triggerWebsiteBuild(leadId, extra = {}) {
   return triggerAgent(7, { lead_id: leadId, ...extra })
 }
 
+// ─── A2 VPS Builder ─────────────────────────────────────────────────────────
+// Triggert den autonomen VPS-Runner über n8n: git pull → Claude Code → npm build → vercel deploy
+// Antwort enthält demo_url direkt — kein Polling nötig.
+const VPS_BUILDER_WEBHOOK =
+  import.meta.env.VITE_N8N_AGENT2_VPS_WEBHOOK ||
+  `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent2-build`
+
+export async function triggerVpsBuild(lead, buildOptions = {}) {
+  if (!lead?.lead_id || !lead?.business_name) {
+    throw new Error('lead_id und business_name sind Pflicht')
+  }
+
+  const payload = {
+    lead_id:        lead.lead_id,
+    business_name:  lead.business_name || lead.name,
+    address:        lead.address || '',
+    phone:          lead.phone || '',
+    website_url:    lead.website_url || lead.website || '',
+    cuisine:        lead.cuisine || '',
+    atmosphere:     lead.atmosphere || '',
+    opening_hours:  lead.opening_hours || lead.hours || '',
+    google_rating:  lead.google_rating || lead.rating || '',
+    google_reviews_count: lead.google_reviews_count || lead.reviews || '',
+    specials:       lead.specials || '',
+    price_range:    lead.price_range || lead.priceRange || '€€',
+    build_options: {
+      style:          buildOptions.style          || 'restaurant-premium',
+      colorDirection: buildOptions.colorDirection || 'auto',
+      quality:        buildOptions.quality        || 'premium',
+      imageSource:    buildOptions.imageSource    || 'unsplash',
+    },
+    images:         lead.images || [],
+  }
+
+  const r = await fetch(VPS_BUILDER_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  if (!r.ok) throw new Error(`Runner HTTP ${r.status}: ${await r.text()}`)
+  return r.json()
+}
+
 export async function triggerPipelineFromUrl(websiteUrl) {
   const url = WEBHOOKS[2]
   if (!url) throw new Error('Agent 2 Webhook nicht konfiguriert')
