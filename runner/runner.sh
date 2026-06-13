@@ -293,8 +293,13 @@ if [ "$MODE" = "build" ] || [ "$MODE" = "fix" ]; then
 
   # Run headless — permissions set in ~/.claude/settings.json (allow all)
   # < /dev/null prevents 3s stdin wait in non-interactive mode
+  # Model: explizit Opus 4.7 (Claude Max Plan). Override via $CLAUDE_MODEL env.
+  # NOTE: Fast Mode (--fast / /fast) ist nur in interaktiver Session toggelbar,
+  # headless aktuell nicht erzwingbar (CLI v2.1.177).
+  CLAUDE_MODEL_USE="${CLAUDE_MODEL:-claude-opus-4-7}"
+  log "Claude model: ${CLAUDE_MODEL_USE}"
   set +e
-  CLAUDE_OUTPUT=$(claude -p "$(cat "$PROMPT_FILE")" < /dev/null 2>&1)
+  CLAUDE_OUTPUT=$(claude --model "$CLAUDE_MODEL_USE" -p "$(cat "$PROMPT_FILE")" < /dev/null 2>&1)
   CLAUDE_EXIT=$?
   set -e
   echo "$CLAUDE_OUTPUT" | tail -30
@@ -387,7 +392,7 @@ RULES:
 - After fixing, the build command 'npm run build' must succeed."
 
       cd "$REPO_PATH"
-      if claude -p "$FIX_PROMPT" < /dev/null 2>&1; then
+      if claude --model "${CLAUDE_MODEL:-claude-opus-4-7}" -p "$FIX_PROMPT" < /dev/null 2>&1; then
         logok "Claude fix run complete. Retrying build..."
         cd "$SITE_ABS"
         BUILD_LOG2=$(npm run build 2>&1)
