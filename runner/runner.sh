@@ -309,7 +309,7 @@ if [ "$HAS_PACKAGE_JSON" = true ]; then
   fi
 
   if [ "$NEED_INSTALL" = true ]; then
-    npm install --prefer-offline 2>&1 | tail -5
+    npm install 2>&1 | tail -5
     logok "npm install done"
   fi
 
