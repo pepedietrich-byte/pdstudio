@@ -12,7 +12,33 @@ Pepe steuert jeden Agenten einzeln über das Command Center.
 - Kein automatischer Durchlauf
 - Ergebnis sofort im Command Center sichtbar
 
-### Runner Mode (Claude Code auf VPS)
+### Runner Mode — A2 Remote Build (Claude Code auf VPS)
+
+Agent 2 triggert den VPS Runner per HTTP. Claude Code läuft headless auf dem VPS und baut/deployt Websites.
+
+**Endpoint:** `http://localhost:8787/run-a2` (VPS-intern) oder `http://76.13.11.80:8787/run-a2` (von außen)
+**Auth:** `Authorization: Bearer $RUNNER_SECRET`
+**Docs:** → [A2_RUNNER_INTEGRATION.md](A2_RUNNER_INTEGRATION.md)
+**Security:** → [RUNNER_SECURITY.md](RUNNER_SECURITY.md)
+
+**Modi:**
+- `analyze` — Health-Check, keine Änderungen. Immer zuerst ausführen.
+- `build` — git pull → Claude Code → npm build → git commit → vercel deploy
+- `deploy` — nur npm build + vercel deploy (kein Claude)
+- `fix` — Claude bekommt Build-Fehler als Kontext und repariert
+
+**VPS Pfade:**
+- Runner: `/opt/pdstudio-runner/` (server.js + runner.sh)
+- Repo: `/var/www/pdstudio/` (geklontes GitHub Repo)
+- Logs: `/opt/pdstudio-runner/logs/{run_id}.log`
+- Summaries: `/opt/pdstudio-runner/runs/{run_id}.json`
+
+**Pflicht-Reihenfolge beim ersten Setup:**
+1. Analyze-Test ausführen — alle Checks müssen grün sein
+2. Vercel link für jede Site manuell bestätigen
+3. Erst dann Build-Mode aktivieren
+
+### Runner Mode — n8n Workflow-Entwicklung
 Claude Code baut n8n-Workflows direkt über die n8n REST API.
 Wird verwendet wenn Pepe sagt: "Bau mir den Workflow" oder "Reparier Agent X in n8n".
 
