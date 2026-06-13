@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Rocket, ExternalLink, Loader2, CheckCircle2, AlertCircle, Server } from 'lucide-react'
 import { triggerVpsBuild } from '../lib/n8n'
+import { markSiteFresh } from '../lib/sites'
 
 // Build-Style Optionen (Pepe wählt im UI)
 const STYLES = [
@@ -38,6 +39,9 @@ export default function VpsBuildPanel({ lead }) {
       const r = await triggerVpsBuild(lead, opts)
       setResult(r)
       setState(r.deploy_status === 'success' ? 'done' : 'error')
+      if (r.deploy_status === 'success' && r.demo_url) {
+        markSiteFresh(lead.lead_id, r.demo_url)
+      }
       if (r.deploy_status !== 'success' && !error) setError(r.error || 'Deploy fehlgeschlagen')
     } catch (e) {
       setState('error'); setError(e.message)

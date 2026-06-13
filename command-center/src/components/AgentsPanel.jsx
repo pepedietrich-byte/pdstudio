@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, PenTool, Calculator, ShieldCheck, Loader2, CheckCircle2, AlertCircle, Copy, ExternalLink } from 'lucide-react'
 import { triggerPolish, triggerWriter, triggerPricing, triggerFactCheck } from '../lib/n8n'
+import { markSiteFresh } from '../lib/sites'
 
 const AGENT_META = {
   3: { id: 3, name: 'Polish Agent',  short: 'A3', color: '#e8197f', icon: Sparkles,    desc: 'Bilder, Typo, Code polishen — Site wird neu deployed' },
@@ -75,6 +76,9 @@ function A3Panel({ lead }) {
       const r = await triggerPolish(lead, opts)
       setResult(r)
       setState(r.deploy_status === 'success' ? 'done' : 'error')
+      if (r.deploy_status === 'success' && r.polished_url) {
+        markSiteFresh(lead.lead_id, r.polished_url)
+      }
       if (r.error) setError(r.error)
     } catch (e) {
       setState('error'); setError(e.message)

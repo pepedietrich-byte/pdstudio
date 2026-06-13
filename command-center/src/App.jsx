@@ -10,6 +10,7 @@ import PipelineHealth from './components/PipelineHealth'
 import CommandKPIs from './components/CommandKPIs'
 import LeadsView from './components/LeadsView'
 import SitesView from './components/SitesView'
+import { countRelevantSites, useFreshSitesVersion } from './lib/sites'
 import ExecutionsView from './components/ExecutionsView'
 import LeadDetail from './components/LeadDetail'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -33,6 +34,7 @@ function App() {
   const { executions, stop, stopping, refresh: refreshExec } = useExecutions()
   const { leads, loading, error, lastRefresh, autoRefresh, setAutoRefresh, refresh } = useSheetData(60000)
   const { sendContextualUpdate, status: twinStatus } = useTwin()
+  useFreshSitesVersion()   // re-render when site-fresh event fires
   const [activeTab,    setActiveTab]    = useState('control')
   const [selectedLead, setSelectedLead] = useState(null)
   const [activeLead,   setActiveLead]   = useState(null)  // globally active lead for agent ops
@@ -148,13 +150,10 @@ function App() {
                   )}
                   {tab.id === 'sites' && (
                     (() => {
-                      const cnt = leads.filter(l => {
-                        const u = l.build?.demo_url || ''
-                        return u && !u.startsWith('/files') && /^https?:\/\//.test(u)
-                      }).length
+                      const cnt = countRelevantSites(leads)
                       return cnt > 0 ? (
                         <span className="font-mono text-[9px] px-1 py-0 rounded-full"
-                          style={{ background: 'rgba(232,25,127,0.12)', color: '#e8197f' }}>
+                          style={{ background: 'rgba(232,25,127,0.15)', color: '#e8197f' }}>
                           {cnt}
                         </span>
                       ) : null
@@ -286,7 +285,7 @@ function App() {
             <motion.div key="sites"
               initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.18, ease: EASE }}>
-              <SitesView leads={leads} />
+              <SitesView leads={leads} onOpenLead={selectLead} />
             </motion.div>
           ) : activeTab === 'executions' ? (
             <motion.div key="executions"
