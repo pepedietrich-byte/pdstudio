@@ -415,22 +415,43 @@ if [ "$REQUIRES_DEPLOY" = "1" ]; then
 
   cd "$SITE_ABS"
 
-  # Check if site is linked to a Vercel project
+  # Auto-link Vercel project if not linked
   VERCEL_JSON="${SITE_ABS}/.vercel/project.json"
   if [ ! -f "$VERCEL_JSON" ]; then
-    DEPLOY_STATUS="not_linked"
-    DEPLOY_URL=""
-    log "━━━ VERCEL NOT LINKED ━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    log "Site is not linked to a Vercel project."
-    log "Run this command to link it:"
-    log ""
-    log "  cd ${SITE_ABS}"
-    log "  vercel link --token \$VERCEL_TOKEN"
-    log ""
-    log "Then re-run with mode=deploy."
-    log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    write_summary "success"
-    exit 0
+    PROJECT_NAME=$(basename "$SITE_ABS")
+    log "Vercel not linked — auto-creating project: ${PROJECT_NAME}"
+
+    CREATE_RESP=$(curl -sf -X POST "https://api.vercel.com/v9/projects" \
+      -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d "{\"name\":\"${PROJECT_NAME}\",\"framework\":null}" 2>&1) || true
+
+    PROJECT_ID=$(echo "$CREATE_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null || echo "")
+    ORG_ID=$(echo "$CREATE_RESP"    | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('accountId',''))" 2>/dev/null || echo "")
+
+    if [ -z "$PROJECT_ID" ]; then
+      # Project may already exist — fetch it
+      log "Create returned no ID — trying to fetch existing project..."
+      FETCH_RESP=$(curl -sf "https://api.vercel.com/v9/projects/${PROJECT_NAME}" \
+        -H "Authorization: Bearer ${VERCEL_TOKEN}" 2>&1) || true
+      PROJECT_ID=$(echo "$FETCH_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null || echo "")
+      ORG_ID=$(echo "$FETCH_RESP"     | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('accountId',''))" 2>/dev/null || echo "")
+    fi
+
+    if [ -z "$PROJECT_ID" ]; then
+      fail "Could not create or find Vercel project '${PROJECT_NAME}'. Response: $(echo "$CREATE_RESP" | head -c 300)"
+    fi
+
+    mkdir -p "${SITE_ABS}/.vercel"
+    printf '{"projectId":"%s","orgId":"%s"}\n' "$PROJECT_ID" "$ORG_ID" > "$VERCEL_JSON"
+    logok "Vercel project linked: ${PROJECT_NAME} (${PROJECT_ID})"
+
+    # Commit the .vercel/project.json so future runs don't re-create
+    cd "$REPO_PATH"
+    git add "${SITE_ABS}/.vercel/project.json"
+    git commit -m "Link ${PROJECT_NAME} to Vercel project ${PROJECT_ID}" 2>/dev/null || true
+    git push origin "$BRANCH" 2>&1 | tail -2 || true
+    cd "$SITE_ABS"
   fi
 
   VERCEL_PROJECT=$(cat "$VERCEL_JSON" | grep '"projectId"' | sed 's/.*: *"\([^"]*\)".*/\1/' || echo "unknown")
