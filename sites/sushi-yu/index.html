@@ -1,1 +1,62 @@
-<!doctype html><html lang="de"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><meta name="robots" content="noindex,nofollow"/><title>Demo</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>Sushi Yu Leipzig — Japanisches Restaurant · Sushi · Omakase</title>
+  <meta name="description" content="Sushi Yu — klassisches japanisches Sushi-Restaurant im Herzen von Leipzig. Tagesfrische Sashimi, Nigiri, Omakase auf Wunsch. Di–So 17:30–22:30." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,700;1,300;1,700&family=Inter+Tight:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    rel="preload"
+    as="image"
+    href="https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=1920&q=85&auto=format&fit=crop"
+    fetchpriority="high"
+  />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Sushi Yu",
+    "description": "Klassisches japanisches Sushi-Restaurant im Herzen von Leipzig. Tagesfrische Sashimi, Nigiri, Omakase auf Wunsch. Ruhiges Ambiente.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Leipzig",
+      "addressRegion": "Sachsen",
+      "postalCode": "04109",
+      "addressCountry": "DE"
+    },
+    "servesCuisine": ["Japanese", "Sushi", "Sashimi", "Omakase"],
+    "priceRange": "€€€",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.4",
+      "reviewCount": "240"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "17:30",
+        "closes": "22:30"
+      }
+    ],
+    "hasMenu": "#karte",
+    "reservationUrl": "#reservierung"
+  }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
