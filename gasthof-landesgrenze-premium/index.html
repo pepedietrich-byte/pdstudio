@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Gasthof Landesgrenze — Wo zwei Länder an einem Tisch zusammenkommen</title>
+<meta name="description" content="Gasthof Landesgrenze — ein einladender Landgasthof an der Grenze. Regionale Küche, herzliche Gastfreundschaft, ein Ort zum Ankommen. Tisch reservieren.">
+
+<meta property="og:type" content="restaurant">
+<meta property="og:title" content="Gasthof Landesgrenze">
+<meta property="og:description" content="Ein Landgasthof an der Grenze — regionale Küche und herzliche Gastfreundschaft.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1510'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23d8a85a' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Gasthof Landesgrenze",
+  "description": "Landgasthof an der Grenze mit regionaler Küche und herzlicher Gastfreundschaft.",
+  "servesCuisine": ["Regional", "Deutsch", "Bürgerlich"],
+  "address": { "@type": "PostalAddress", "addressCountry": "DE" },
+  "url": "https://www.gasthof-landesgrenze.de/",
+  "acceptsReservations": "True"
+}
+</script>
+
+<style>
+/* ============================================================
+   GASTHOF LANDESGRENZE — Single-file premium build
+   Borderland Inn palette · Playfair Display + Inter · OKLCH
+   ============================================================ */
+
+:root {
+  /* ===== EASING ===== */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* ===== COLOR — warm borderland dark ===== */
+  --bg:        oklch(0.17 0.014 64);
+  --bg-deeper: oklch(0.13 0.012 62);
+  --bg-raised: oklch(0.21 0.015 58);
+  --bg-border: oklch(0.31 0.016 56 / 0.5);
+
+  --ink:       oklch(0.96 0.016 82);
+  --ink-soft:  oklch(0.79 0.018 76);
+  --ink-mute:  oklch(0.59 0.016 70);
+  --ink-faint: oklch(0.43 0.014 64);
+
+  --gold:      oklch(0.80 0.130 80);
+  --gold-deep: oklch(0.64 0.140 66);
+  --gold-soft: oklch(0.80 0.130 80 / 0.16);
+
+  --forest:    oklch(0.46 0.070 150);
+
+  /* ===== TYPE ===== */
+  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --sans:  "Inter", system-ui, -apple-system, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, monospace;
+
+  /* ===== SCALE ===== */
+  --r-sm: 4px;
+  --r-md: 9px;
+  --r-lg: 14px;
+
+  --container: 1280px;
+  --section-y-d: clamp(96px, 12vw, 156px);
+  --section-y-m: 72px;
+}
+
+* { box-sizing: border-box; }
+*::selection { background: var(--gold); color: var(--bg); }
+
+html { scroll-behavior: smooth; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; transition: color 200ms var(--ease-out); }
+a:hover { color: var(--gold); }
+button { font: inherit; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 48px);
+}
+section { padding: var(--section-y-d) 0; position: relative; }
+@media (max-width: 768px) { section { padding: var(--section-y-m) 0; } }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ============================================================
+   DEMO NOTICE BAR
+   ============================================================ */
+.demo-bar {
+  position: relative; z-index: 60;
+  background: var(--bg-deeper);
+  border-bottom: 1px solid var(--bg-border);
+  text-align: center;
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.demo-bar a { color: var(--gold); font-weight: 600; }
+.demo-bar a:hover { color: var(--gold-deep); }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: oklch(0.17 0.014 64 / 0.78);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid oklch(0.31 0.016 56 / 0.4);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px;
+}
+.nav-brand {
+  display: flex; flex-direction: column; gap: 1px;
+  font-family: var(--serif); font-size: 21px; font-weight: 600;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.nav-brand small {
+  font-family: var(--mono); font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase;
+}
+.nav-links {
+  display: flex; align-items: center; gap: clamp(20px, 2.5vw, 36px);
+  list-style: none; margin: 0; padding: 0;
+}
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 18px; border-radius: 999px;
+  background: var(--gold); color: var(--bg);
+  font-weight: 600; font-size: 14px;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out);
+}
+.nav-cta:hover { background: var(--gold-deep); color: var(--bg); }
+.nav-cta:active { transform: scale(0.97); }
+.nav-toggle {
+  display: none; width: 40px; height: 40px;
+  background: transparent; border: 1px solid var(--bg-border);
+  border-radius: var(--r-md); color: var(--ink);
+  align-items: center; justify-content: center;
+}
+@media (max-width: 880px) {
+  .nav-links, .nav > .container > .nav-inner > .nav-cta { display: none; }
+  .nav-toggle { display: inline-flex; }
+}
+.mobile-menu {
+  position: fixed; inset: 0 0 0 0;
+  background: var(--bg);
+  padding: 92px clamp(20px, 6vw, 48px) 40px;
+  transform: translateY(-8px); opacity: 0; pointer-events: none;
+  transition: transform 260ms var(--ease-out), opacity 220ms var(--ease-out);
+  z-index: 55;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.mobile-menu.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.mobile-menu a {
+  font-family: var(--serif); font-size: 30px; padding: 16px 0;
+  border-bottom: 1px solid oklch(0.31 0.016 56 / 0.35); color: var(--ink);
+}
+.mobile-menu .nav-cta { margin-top: 24px; width: max-content; height: 50px; padding: 0 26px; font-size: 15px; }
+.mobile-close {
+  position: absolute; top: 22px; right: clamp(20px, 6vw, 48px);
+  width: 40px; height: 40px; background: transparent;
+  border: 1px solid var(--bg-border); border-radius: var(--r-md);
+  color: var(--ink); display: flex; align-items: center; justify-content: center;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100dvh - 110px);
+  display: flex; align-items: flex-end;
+  padding-top: clamp(80px, 12vw, 150px);
+  padding-bottom: clamp(56px, 7vw, 96px);
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5) contrast(1.04) saturate(0.95); }
+.hero-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, oklch(0.13 0.012 62 / 0.55) 0%, transparent 28%, transparent 42%, oklch(0.13 0.012 62 / 0.92) 100%),
+    linear-gradient(90deg, oklch(0.13 0.012 62 / 0.78) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 30%, oklch(0.64 0.140 66 / 0.10) 0%, transparent 60%);
+}
+.hero-inner { position: relative; z-index: 1; width: 100%; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 26px; }
+.hero-eyebrow::after { content: ''; width: 56px; height: 1px; background: oklch(0.80 0.130 80 / 0.45); }
+.hero h1 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(46px, 8.2vw, 104px);
+  line-height: 0.98; letter-spacing: -0.025em;
+  margin: 0 0 28px; color: var(--ink); max-width: 16ch;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--gold); }
+.hero-sub {
+  font-size: clamp(17px, 1.6vw, 21px); line-height: 1.5;
+  color: var(--ink-soft); max-width: 50ch; margin: 0 0 40px; text-wrap: pretty;
+}
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 56px; padding: 0 28px; border-radius: 999px;
+  background: var(--gold); color: var(--bg);
+  font-weight: 600; font-size: 15px; border: 0;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+.btn-primary:hover { background: var(--gold-deep); color: var(--bg); box-shadow: 0 12px 30px -10px oklch(0.64 0.140 66 / 0.5); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 56px; padding: 0 26px; border-radius: 999px;
+  background: oklch(0.96 0.016 82 / 0.04); color: var(--ink);
+  font-weight: 500; font-size: 15px;
+  border: 1px solid oklch(0.96 0.016 82 / 0.18);
+  transition: transform 160ms var(--ease-out), border-color 200ms var(--ease-out), background 200ms var(--ease-out);
+}
+.btn-ghost:hover { border-color: var(--gold); background: oklch(0.80 0.130 80 / 0.08); color: var(--ink); }
+.btn-ghost:active { transform: scale(0.97); }
+
+.hero-foot {
+  display: flex; gap: clamp(28px, 5vw, 64px); flex-wrap: wrap;
+  margin-top: clamp(48px, 7vw, 88px);
+  padding-top: 28px; border-top: 1px solid oklch(0.96 0.016 82 / 0.12);
+}
+.hero-foot-item { display: flex; flex-direction: column; gap: 5px; }
+.hero-foot-item .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+.hero-foot-item .v { font-family: var(--serif); font-size: 19px; color: var(--ink); }
+
+/* ============================================================
+   TRUST STRIP
+   ============================================================ */
+.trust {
+  padding: 36px 0;
+  border-bottom: 1px solid oklch(0.31 0.016 56 / 0.5);
+  background: oklch(0.15 0.012 62);
+}
+.trust-row { display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap; }
+.trust-item { display: flex; flex-direction: column; gap: 6px; min-width: 120px; }
+.trust-item strong {
+  font-family: var(--serif); font-size: clamp(26px, 3vw, 38px); font-weight: 500;
+  letter-spacing: -0.02em; color: var(--gold); line-height: 1;
+}
+.trust-item span { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); }
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about-grid { display: grid; grid-template-columns: 6fr 5fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+@media (max-width: 920px) { .about-grid { grid-template-columns: 1fr; gap: 48px; } }
+.about-text .eyebrow { display: block; margin-bottom: 22px; }
+.about-text h2 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(38px, 5vw, 62px); line-height: 1.03;
+  letter-spacing: -0.02em; margin: 0 0 28px; color: var(--ink); text-wrap: balance;
+}
+.about-text h2 em { font-style: italic; font-weight: 400; }
+.about-text p { font-size: 17px; line-height: 1.66; color: var(--ink-soft); max-width: 56ch; margin: 0 0 20px; text-wrap: pretty; }
+.about-text p:first-of-type::first-letter {
+  font-family: var(--serif); font-size: 4em; float: left; line-height: 0.9;
+  padding: 6px 12px 0 0; color: var(--gold); font-weight: 600;
+}
+.about-img {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid var(--bg-border); aspect-ratio: 4 / 5;
+}
+.about-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.92); }
+.about-img::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 55%, oklch(0.13 0.012 62 / 0.55) 100%);
+}
+
+/* ============================================================
+   CUISINE CARDS
+   ============================================================ */
+.cuisine { background: var(--bg-deeper); border-top: 1px solid oklch(0.31 0.016 56 / 0.5); border-bottom: 1px solid oklch(0.31 0.016 56 / 0.5); }
+.cuisine-head { max-width: 680px; margin-bottom: clamp(48px, 6vw, 72px); }
+.cuisine-head .eyebrow { display: block; margin-bottom: 20px; }
+.cuisine-head h2 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(40px, 6vw, 76px); line-height: 1; letter-spacing: -0.025em;
+  margin: 0 0 18px; color: var(--ink);
+}
+.cuisine-head h2 em { font-style: italic; font-weight: 400; color: var(--gold); }
+.cuisine-head p { font-size: 17px; color: var(--ink-soft); max-width: 52ch; }
+.cuisine-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 920px) { .cuisine-grid { grid-template-columns: 1fr; max-width: 480px; } }
+.cuisine-card {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid var(--bg-border); background: var(--bg-raised);
+  min-height: 420px; display: flex; flex-direction: column; justify-content: flex-end;
+  transition: transform 320ms var(--ease-out), border-color 320ms var(--ease-out);
+}
+.cuisine-card:hover { transform: translateY(-4px); border-color: oklch(0.80 0.130 80 / 0.4); }
+.cuisine-card .ci { position: absolute; inset: 0; z-index: 0; }
+.cuisine-card .ci img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.62); transition: transform 600ms var(--ease-out), filter 320ms var(--ease-out); }
+.cuisine-card:hover .ci img { transform: scale(1.05); filter: brightness(0.7); }
+.cuisine-card .ci::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, oklch(0.11 0.010 60 / 0.92) 100%); }
+.cuisine-card .cc { position: relative; z-index: 1; padding: clamp(24px, 3vw, 32px); }
+.cuisine-card .num { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.cuisine-card h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(24px, 2.6vw, 30px); letter-spacing: -0.015em; margin: 0 0 10px; color: var(--ink); }
+.cuisine-card p { font-size: 14px; line-height: 1.55; color: var(--ink-soft); margin: 0; max-width: 36ch; }
+.cuisine-note { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; color: var(--ink-mute); }
+
+/* ============================================================
+   RESERVATION
+   ============================================================ */
+.reserve { background: radial-gradient(ellipse 80% 60% at 78% 18%, oklch(0.64 0.140 66 / 0.09) 0%, transparent 60%), var(--bg); }
+.reserve-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(40px, 6vw, 88px); align-items: start; }
+@media (max-width: 920px) { .reserve-grid { grid-template-columns: 1fr; gap: 48px; } }
+.reserve-intro .eyebrow { display: block; margin-bottom: 20px; }
+.reserve-intro h2 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(38px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.022em;
+  margin: 0 0 22px; color: var(--ink);
+}
+.reserve-intro h2 em { font-style: italic; font-weight: 400; color: var(--gold); }
+.reserve-intro p { font-size: 17px; line-height: 1.6; color: var(--ink-soft); max-width: 42ch; margin: 0 0 32px; }
+.reserve-quick { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.reserve-quick li { display: flex; align-items: flex-start; gap: 14px; font-size: 14.5px; color: var(--ink-soft); }
+.reserve-quick svg { flex-shrink: 0; color: var(--gold); margin-top: 2px; }
+.reserve-quick a { color: var(--ink); border-bottom: 1px solid oklch(0.80 0.130 80 / 0.3); }
+.reserve-quick a:hover { color: var(--gold); border-color: var(--gold); }
+
+.reserve-card {
+  background: var(--bg-raised); border: 1px solid oklch(0.31 0.016 56 / 0.6);
+  border-radius: var(--r-lg); padding: clamp(28px, 3.5vw, 44px);
+  position: relative; overflow: hidden;
+}
+.reserve-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 40% at 100% 0%, oklch(0.80 0.130 80 / 0.06) 0%, transparent 65%); pointer-events: none; }
+.form-step { display: flex; flex-direction: column; gap: 22px; position: relative; z-index: 1; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); }
+.field input, .field select, .field textarea {
+  background: oklch(0.14 0.012 62); border: 1px solid oklch(0.31 0.016 56 / 0.6);
+  border-radius: var(--r-md); padding: 14px 16px; font-size: 15px; color: var(--ink);
+  font-family: var(--sans); width: 100%;
+  transition: border-color 180ms var(--ease-out), background 180ms var(--ease-out);
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--gold); background: oklch(0.16 0.012 62); }
+.field input::placeholder, .field textarea::placeholder { color: var(--ink-mute); }
+.field select {
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23a89970' stroke-width='1.5' d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px;
+}
+.party-picker { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+@media (max-width: 600px) { .party-picker { grid-template-columns: repeat(5, 1fr); } }
+.party-btn {
+  height: 46px; border-radius: var(--r-md);
+  background: oklch(0.14 0.012 62); border: 1px solid oklch(0.31 0.016 56 / 0.6);
+  color: var(--ink); font-family: var(--mono); font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 180ms var(--ease-out);
+}
+.party-btn:hover { border-color: oklch(0.80 0.130 80 / 0.4); }
+.party-btn:active { transform: scale(0.96); }
+.party-btn.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+.form-submit {
+  height: 56px; width: 100%; background: var(--gold); color: var(--bg);
+  border: 0; border-radius: var(--r-md); font-size: 15px; font-weight: 600;
+  margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: transform 160ms var(--ease-out), background 200ms var(--ease-out);
+}
+.form-submit:hover { background: var(--gold-deep); }
+.form-submit:active { transform: scale(0.985); }
+.form-mini { font-size: 12.5px; color: var(--ink-mute); text-align: center; margin-top: 2px; }
+.form-success { display: none; text-align: center; padding: 24px 8px; position: relative; z-index: 1; }
+.form-success.show { display: block; animation: fadeUp 480ms var(--ease-out) both; }
+.form-success .check { width: 56px; height: 56px; margin: 0 auto 20px; border-radius: 50%; background: oklch(0.80 0.130 80 / 0.16); display: flex; align-items: center; justify-content: center; color: var(--gold); }
+.form-success h3 { font-family: var(--serif); font-weight: 500; font-size: 28px; letter-spacing: -0.015em; margin: 0 0 10px; color: var(--ink); }
+.form-success p { font-size: 15px; color: var(--ink-soft); max-width: 38ch; margin: 0 auto 22px; line-height: 1.55; }
+.form-success .summary { display: inline-flex; flex-direction: column; gap: 4px; background: oklch(0.14 0.012 62); border: 1px solid oklch(0.31 0.016 56 / 0.6); border-radius: var(--r-md); padding: 16px 22px; text-align: left; font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
+.form-success .summary strong { color: var(--gold); font-weight: 500; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   HOURS & LOCATION
+   ============================================================ */
+.hours { background: var(--bg-deeper); border-top: 1px solid oklch(0.31 0.016 56 / 0.5); border-bottom: 1px solid oklch(0.31 0.016 56 / 0.5); }
+.hours-grid { display: grid; grid-template-columns: 6fr 6fr; gap: clamp(40px, 6vw, 80px); align-items: start; }
+@media (max-width: 920px) { .hours-grid { grid-template-columns: 1fr; gap: 48px; } }
+.hours-side .eyebrow { display: block; margin-bottom: 20px; }
+.hours-side h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(36px, 4.5vw, 58px); line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 28px; color: var(--ink); }
+.hours-side h2 em { font-style: italic; font-weight: 400; color: var(--gold); }
+.hours-list { list-style: none; margin: 0; padding: 0; }
+.hours-list li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+  padding: 16px 0; border-bottom: 1px solid oklch(0.31 0.016 56 / 0.5);
+}
+.hours-list li:first-child { border-top: 1px solid oklch(0.31 0.016 56 / 0.5); }
+.hours-list .day { font-family: var(--serif); font-size: 18px; color: var(--ink); }
+.hours-list .time { font-family: var(--mono); font-size: 13.5px; letter-spacing: 0.02em; color: var(--ink-soft); }
+.hours-list .time.muted { color: var(--ink-mute); }
+
+.locate-card { background: var(--bg-raised); border: 1px solid oklch(0.31 0.016 56 / 0.5); border-radius: var(--r-lg); overflow: hidden; }
+.locate-card .map { height: 220px; position: relative; background: linear-gradient(135deg, oklch(0.22 0.020 150 / 0.5), oklch(0.18 0.014 62)); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--bg-border); }
+.locate-card .map svg { color: var(--gold); opacity: 0.85; }
+.locate-card .map .mlabel { position: absolute; bottom: 16px; left: 18px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); }
+.locate-body { padding: clamp(24px, 3vw, 32px); display: flex; flex-direction: column; gap: 18px; }
+.locate-row { display: flex; flex-direction: column; gap: 5px; }
+.locate-row .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+.locate-row .v { font-family: var(--serif); font-size: 18px; color: var(--ink); }
+.locate-row .v a { color: var(--ink); border-bottom: 1px solid oklch(0.80 0.130 80 / 0.3); }
+.locate-row .v a:hover { color: var(--gold); border-color: var(--gold); }
+.locate-link { display: inline-flex; align-items: center; gap: 7px; color: var(--gold); font-size: 13.5px; font-weight: 500; margin-top: 2px; }
+.locate-link:hover { color: var(--gold-deep); }
+
+/* ============================================================
+   CTA BANNER
+   ============================================================ */
+.cta-banner { position: relative; overflow: hidden; text-align: center; }
+.cta-banner-bg { position: absolute; inset: 0; z-index: 0; }
+.cta-banner-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.34) contrast(1.05); }
+.cta-banner-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 50% 50%, oklch(0.64 0.140 66 / 0.16) 0%, transparent 65%), linear-gradient(180deg, oklch(0.13 0.012 62 / 0.8), oklch(0.13 0.012 62 / 0.86)); }
+.cta-banner .inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+.cta-banner .eyebrow { display: block; margin-bottom: 22px; }
+.cta-banner h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 6vw, 78px); line-height: 1.02; letter-spacing: -0.025em; margin: 0 0 22px; color: var(--ink); text-wrap: balance; }
+.cta-banner h2 em { font-style: italic; font-weight: 400; color: var(--gold); }
+.cta-banner p { font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-soft); max-width: 48ch; margin: 0 auto 40px; }
+.cta-banner .hero-ctas { justify-content: center; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer { background: oklch(0.11 0.010 60); border-top: 1px solid oklch(0.31 0.016 56 / 0.5); padding: 80px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+@media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+.footer-brand { font-family: var(--serif); font-size: 28px; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 8px; }
+.footer-brand small { display: block; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-top: 8px; }
+.footer-tag { color: var(--ink-mute); font-size: 14px; max-width: 34ch; line-height: 1.55; margin: 0; }
+.footer-col h4 { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin: 0 0 18px; }
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+.footer-col a, .footer-col p { color: var(--ink-soft); font-size: 14px; margin: 0; line-height: 1.5; }
+.footer-col a:hover { color: var(--ink); }
+.footer-bottom { border-top: 1px solid oklch(0.31 0.016 56 / 0.5); padding-top: 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.footer-bottom p { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-mute); margin: 0; }
+.footer-bottom .demo { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); padding: 5px 11px; border: 1px solid oklch(0.31 0.016 56 / 0.6); border-radius: var(--r-sm); }
+.footer-bottom .demo a { color: var(--gold); }
+
+/* ============================================================
+   SCROLL REVEAL & MOTION
+   ============================================================ */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 760ms var(--ease-out), transform 760ms var(--ease-out); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+@media (hover: none) {
+  .cuisine-card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ DEMO NOTICE ============================ -->
+<div class="demo-bar">
+  Demo-Präsentation gestaltet von <a href="https://pdstudio.de" target="_blank" rel="noopener">PDSTUDIO</a> · unverbindliche Konzeptansicht
+</div>
+
+<!-- ============================ NAV ============================ -->
+<header class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#top" class="nav-brand">
+        Gasthof Landesgrenze
+        <small>Landgasthof seit jeher</small>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#about">Haus</a></li>
+          <li><a href="#cuisine">Küche</a></li>
+          <li><a href="#hours">Öffnungszeiten</a></li>
+          <li><a href="#reserve">Reservieren</a></li>
+        </ul>
+      </nav>
+      <a href="#reserve" class="nav-cta">Tisch reservieren</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menü öffnen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose" aria-label="Menü schließen">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <a href="#about">Haus</a>
+  <a href="#cuisine">Küche</a>
+  <a href="#hours">Öffnungszeiten</a>
+  <a href="#reserve">Reservieren</a>
+  <a href="#reserve" class="nav-cta">Tisch reservieren</a>
+</div>
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" id="top">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2000&q=80" alt="Warmes, einladendes Gasthaus-Interieur am Abend" loading="eager" fetchpriority="high">
+  </div>
+  <div class="container hero-inner">
+    <span class="eyebrow hero-eyebrow">Landgasthof an der Grenze</span>
+    <h1>Wo zwei Länder an <em>einem Tisch</em> zusammenkommen.</h1>
+    <p class="hero-sub">Ein Ort zum Ankommen — ehrliche regionale Küche, knisterndes Kaminlicht und die Gastfreundschaft, für die ein Gasthof an der Landesgrenze seit jeher steht.</p>
+    <div class="hero-ctas">
+      <a href="#reserve" class="btn-primary">
+        Tisch reservieren
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#cuisine" class="btn-ghost">Unsere Küche entdecken</a>
+    </div>
+    <div class="hero-foot">
+      <div class="hero-foot-item"><span class="k">Lage</span><span class="v">An der Landesgrenze</span></div>
+      <div class="hero-foot-item"><span class="k">Küche</span><span class="v">Regional & saisonal</span></div>
+      <div class="hero-foot-item"><span class="k">Reservierung</span><span class="v">Jederzeit willkommen</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TRUST ============================ -->
+<div class="trust">
+  <div class="container">
+    <div class="trust-row reveal">
+      <div class="trust-item"><strong>Regional</strong><span>Zutaten aus der Umgebung</span></div>
+      <div class="trust-item"><strong>Hausgemacht</strong><span>Täglich frisch gekocht</span></div>
+      <div class="trust-item"><strong>Familiär</strong><span>Persönlich geführtes Haus</span></div>
+      <div class="trust-item"><strong>Willkommen</strong><span>Gäste &amp; Reisende</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ ABOUT ============================ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <span class="eyebrow">Das Haus</span>
+        <h2>Ein Gasthof, der <em>Grenzen verwischt</em> — und Menschen verbindet.</h2>
+        <p>An der Landesgrenze treffen sich Wege, Geschichten und Geschmäcker. Genau hier steht unser Gasthof: als Wirtshaus für alle, die unterwegs sind, und als zweites Wohnzimmer für alle, die geblieben sind.</p>
+        <p>Wir kochen, wie man es von einem guten Landgasthof erwartet — ehrlich, mit Zeit und mit Zutaten aus der Region. Kein Schnickschnack, dafür ein gedeckter Tisch, ein warmes Licht und das Gefühl, willkommen zu sein.</p>
+        <p>Ob auf der Durchreise, zum Familienessen oder für den Stammtisch am Abend: Bei uns nimmt man Platz und bleibt gerne ein wenig länger.</p>
+      </div>
+      <div class="about-img reveal">
+        <img src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=1100&q=80" alt="Gedeckter Tisch im warmen Licht eines Landgasthofs" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CUISINE ============================ -->
+<section class="cuisine" id="cuisine">
+  <div class="container">
+    <div class="cuisine-head reveal">
+      <span class="eyebrow">Aus der Küche</span>
+      <h2>Regional gedacht, <em>handwerklich</em> gekocht.</h2>
+      <p>Was bei uns auf den Tisch kommt, folgt den Jahreszeiten und der Region. Eine kleine Auswahl dessen, wofür unsere Küche steht.</p>
+    </div>
+    <div class="cuisine-grid">
+      <article class="cuisine-card reveal">
+        <div class="ci"><img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=900&q=80" alt="Herzhafter Braten aus der Region" loading="lazy"></div>
+        <div class="cc">
+          <div class="num">01 — Herzhaft</div>
+          <h3>Braten &amp; Schmorgerichte</h3>
+          <p>Langsam geschmort, kräftig gewürzt — die deftige Seite der Landküche, wie sie sein soll.</p>
+        </div>
+      </article>
+      <article class="cuisine-card reveal">
+        <div class="ci"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80" alt="Saisonale Gerichte mit frischen Zutaten" loading="lazy"></div>
+        <div class="cc">
+          <div class="num">02 — Saisonal</div>
+          <h3>Frisch &amp; der Saison</h3>
+          <p>Was die Region gerade hergibt, kommt frisch auf den Teller — wechselnd, ehrlich, mit Charakter.</p>
+        </div>
+      </article>
+      <article class="cuisine-card reveal">
+        <div class="ci"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=900&q=80" alt="Hausgemachte Mehlspeisen und Kuchen" loading="lazy"></div>
+        <div class="cc">
+          <div class="num">03 — Süß</div>
+          <h3>Hausgemachte Mehlspeisen</h3>
+          <p>Ein süßer Abschluss aus eigener Küche — zum Kaffee am Nachmittag oder als Krönung des Abends.</p>
+        </div>
+      </article>
+    </div>
+    <p class="cuisine-note">Beispielhafte Auswahl zur Veranschaulichung — die aktuelle Tageskarte erhalten Sie gerne auf Anfrage.</p>
+  </div>
+</section>
+
+<!-- ============================ RESERVATION ============================ -->
+<section class="reserve" id="reserve">
+  <div class="container">
+    <div class="reserve-grid">
+      <div class="reserve-intro reveal">
+        <span class="eyebrow">Reservierung</span>
+        <h2>Reservieren Sie <em>Ihren Tisch</em>.</h2>
+        <p>Senden Sie uns Ihre Wunschzeit — wir melden uns zur Bestätigung. Für Feiern und größere Runden finden wir gemeinsam den passenden Platz.</p>
+        <ul class="reserve-quick">
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span>Reservierungen für jede Tageszeit — auch kurzfristig.</span>
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11"/></svg>
+            <span>Gesellschaften &amp; Feiern auf Anfrage gerne möglich.</span>
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>Lieber telefonisch? Kontaktdaten erhalten Sie <a href="https://www.gasthof-landesgrenze.de/" target="_blank" rel="noopener">hier auf Anfrage</a>.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="reserve-card reveal">
+        <form class="form-step" id="reserveForm" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="rname">Name</label>
+              <input type="text" id="rname" name="name" placeholder="Ihr Name" required>
+            </div>
+            <div class="field">
+              <label for="rphone">Telefon / E-Mail</label>
+              <input type="text" id="rphone" name="contact" placeholder="Für die Bestätigung" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="rdate">Datum</label>
+              <input type="date" id="rdate" name="date" required>
+            </div>
+            <div class="field">
+              <label for="rtime">Uhrzeit</label>
+              <input type="time" id="rtime" name="time" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Personen</label>
+            <div class="party-picker" id="partyPicker">
+              <button type="button" class="party-btn" data-v="1">1</button>
+              <button type="button" class="party-btn active" data-v="2">2</button>
+              <button type="button" class="party-btn" data-v="3">3</button>
+              <button type="button" class="party-btn" data-v="4">4</button>
+              <button type="button" class="party-btn" data-v="5">5</button>
+              <button type="button" class="party-btn" data-v="6">6</button>
+              <button type="button" class="party-btn" data-v="7+">7+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="rnote">Anmerkung <span style="text-transform:none;letter-spacing:0;color:var(--ink-faint)">(optional)</span></label>
+            <textarea id="rnote" name="note" rows="2" placeholder="Anlass, Sitzwunsch, Allergien …"></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            Reservierungsanfrage senden
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="form-mini">Unverbindliche Anfrage — Sie erhalten eine Bestätigung von uns.</p>
+        </form>
+
+        <div class="form-success" id="reserveSuccess">
+          <div class="check">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3>Anfrage notiert</h3>
+          <p>Vielen Dank! In dieser Demo wird die Anfrage nicht versendet — im Live-Betrieb erhalten Sie umgehend eine Bestätigung.</p>
+          <div class="summary" id="reserveSummary"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ HOURS & LOCATION ============================ -->
+<section class="hours" id="hours">
+  <div class="container">
+    <div class="hours-grid">
+      <div class="hours-side reveal">
+        <span class="eyebrow">Öffnungszeiten</span>
+        <h2>Wann wir <em>für Sie da sind</em>.</h2>
+        <ul class="hours-list">
+          <li><span class="day">Montag</span><span class="time muted">auf Anfrage</span></li>
+          <li><span class="day">Dienstag</span><span class="time muted">auf Anfrage</span></li>
+          <li><span class="day">Mittwoch</span><span class="time muted">auf Anfrage</span></li>
+          <li><span class="day">Donnerstag</span><span class="time muted">auf Anfrage</span></li>
+          <li><span class="day">Freitag</span><span class="time muted">auf Anfrage</span></li>
+          <li><span class="day">Samstag</span><span class="time muted">auf Anfrage</span></li>
+          <li><span class="day">Sonntag</span><span class="time muted">auf Anfrage</span></li>
+        </ul>
+      </div>
+      <div class="locate-card reveal">
+        <div class="map">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="mlabel">Anfahrt · An der Landesgrenze</span>
+        </div>
+        <div class="locate-body">
+          <div class="locate-row">
+            <span class="k">Adresse</span>
+            <span class="v">Wird auf Anfrage mitgeteilt</span>
+          </div>
+          <div class="locate-row">
+            <span class="k">Telefon</span>
+            <span class="v">Auf Anfrage</span>
+          </div>
+          <div class="locate-row">
+            <span class="k">Web</span>
+            <span class="v"><a href="https://www.gasthof-landesgrenze.de/" target="_blank" rel="noopener">gasthof-landesgrenze.de</a></span>
+          </div>
+          <a class="locate-link" href="https://www.google.com/maps/search/Gasthof+Landesgrenze" target="_blank" rel="noopener">
+            Auf Google Maps öffnen
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CTA BANNER ============================ -->
+<section class="cta-banner">
+  <div class="cta-banner-bg">
+    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2000&q=80" alt="Gedeckte Tafel im Kerzenschein" loading="lazy">
+  </div>
+  <div class="container">
+    <div class="inner reveal">
+      <span class="eyebrow">Zu Tisch</span>
+      <h2>Der Tisch ist <em>gedeckt</em>.</h2>
+      <p>Reservieren Sie Ihren Platz und lassen Sie sich an der Landesgrenze verwöhnen — wir freuen uns auf Sie.</p>
+      <div class="hero-ctas">
+        <a href="#reserve" class="btn-primary">
+          Jetzt reservieren
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Gasthof Landesgrenze<small>Landgasthof · Regionale Küche</small></div>
+        <p class="footer-tag">Ein einladender Landgasthof an der Grenze — für Reisende, Nachbarn und alle, die einen guten Tisch zu schätzen wissen.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Entdecken</h4>
+        <ul>
+          <li><a href="#about">Das Haus</a></li>
+          <li><a href="#cuisine">Unsere Küche</a></li>
+          <li><a href="#hours">Öffnungszeiten</a></li>
+          <li><a href="#reserve">Reservieren</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><p>Adresse auf Anfrage</p></li>
+          <li><p>Telefon auf Anfrage</p></li>
+          <li><a href="https://www.gasthof-landesgrenze.de/" target="_blank" rel="noopener">gasthof-landesgrenze.de</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="#" onclick="return false">Impressum</a></li>
+          <li><a href="#" onclick="return false">Datenschutz</a></li>
+          <li><a href="#" onclick="return false">AGB</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 gasthof-landesgrenze.de — Alle Rechte vorbehalten.</p>
+      <span class="demo">Demo · gebaut von <a href="https://pdstudio.de" target="_blank" rel="noopener">PDSTUDIO</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---- Mobile menu ---- */
+  var toggle = document.getElementById('navToggle');
+  var menu = document.getElementById('mobileMenu');
+  var close = document.getElementById('mobileClose');
+  function setMenu(open) {
+    menu.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  if (toggle) toggle.addEventListener('click', function () { setMenu(true); });
+  if (close) close.addEventListener('click', function () { setMenu(false); });
+  menu.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () { setMenu(false); });
+  });
+
+  /* ---- Scroll reveal ---- */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ---- Party picker ---- */
+  var party = '2';
+  var picker = document.getElementById('partyPicker');
+  if (picker) {
+    picker.addEventListener('click', function (e) {
+      var btn = e.target.closest('.party-btn');
+      if (!btn) return;
+      picker.querySelectorAll('.party-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      party = btn.getAttribute('data-v');
+    });
+  }
+
+  /* ---- Min date = today ---- */
+  var dateInput = document.getElementById('rdate');
+  if (dateInput) {
+    var t = new Date();
+    var iso = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
+    dateInput.min = iso;
+  }
+
+  /* ---- Reservation submit (client-side demo) ---- */
+  var form = document.getElementById('reserveForm');
+  var success = document.getElementById('reserveSuccess');
+  var summary = document.getElementById('reserveSummary');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var name = document.getElementById('rname').value || '—';
+      var date = document.getElementById('rdate').value || '—';
+      var time = document.getElementById('rtime').value || '—';
+      summary.innerHTML =
+        '<span><strong>Gast:</strong> ' + escapeHtml(name) + '</span>' +
+        '<span><strong>Wann:</strong> ' + escapeHtml(date) + ' · ' + escapeHtml(time) + ' Uhr</span>' +
+        '<span><strong>Personen:</strong> ' + escapeHtml(party) + '</span>';
+      form.style.display = 'none';
+      success.classList.add('show');
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+})();
+</script>
+</body>
+</html>
