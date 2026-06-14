@@ -59,7 +59,8 @@ Pepe entscheidet pro Lead, welcher Agent läuft.
 ### Mobile / Cloud Claude — Network Policy
 - Die Mobile/Cloud Claude Sandbox blockt Egress zu `api.vercel.com` (CLI **und** REST). `VERCEL_TOKEN` existiert, hilft aber nicht.
 - **NIEMALS** versuchen, von einer Mobile/Cloud Session direkt zu deployen (kein `vercel deploy`, kein `curl api.vercel.com`).
-- Für `command-center`: aktuell **kein** GitHub→Vercel Auto-Deploy aktiv (Projekt `prj_ayAeMsCYrMINcWVRCuPdBKUvvipr` ist nicht git-verlinkt). Mobile Claude darf nur `git push` machen und muss Pepe darauf hinweisen, dass ein manueller Deploy nötig ist — bis Auto-Deploy einmalig eingerichtet wurde (Vercel Dashboard → Project `command-center` → Settings → Git → Connect `pepedietrich-byte/pdstudio`, Production Branch `main`).
+- Für das Command Center: Vercel-Projekt heißt **`pdstudio`** (Project-ID `prj_ayAeMsCYrMINcWVRCuPdBKUvvipr`, Team `team_zF3sTMokjlASwH9xDahXdoCc`, Live URL `command-center-lac-one.vercel.app`). Lokaler Cache in `command-center/.vercel/project.json` hatte fälschlich `projectName: "command-center"` — korrigiert auf `"pdstudio"`. Auto-Deploy via GitHub: Status unverifiziert (kein gültiger Vercel-Token verfügbar zum Check). Wenn Mobile Claude pushen soll, vorher mit Pepe klären ob ein manueller Deploy nötig ist.
+- Setup für Auto-Deploy (einmalig im Vercel Dashboard): Project `pdstudio` → Settings → Git → Connect `pepedietrich-byte/pdstudio`, Production Branch `main`, Root Directory `command-center`. Ab dann triggert jeder `git push origin main` einen Deploy ohne dass Claude `api.vercel.com` aufrufen muss.
 - Für Demo-Sites (`sites/*`): Deploy läuft über n8n A7 Workflow. Mobile Claude triggert nur den n8n Webhook (Host `n8n.srv1736252.hstgr.cloud`) — kein direkter Vercel API Call nötig.
 - Alternative für Restaurant-Builds am Handy: **Prompt-Only Flow** im VpsBuildPanel — kopiert den finalen Build-Prompt aus `buildFinalPrompt()`, danach Build via Claude App + git push.
 
