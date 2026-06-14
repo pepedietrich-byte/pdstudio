@@ -1,4 +1,4 @@
-// ─── A1 Lead Qualifier ──────────────────────────────────────────────────────
+// ─── A1 SIGN ──────────────────────────────────────────────────────
 // Reine Client-seitige Lead-Bewertung gemäß PDSTUDIO Sales-Kriterien.
 //
 // Bewertet ob ein Lead für PDSTUDIO Restaurant-Demo verkaufbar ist.

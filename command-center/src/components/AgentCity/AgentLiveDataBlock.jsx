@@ -36,7 +36,7 @@ function Row({ label, value, color = '#cbd5e1', mono = true }) {
   )
 }
 
-// ── A1 Lead Qualifier Block ──────────────────────────────────────────────
+// ── A1 SIGN Block ──────────────────────────────────────────────
 function A1Block({ lead }) {
   const q = useMemo(() => { try { return qualifyLead(lead) } catch { return null } }, [lead])
   if (!q || q.error) return <EmptyState icon={Target} message="A1: Lead-Daten unvollständig — qualifier kann nicht laufen" />
@@ -78,7 +78,7 @@ function A1Block({ lead }) {
   )
 }
 
-// ── A6 Fact Checker Block (in 6-Agent UI: A6 = Fact Checker) ─────────────
+// ── A6 SERKAN Block (in 6-Agent UI: A6 = SERKAN) ─────────────
 function A6Block({ lead }) {
   const fc = useMemo(() => { try { return runFactCheck(lead) } catch { return null } }, [lead])
   if (!fc) return <EmptyState icon={ShieldCheck} message="A6: kein Fact Check möglich (lead missing)" />
@@ -180,7 +180,7 @@ function A3Block({ lead, assets }) {
   )
 }
 
-// ── A4 Human Writer Block ────────────────────────────────────────────────
+// ── A4 GOETHE Block ────────────────────────────────────────────────
 function A4Block({ lead, savedDrafts }) {
   const fc = useMemo(() => { try { return runFactCheck(lead) } catch { return null } }, [lead])
   if (!fc) return <EmptyState icon={PenLine} message="A4: FactCheck nötig vor Mail-Generation" />

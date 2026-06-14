@@ -23,12 +23,12 @@ function hexPos(idx) {
 }
 
 export const AGENT_POSITIONS = {
-  1: hexPos(0),   // 12:00 — Lead Qualifier (Pipeline-Eingang oben)
-  2: hexPos(1),   //  2:00 — Claude Code Builder
-  3: hexPos(2),   //  4:00 — Polish Agent
-  4: hexPos(3),   //  6:00 — Human Writer (gegenüber Qualifier)
-  5: hexPos(4),   //  8:00 — Pricing Agent
-  6: hexPos(5),   // 10:00 — Fact Checker
+  1: hexPos(0),   // 12:00 — SIGN (Pipeline-Eingang oben)
+  2: hexPos(1),   //  2:00 — CODÊ
+  3: hexPos(2),   //  4:00 — ELON
+  4: hexPos(3),   //  6:00 — GOETHE (gegenüber Qualifier)
+  5: hexPos(4),   //  8:00 — OMID
+  6: hexPos(5),   // 10:00 — SERKAN
   8: { gx: 0, gy: 0 },  // TWIN PEPE — center
 }
 

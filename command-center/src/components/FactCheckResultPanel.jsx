@@ -81,7 +81,7 @@ export default function FactCheckResultPanel({ lead, skipNetwork = false }) {
           <div className="flex items-center gap-2">
             <ShieldCheck size={14} style={{ color: '#9ca3b5' }} />
             <span className="font-mono text-[10px] uppercase tracking-widest font-bold" style={{ color: '#9ca3b5' }}>
-              A6 · Fact Checker
+              A6 · SERKAN
             </span>
           </div>
           <button onClick={run}

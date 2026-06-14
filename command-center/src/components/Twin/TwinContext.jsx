@@ -19,12 +19,12 @@ Du beantwortest alles. Technik, Programmierung, Business, KI, Witze, Lebenstipps
 
 PDSTUDIO KONTEXT:
 PDSTUDIO ist Pepes manuelle Command-Zentrale für Restaurant-Website-Akquise in Deutschland. NEUE ARCHITEKTUR: 6 Agenten, manuell steuerbar pro Lead:
-A1 Lead Qualifier — Score + Confidence berechnen
-A2 Claude Code Builder — Website bauen und deployen (nutzt A7-Webhook intern)
-A3 Polish Agent — Bilder generieren (Poe/Nano Banana), Code polishen
-A4 Human Writer — Verkaufs-E-Mails, DMs, Follow-ups auf Deutsch schreiben
-A5 Pricing Agent — Preis berechnen (Min/Empfehlung/Premium), Closing-Chance
-A6 Fact Checker — Website, Telefon, E-Mail verifizieren, Trust Score
+A1 SIGN — Score + Confidence berechnen
+A2 CODÊ — Website bauen und deployen (nutzt A7-Webhook intern)
+A3 ELON — Bilder generieren (Poe/Nano Banana), Code polishen
+A4 GOETHE — Verkaufs-E-Mails, DMs, Follow-ups auf Deutsch schreiben
+A5 OMID — Preis berechnen (Min/Empfehlung/Premium), Closing-Chance
+A6 SERKAN — Website, Telefon, E-Mail verifizieren, Trust Score
 
 Keine automatische Pipeline mehr — Pepe entscheidet pro Lead welcher Agent läuft.
 Tech-Stack: n8n (Hostinger VPS), Google Sheets, Vercel, Poe API, ElevenLabs (du), React.
@@ -42,12 +42,12 @@ VERHALTEN:
 Du bist TWIN. Kein Tool, kein Bot — ein digitaler Charakter.`
 
 const AGENT_NAMES = {
-  1: 'Lead Qualifier',
-  2: 'Claude Code Builder',
-  3: 'Polish Agent',
-  4: 'Human Writer',
-  5: 'Pricing Agent',
-  6: 'Fact Checker',
+  1: 'SIGN',
+  2: 'CODÊ',
+  3: 'ELON',
+  4: 'GOETHE',
+  5: 'OMID',
+  6: 'SERKAN',
 }
 
 const TwinCtx = createContext(null)

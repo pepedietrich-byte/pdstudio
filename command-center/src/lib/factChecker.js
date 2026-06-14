@@ -1,4 +1,4 @@
-// ─── A6 Fact Checker ────────────────────────────────────────────────────────
+// ─── A6 SERKAN ────────────────────────────────────────────────────────
 // Verifiziert Lead-Daten für Versand-Freigabe.
 // Output-Schema gemäß PDSTUDIO Spec:
 //   { leadId, businessName, verifiedFacts, uncertainFacts, conflicts,

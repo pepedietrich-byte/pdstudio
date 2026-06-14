@@ -1,4 +1,4 @@
-// ─── A1 Lead Qualifier Panel ────────────────────────────────────────────────
+// ─── A1 SIGN Panel ────────────────────────────────────────────────
 // Zeigt das Resultat von qualifyLead() — Score, Bands, Weaknesses, Opportunities,
 // Next-Action und Top-Reasons. Pure client-side Komponente, ohne Webhook.
 

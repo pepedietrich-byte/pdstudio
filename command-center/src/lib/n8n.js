@@ -22,13 +22,13 @@ export const WORKFLOW_AGENT_MAP = {
 
 // New agent names (A1-A6 architecture). A7 webhook is reused by A2 internally.
 export const AGENT_NAMES = {
-  1: 'Lead Qualifier',
-  2: 'Claude Code Builder',
-  3: 'Polish Agent',
-  4: 'Human Writer',
-  5: 'Pricing Agent',
-  6: 'Fact Checker',
-  7: 'Claude Code Builder', // internal — A7 webhook, shown as A2 in UI
+  1: 'SIGN',
+  2: 'CODÊ',
+  3: 'ELON',
+  4: 'GOETHE',
+  5: 'OMID',
+  6: 'SERKAN',
+  7: 'CODÊ', // internal — A7 webhook, shown as A2 in UI
 }
 
 export function isWebhookConfigured(agentId) {
@@ -109,7 +109,7 @@ export function isBuildMetaWriteAvailable() {
   return !!BUILD_META_WEBHOOK
 }
 
-// ─── A3 Polish Agent ─────────────────────────────────────────────────────────
+// ─── A3 ELON ─────────────────────────────────────────────────────────
 const A3_POLISH_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT3_POLISH_WEBHOOK ||
   `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent3-polish`
@@ -153,7 +153,7 @@ export async function triggerPolish(lead, polishOptions = {}) {
   return started
 }
 
-// ─── A4 Human Writer ─────────────────────────────────────────────────────────
+// ─── A4 GOETHE ─────────────────────────────────────────────────────────
 const A4_WRITER_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT4_WRITE_WEBHOOK ||
   `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent4-write`
@@ -182,7 +182,7 @@ export async function triggerWriter(lead, writerOptions = {}) {
   return r.json()
 }
 
-// ─── A5 Pricing Agent ─────────────────────────────────────────────────────────
+// ─── A5 OMID ─────────────────────────────────────────────────────────
 const A5_PRICING_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT5_PRICE_WEBHOOK ||
   `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent5-price`
@@ -207,7 +207,7 @@ export async function triggerPricing(lead) {
   return r.json()
 }
 
-// ─── A6 Fact Checker ─────────────────────────────────────────────────────────
+// ─── A6 SERKAN ─────────────────────────────────────────────────────────
 const A6_FACT_WEBHOOK =
   import.meta.env.VITE_N8N_AGENT6_CHECK_WEBHOOK ||
   `${(BASE || 'https://n8n.srv1736252.hstgr.cloud').replace(/\/$/, '')}/webhook/agent6-check`

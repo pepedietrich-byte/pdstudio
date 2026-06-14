@@ -443,10 +443,10 @@ export default function LeadDetail({ lead, onBack }) {
   const bdSlice = bdExpand ? bdAll : bdAll.slice(0, 5)
   const bdMax   = bdAll.length ? Math.max(...bdAll.map(n => n.pts || 0), 1) : 1
 
-  // ── A1 Lead Qualifier ──────────────────────────────────────────────────────
+  // ── A1 SIGN ──────────────────────────────────────────────────────
   async function runA1() {
     if (!lead.lead_id) { setA1Msg('lead_id fehlt'); return }
-    setA1Status(JOB_STATUS.RUNNING); setA1Msg('A1 Lead Qualifier wird gestartet...')
+    setA1Status(JOB_STATUS.RUNNING); setA1Msg('A1 SIGN wird gestartet...')
     try {
       await triggerAgent(1, { lead_id: lead.lead_id, website: lead.website, source: 'manual' })
       setA1Status(JOB_STATUS.DONE)
@@ -457,7 +457,7 @@ export default function LeadDetail({ lead, onBack }) {
     }
   }
 
-  // ── A2 Claude Code Builder ─────────────────────────────────────────────────
+  // ── A2 CODÊ ─────────────────────────────────────────────────
   async function runA2Webhook() {
     if (!lead.lead_id) { setA2Msg('lead_id fehlt'); return }
     setA2Status(JOB_STATUS.RUNNING); setA2Msg('A2 Build wird gestartet...')
@@ -525,7 +525,7 @@ export default function LeadDetail({ lead, onBack }) {
     }
   }
 
-  // ── A4 Human Writer ────────────────────────────────────────────────────────
+  // ── A4 GOETHE ────────────────────────────────────────────────────────
   async function runA4() {
     setA4Status(JOB_STATUS.RUNNING); setA4Msg('Texte werden generiert...')
     const toneMap = {
@@ -584,7 +584,7 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
     }
   }
 
-  // ── A5 Pricing Agent ───────────────────────────────────────────────────────
+  // ── A5 OMID ───────────────────────────────────────────────────────
   function runA5() {
     setA5Status(JOB_STATUS.RUNNING)
     const rating  = +lead.google_rating || 0
@@ -644,7 +644,7 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
     setA5Status(JOB_STATUS.DONE)
   }
 
-  // ── A3 Polish Agent ────────────────────────────────────────────────────────
+  // ── A3 ELON ────────────────────────────────────────────────────────
   async function runA3() {
     const demoUrl  = a3DemoUrl || build?.demo_url || ''
     const siteName = lead.name || ''
@@ -705,7 +705,7 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
     }
   }
 
-  // ── A6 Fact Checker ───────────────────────────────────────────────────────
+  // ── A6 SERKAN ───────────────────────────────────────────────────────
   function runA6() {
     setA6Status(JOB_STATUS.RUNNING)
     setA6Msg('Daten werden geprüft...')

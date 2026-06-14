@@ -4,7 +4,7 @@
 export const AGENTS = {
   1: {
     id: 1,
-    name: 'Lead Qualifier',
+    name: 'SIGN',
     role: 'Technischer Audit & Score-Berechnung',
     color: '#00d4ff',
     glyph: 'A1',
@@ -18,7 +18,7 @@ export const AGENTS = {
   },
   2: {
     id: 2,
-    name: 'Claude Code Builder',
+    name: 'CODÊ',
     role: 'Website-Build & Deployment',
     color: '#9b6ef3',
     glyph: 'A2',
@@ -34,7 +34,7 @@ export const AGENTS = {
   },
   3: {
     id: 3,
-    name: 'Polish Agent',
+    name: 'ELON',
     role: 'Bild-Generierung & Code-Verbesserung',
     color: '#e8197f',
     glyph: 'A3',
@@ -50,7 +50,7 @@ export const AGENTS = {
   },
   4: {
     id: 4,
-    name: 'Human Writer',
+    name: 'GOETHE',
     role: 'Verkaufstexte & Outreach',
     color: '#f5a623',
     glyph: 'A4',
@@ -67,7 +67,7 @@ export const AGENTS = {
   },
   5: {
     id: 5,
-    name: 'Pricing Agent',
+    name: 'OMID',
     role: 'Preisberechnung & Closing-Chance',
     color: '#2ddb72',
     glyph: 'A5',
@@ -82,7 +82,7 @@ export const AGENTS = {
   },
   6: {
     id: 6,
-    name: 'Fact Checker',
+    name: 'SERKAN',
     role: 'Fakten-Prüfung & Versandfreigabe',
     color: '#ff6b35',
     glyph: 'A6',
@@ -110,8 +110,8 @@ export const TWIN_PEPE = {
 // Legacy n8n agent IDs → new agent IDs mapping (for UI labeling)
 // The old webhook endpoints are reused but shown under new names
 export const LEGACY_TO_NEW = {
-  1: 1,  // Luthor → Lead Qualifier
-  7: 2,  // Zuckerberg → Claude Code Builder
+  1: 1,  // Luthor → SIGN
+  7: 2,  // Zuckerberg → CODÊ
   // 2-6 are deprecated as standalone pipeline agents
 }
 

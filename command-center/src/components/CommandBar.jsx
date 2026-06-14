@@ -43,7 +43,7 @@ export default function CommandBar({ onLaunched, leads = [] }) {
       if (googleMode) {
         await triggerPipelineWithGoogleUrl(normalizeUrl(urlInput))
         setStatus('done')
-        setMsg('A1 Lead Qualifier gestartet — Google Maps URL wird ausgewertet')
+        setMsg('A1 SIGN gestartet — Google Maps URL wird ausgewertet')
       } else if (urlMode) {
         await triggerAgent(2, { website: normalizeUrl(urlInput), source: 'manual_url' })
         setStatus('done')
@@ -60,7 +60,7 @@ export default function CommandBar({ onLaunched, leads = [] }) {
 
   const modeColor = googleMode ? '#2ddb72' : urlMode ? '#00d4ff' : 'rgba(255,255,255,0.3)'
   const modeLabel = googleMode
-    ? 'Google Maps — A1 Lead Qualifier + Score'
+    ? 'Google Maps — A1 SIGN + Score'
     : urlMode
       ? 'Restaurant-URL — direkter Import'
       : 'URL eingeben um Lead hinzuzufügen'

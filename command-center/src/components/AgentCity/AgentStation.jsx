@@ -6,12 +6,12 @@ import { getLeadStage } from '../../lib/sheets'
 import AgentAvatar from './AgentAvatar'
 
 const COLORS = {
-  1: '#00d4ff',   // Lead Qualifier
-  2: '#9b6ef3',   // Claude Code Builder
-  3: '#e8197f',   // Polish Agent
-  4: '#f5a623',   // Human Writer
-  5: '#2ddb72',   // Pricing Agent
-  6: '#ff6b35',   // Fact Checker
+  1: '#00d4ff',   // SIGN
+  2: '#9b6ef3',   // CODÊ
+  3: '#e8197f',   // ELON
+  4: '#f5a623',   // GOETHE
+  5: '#2ddb72',   // OMID
+  6: '#ff6b35',   // SERKAN
 }
 
 export default function AgentStation({ agentId, leads = [], executions = [], onClick, focused, dimmed }) {

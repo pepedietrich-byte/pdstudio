@@ -14,12 +14,12 @@ import { getLeadStage } from '../../lib/sheets'
 
 // New architecture: 6 agents visible + TWIN PEPE
 const AGENT_NAMES = {
-  1: 'Lead Qualifier',
-  2: 'Claude Code Builder',
-  3: 'Polish Agent',
-  4: 'Human Writer',
-  5: 'Pricing Agent',
-  6: 'Fact Checker',
+  1: 'SIGN',
+  2: 'CODÊ',
+  3: 'ELON',
+  4: 'GOETHE',
+  5: 'OMID',
+  6: 'SERKAN',
   8: 'TWIN PEPE',
 }
 

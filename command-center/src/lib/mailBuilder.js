@@ -1,4 +1,4 @@
-// ─── A4 Human Writer — Mail Builder ─────────────────────────────────────────
+// ─── A4 GOETHE — Mail Builder ─────────────────────────────────────────
 // Generiert 3 Verkaufs-Mail-Varianten aus validierten Lead-Daten.
 // Nutzt Poe API via /api/pepe-ask (verfügbarer Proxy).
 //

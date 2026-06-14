@@ -5,10 +5,10 @@ import { triggerPolish, triggerWriter, triggerPricing, triggerFactCheck, updateB
 import { markSiteFresh } from '../lib/sites'
 
 const AGENT_META = {
-  3: { id: 3, name: 'Polish Agent',  short: 'A3', color: '#e8197f', icon: Sparkles,    desc: 'Bilder, Typo, Code polishen — Site wird neu deployed' },
-  4: { id: 4, name: 'Human Writer',  short: 'A4', color: '#f5a623', icon: PenTool,     desc: 'Verkaufstexte in Pepes Stimme — E-Mail, SMS, WhatsApp' },
-  5: { id: 5, name: 'Pricing Agent', short: 'A5', color: '#2ddb72', icon: Calculator,  desc: 'Preis, Closing-Chance, Pitch-Focus berechnen' },
-  6: { id: 6, name: 'Fact Checker',  short: 'A6', color: '#ff6b35', icon: ShieldCheck, desc: 'Website/Telefon/E-Mail verifizieren, Trust Score' },
+  3: { id: 3, name: 'ELON',  short: 'A3', color: '#e8197f', icon: Sparkles,    desc: 'Bilder, Typo, Code polishen — Site wird neu deployed' },
+  4: { id: 4, name: 'GOETHE',  short: 'A4', color: '#f5a623', icon: PenTool,     desc: 'Verkaufstexte in Pepes Stimme — E-Mail, SMS, WhatsApp' },
+  5: { id: 5, name: 'OMID', short: 'A5', color: '#2ddb72', icon: Calculator,  desc: 'Preis, Closing-Chance, Pitch-Focus berechnen' },
+  6: { id: 6, name: 'SERKAN',  short: 'A6', color: '#ff6b35', icon: ShieldCheck, desc: 'Website/Telefon/E-Mail verifizieren, Trust Score' },
 }
 
 function AgentBlock({ agent, children, isExpanded, onToggle }) {

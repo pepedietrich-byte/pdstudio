@@ -1,4 +1,4 @@
-// ─── A4 Human Writer Panel ──────────────────────────────────────────────────
+// ─── A4 GOETHE Panel ──────────────────────────────────────────────────
 // Generiert 3 Mail-Varianten parallel via Poe.
 // Zeigt Vorschau, Risk-Flags, Confidence, sendReady.
 // User kann jede Variante einzeln kopieren.
@@ -189,7 +189,7 @@ export default function MailBuilderPanel({ lead }) {
         <div className="flex items-center gap-2">
           <PenLine size={14} style={{ color: '#f5a623' }} />
           <span className="font-mono text-[10px] uppercase tracking-widest font-bold" style={{ color: '#f5a623' }}>
-            A4 · Human Writer · 3 Mail-Varianten
+            A4 · GOETHE · 3 Mail-Varianten
           </span>
         </div>
         <button onClick={generate}
