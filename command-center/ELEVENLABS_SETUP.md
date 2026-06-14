@@ -3,6 +3,16 @@
 > Diese Anleitung verbindet deinen ElevenLabs Voice-Agent mit der PDSTUDIO Tool-Registry.
 > Nach Setup kannst du per Sprache reale Pipeline-Aktionen ausführen (qualify, factCheck, mailGenerate, premiumPrompt, etc.).
 
+## ⚡ Live-Status (Stand 2026-06-14)
+
+- ✅ **Tool angelegt**: `tool_2301kv2ybg26e2mredmq6e10r0p7` (`pdstudio_action` webhook)
+- ✅ **Agent verlinkt**: `agent_7101ktxvqktvfm2ta3rdgrpds3bv` ("TWIN PEPE")
+- ✅ **System-Prompt aktualisiert**: 6-Agent-Architektur + Tool-Anweisung + 17 Intents
+- ✅ **Vercel-Production deployed**: `/api/twin-tool` antwortet HTTP 200
+- ✅ **Direct-Runner-Bridge live**: `/api/runner-trigger` reicht echte Calls an `srv1736252.hstgr.cloud:8787/run-a2` durch
+- ✅ **Vercel-Env**: `RUNNER_BASE_URL`, `RUNNER_SECRET`, `ELEVENLABS_API_KEY` gesetzt
+- ☐ **Manuelles TODO**: Smoke-Test im ElevenLabs Voice-Playground (sage "Pepe, prüfe diesen Lead" → erwarte Tool-Call)
+
 ## Voraussetzungen
 
 - ElevenLabs Account mit Conversational AI / Voice Agents Zugang
