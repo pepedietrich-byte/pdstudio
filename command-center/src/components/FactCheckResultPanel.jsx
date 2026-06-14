@@ -141,13 +141,22 @@ export default function FactCheckResultPanel({ lead, skipNetwork = false }) {
         </div>
         <div className="flex items-center gap-2">
           {result.networkChecked && (
-            <span className="font-mono text-[8px] uppercase tracking-widest" style={{ color: '#39ff88' }}>
-              ✓ network
+            <span className="font-mono text-[8px] uppercase tracking-widest px-1.5 py-0.5 rounded"
+              style={{ background: 'rgba(57,255,136,0.1)', color: '#39ff88', border: '1px solid rgba(57,255,136,0.3)' }}>
+              ✓ network · MX + HEAD
+            </span>
+          )}
+          {!result.networkChecked && !result.networkCheckFailed && (
+            <span className="font-mono text-[8px] uppercase tracking-widest px-1.5 py-0.5 rounded"
+              title="Server-Validation läuft nur in Production (api/fact-check)"
+              style={{ background: 'rgba(245,166,35,0.08)', color: '#f5a623', border: '1px solid rgba(245,166,35,0.25)' }}>
+              local-only (no network)
             </span>
           )}
           {result.networkCheckFailed && (
-            <span className="font-mono text-[8px] uppercase tracking-widest" style={{ color: '#f5a623' }}>
-              network: {String(result.networkCheckFailed).slice(0, 20)}
+            <span className="font-mono text-[8px] uppercase tracking-widest px-1.5 py-0.5 rounded"
+              style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.25)' }}>
+              network failed: {String(result.networkCheckFailed).slice(0, 20)}
             </span>
           )}
           <button onClick={run}

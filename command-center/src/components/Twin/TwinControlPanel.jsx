@@ -49,8 +49,9 @@ function PermissionChip({ permission }) {
 }
 
 function LogEntry({ entry, onView }) {
-  const Icon = entry.error ? XCircle : entry.requiresConfirmation ? ShieldAlert : entry.ok ? CheckCircle2 : AlertTriangle
-  const color = entry.error ? '#ef4444' : entry.requiresConfirmation ? '#f5a623' : entry.ok ? '#39ff88' : '#9ca3b5'
+  const isDisabled = entry.error && /not.?(configured|implemented|connected)|backend.*nicht/i.test(entry.error)
+  const Icon = isDisabled ? ShieldAlert : entry.error ? XCircle : entry.requiresConfirmation ? ShieldAlert : entry.ok ? CheckCircle2 : AlertTriangle
+  const color = isDisabled ? '#9ca3b5' : entry.error ? '#ef4444' : entry.requiresConfirmation ? '#f5a623' : entry.ok ? '#39ff88' : '#9ca3b5'
 
   return (
     <motion.div

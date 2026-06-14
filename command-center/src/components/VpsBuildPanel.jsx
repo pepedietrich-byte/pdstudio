@@ -17,6 +17,7 @@ import { getAnimationBlock } from '../lib/animationLibrary'
 import { ensureHeroAvailable } from '../lib/poeImageGen'
 import { buildFinalPrompt } from '../lib/promptBuilder'
 import { buildPremiumPrompt } from '../lib/promptAnalyzer'
+import { evaluateBuild, evaluateBuildFromUrl } from '../lib/buildAcceptanceGate'
 import AssetQualityPanel from './AssetQualityPanel'
 import FactCheckPanel from './FactCheckPanel'
 
@@ -68,6 +69,8 @@ export default function VpsBuildPanel({ lead }) {
   const [showPromptModal, setShowPromptModal] = useState(false)
   const [copyStatus, setCopyStatus] = useState(null) // 'copied' | 'failed' | null
   const [premiumGenerating, setPremiumGenerating] = useState(false)
+  const [acceptanceVerdict, setAcceptanceVerdict] = useState(null)
+  const [acceptanceLoading, setAcceptanceLoading] = useState(false)
 
   // ── Recommended style aus erkannter Kategorie ──────────────────────────
   const detected = useMemo(() => detectCategory(lead || {}), [lead])
@@ -372,6 +375,15 @@ export default function VpsBuildPanel({ lead }) {
           })
           const audit = await auditRes.json()
           setSalesReadiness(audit)
+
+          // ── Build Acceptance Gate auf URL ─────────────────────────────
+          // Verifies post-deploy site against PDSTUDIO Pflicht-Kriterien.
+          setAcceptanceLoading(true)
+          const accept = await evaluateBuildFromUrl(r.demo_url, {
+            lead, gate_report: gateReport, approved_assets: assets,
+          })
+          setAcceptanceVerdict(accept)
+          setAcceptanceLoading(false)
         } catch {}
       } else {
         setBuildError(r.error || 'Deploy fehlgeschlagen')
@@ -382,6 +394,23 @@ export default function VpsBuildPanel({ lead }) {
       setPipelineStatus('blocked')
     }
   }, [gateReport, adminOverride, lead, assets, styleId, quality, reservationMode])
+
+  // ── Manueller Code-Check: nimmt App.jsx+index.html via Paste oder fetch ──
+  const handleEvaluateCode = useCallback(async ({ appCode, indexHtml }) => {
+    const result = evaluateBuild({
+      appCode: appCode || '',
+      indexHtml: indexHtml || '',
+      context: {
+        lead,
+        gate_report: gateReport,
+        approved_assets: assets.filter(a => ['hero_ready', 'usable'].includes(a.verdict)),
+        concept,
+        builtWithPromptBuilder: finalPrompt?.promptBuilderVersion || null,
+      },
+    })
+    setAcceptanceVerdict({ ...result, source: 'local_code' })
+    return result
+  }, [lead, gateReport, assets, concept, finalPrompt])
 
   // ── Render ─────────────────────────────────────────────────────────────
   const statusMeta = STATUS_META[pipelineStatus]
@@ -710,6 +739,72 @@ export default function VpsBuildPanel({ lead }) {
             {salesReadiness.score < 85 && (
               <div className="text-[10px] pt-1.5 border-t" style={{ color: '#f5a623', borderColor: 'rgba(245,166,35,0.2)' }}>
                 ⚠ Unter 85 — NICHT als final/polished markieren. Repair empfohlen.
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Build Acceptance Gate Verdict */}
+      <AnimatePresence>
+        {(acceptanceLoading || acceptanceVerdict) && (
+          <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+            className="rounded p-3 space-y-2"
+            style={{
+              background: acceptanceLoading ? 'rgba(155,110,243,0.04)' :
+                acceptanceVerdict?.verdict === 'polished' ? 'rgba(57,255,136,0.05)' :
+                acceptanceVerdict?.verdict === 'needs_polish' ? 'rgba(245,166,35,0.05)' :
+                'rgba(239,68,68,0.05)',
+              border: '1px solid ' + (
+                acceptanceVerdict?.verdict === 'polished' ? 'rgba(57,255,136,0.3)' :
+                acceptanceVerdict?.verdict === 'needs_polish' ? 'rgba(245,166,35,0.3)' :
+                acceptanceLoading ? 'rgba(155,110,243,0.3)' :
+                'rgba(239,68,68,0.3)'
+              ),
+            }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Shield size={14} style={{
+                  color: acceptanceLoading ? '#9b6ef3' :
+                    acceptanceVerdict?.verdict === 'polished' ? '#39ff88' :
+                    acceptanceVerdict?.verdict === 'needs_polish' ? '#f5a623' : '#ef4444',
+                }} />
+                <span className="text-sm font-semibold" style={{ color: '#e8edf4' }}>
+                  Build Acceptance Gate
+                </span>
+              </div>
+              {acceptanceLoading ? (
+                <Loader2 size={12} className="animate-spin" style={{ color: '#9b6ef3' }} />
+              ) : (
+                <span className="text-[10px] uppercase tracking-widest font-mono font-bold" style={{
+                  color: acceptanceVerdict?.verdict === 'polished' ? '#39ff88' :
+                    acceptanceVerdict?.verdict === 'needs_polish' ? '#f5a623' : '#ef4444',
+                }}>
+                  {acceptanceVerdict?.verdict?.replace(/_/g, ' ')}
+                  {acceptanceVerdict?.score !== undefined ? ` · ${acceptanceVerdict.score}/100` : ''}
+                </span>
+              )}
+            </div>
+            {acceptanceVerdict?.problems?.length > 0 && (
+              <div className="space-y-0.5">
+                {acceptanceVerdict.problems.slice(0, 4).map((p, i) => (
+                  <div key={i} className="text-[10px] flex items-start gap-1.5" style={{ color: '#cbd5e1' }}>
+                    <span>·</span><span>{p.message || p}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {acceptanceVerdict?.error && (
+              <div className="text-[10px]" style={{ color: '#ef4444' }}>
+                Audit-Fehler: {acceptanceVerdict.error}
+              </div>
+            )}
+            {acceptanceVerdict?.verdict !== 'polished' && acceptanceVerdict?.verdict && (
+              <div className="text-[10px] pt-1.5 border-t font-semibold" style={{
+                color: acceptanceVerdict?.verdict === 'needs_polish' ? '#f5a623' : '#ef4444',
+                borderColor: 'rgba(255,255,255,0.04)',
+              }}>
+                Build darf NICHT als "polished" markiert werden bis Verdict = polished.
               </div>
             )}
           </motion.div>

@@ -5,6 +5,7 @@ import {
   buildMemoryContext, extractSuggestedMemories,
   incrementSessionCount, clearAllMemory, CATEGORY_LABELS,
 } from '../../services/twin/twinMemory'
+import { routeVoiceCommand, detectIntent } from '../../lib/voiceIntent'
 
 const AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID || 'agent_7101ktxvqktvfm2ta3rdgrpds3bv'
 
@@ -58,6 +59,9 @@ function TwinInner({ children }) {
   const [memories, setMemories]               = useState(() => loadMemory().memories || [])
   const [suggestedMemories, setSuggestions]   = useState([])
   const [activeTab, setActiveTab]             = useState('transcript') // 'transcript' | 'memory'
+  const [voiceContext, setVoiceContext]       = useState(null) // { lead, assets, gateReport, concept }
+  const [voiceLog, setVoiceLog]               = useState([])    // history of intent → result
+  const [pendingVoiceConfirmation, setPendingVoiceConfirmation] = useState(null)
   const injectedRef = useRef(false)
 
   const {
@@ -141,6 +145,48 @@ function TwinInner({ children }) {
 
   // ── Agent context ────────────────────────────────────────────
 
+  // ── Voice-Command-Routing ───────────────────────────────────────────
+  // Wird vom UI oder von ElevenLabs Transcript-Hook aufgerufen.
+  // Erkennt Intent, prüft Permission, führt Tool aus, gibt spoken-Summary
+  // zurück (für TTS via sendContextualUpdate oder als Text-Antwort).
+  async function executeVoiceCommand(text, opts = {}) {
+    const intent = detectIntent(text)
+    if (!intent) {
+      const spoken = 'Den Befehl habe ich nicht verstanden. Sag z.B. „prüfe diesen Lead" oder „nächste Aktion".'
+      setVoiceLog(prev => [{ text, intent: null, spoken, ts: Date.now() }, ...prev].slice(0, 20))
+      if (status === 'connected') {
+        try { sendContextualUpdate(spoken) } catch { /* non-critical */ }
+      }
+      return { ok: false, spoken }
+    }
+    const ctx = { ...voiceContext, ...(opts.context || {}), confirmed: !!opts.confirmed }
+    const result = await routeVoiceCommand(text, ctx)
+    setVoiceLog(prev => [{
+      text, intent, tool: result.tool, ok: result.ok, error: result.error,
+      spoken: result.spoken, ts: Date.now(), requiresConfirmation: result.requiresConfirmation,
+    }, ...prev].slice(0, 20))
+    if (result.requiresConfirmation) {
+      setPendingVoiceConfirmation({ text, intent, tool: result.tool, spoken: result.spoken })
+    } else {
+      setPendingVoiceConfirmation(null)
+    }
+    if (status === 'connected' && result.spoken) {
+      try { sendContextualUpdate(result.spoken) } catch { /* non-critical */ }
+    }
+    return result
+  }
+
+  async function confirmPendingVoice() {
+    if (!pendingVoiceConfirmation) return null
+    const { text } = pendingVoiceConfirmation
+    setPendingVoiceConfirmation(null)
+    return executeVoiceCommand(text, { confirmed: true })
+  }
+
+  function cancelPendingVoice() {
+    setPendingVoiceConfirmation(null)
+  }
+
   function sendAgentContext(agentId, executionStatus, leadCount) {
     if (status !== 'connected') return
     const name = agentId === 8 ? 'TWIN PEPE · Command Core'
@@ -211,6 +257,14 @@ function TwinInner({ children }) {
       refreshMemories,
       clearMessages: () => setMessages([]),
       CATEGORY_LABELS,
+      // Voice command bridge
+      voiceLog,
+      voiceContext,
+      setVoiceContext,
+      executeVoiceCommand,
+      pendingVoiceConfirmation,
+      confirmPendingVoice,
+      cancelPendingVoice,
     }}>
       {children}
     </TwinCtx.Provider>

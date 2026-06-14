@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
-import { X, Activity, AlertTriangle, CheckCircle, Clock, Cpu, ArrowRight, Target, ExternalLink } from 'lucide-react'
+import { X, Activity, AlertTriangle, CheckCircle, Clock, Cpu, ArrowRight, Target, ExternalLink, Database } from 'lucide-react'
 import { AGENT_NAMES } from '../../lib/n8n'
 import { AGENTS } from '../../lib/agents'
 import { useAgentDiagnostics } from '../../hooks/useAgentDiagnostics'
 import { getAllLeadResults } from '../../hooks/useLeadResults'
+import AgentLiveDataBlock from './AgentLiveDataBlock'
 
 const COLORS = {
   1: '#00d4ff',  // Lead Qualifier
@@ -195,6 +196,28 @@ export default function AgentDetailPanel({ agentId, leads = [], executions = [],
               Leads öffnen <ArrowRight size={8} />
             </button>
           )}
+        </div>
+      )}
+
+      {/* ── LIVE DATA — echte Outputs aus den Lib-Funktionen ── */}
+      {(activeLead || agentId === 8) && (
+        <div style={{
+          background: `${color}06`, border: `1px solid ${color}22`,
+          borderRadius: 6, padding: 10, marginBottom: 12,
+        }}>
+          <div className="flex items-center gap-1.5 mb-2">
+            <Database size={9} style={{ color }} />
+            <span className="font-mono text-[8px] uppercase tracking-widest font-bold" style={{ color }}>
+              Live Data · A{agentId}
+            </span>
+          </div>
+          <AgentLiveDataBlock
+            agentId={agentId}
+            lead={activeLead}
+            assets={activeResults?.assets || activeResults?.a3Assets || []}
+            a5Result={activeResults?.a5Result}
+            savedDrafts={activeResults?.a4Drafts}
+          />
         </div>
       )}
 
