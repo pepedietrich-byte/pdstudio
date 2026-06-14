@@ -20,6 +20,7 @@ import AgentCityScene from './components/AgentCity/AgentCityScene'
 import MobileAgentCity from './components/AgentCity/MobileAgentCity'
 import ActiveLeadBanner from './components/ActiveLeadBanner'
 import { TwinProvider, TwinVoiceOrb, TwinConversationPanel, TwinStatusIndicator, useTwin } from './components/Twin'
+import TwinLiveToast from './components/TwinLiveToast'
 import { getAllLeadResults } from './hooks/useLeadResults'
 
 const TABS = [
@@ -485,6 +486,7 @@ export default function Root() {
       </PasswordGate>
       <TwinVoiceOrb />
       <TwinConversationPanel />
+      <TwinLiveToast />
       <DeepLinkBootstrap />
     </TwinProvider>
   )

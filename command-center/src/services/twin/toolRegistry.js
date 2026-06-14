@@ -16,6 +16,7 @@ import { analyzeAssets } from '../../lib/assetAnalysis'
 import { runPreBuildGate } from '../../lib/preBuildGate'
 import { generateConcept } from '../../lib/conceptArchitect'
 import { triggerWebsiteBuild, triggerAgent } from '../../lib/n8n'
+import { emit as busEmit, getAffectedEntities } from '../../lib/activityBus'
 
 export const PERMISSION_LEVELS = {
   safe_action: { label: 'Safe', color: '#39ff88', confirmRequired: false },
@@ -313,10 +314,35 @@ export async function executeTool(toolName, params = {}, { confirmed = false, on
   const t0 = Date.now()
   try {
     const result = await tool.handler(params)
-    onLog?.({ type: 'end', tool: tool.name, durationMs: Date.now() - t0, ok: result.ok })
-    return { ...result, tool: tool.name, durationMs: Date.now() - t0 }
+    const durationMs = Date.now() - t0
+    onLog?.({ type: 'end', tool: tool.name, durationMs, ok: result.ok })
+
+    // ── ActivityBus emit — triggert Live-UI-Updates ─────────────────────
+    busEmit({
+      type: 'tool_result',
+      tool: tool.name,
+      permission: tool.permission,
+      ok: result.ok,
+      error: result.error,
+      result: result.result,
+      spoken: null, // wird von Voice-Layer gesetzt
+      durationMs,
+      affectedEntities: getAffectedEntities(tool.name),
+      leadId: params?.lead?.lead_id || params?.lead_id || null,
+    })
+
+    return { ...result, tool: tool.name, durationMs }
   } catch (e) {
-    onLog?.({ type: 'error', tool: tool.name, durationMs: Date.now() - t0, error: e.message })
+    const durationMs = Date.now() - t0
+    onLog?.({ type: 'error', tool: tool.name, durationMs, error: e.message })
+    busEmit({
+      type: 'tool_error',
+      tool: tool.name,
+      error: e.message,
+      durationMs,
+      affectedEntities: [],
+      leadId: params?.lead?.lead_id || null,
+    })
     return { ok: false, error: e.message, tool: tool.name }
   }
 }
