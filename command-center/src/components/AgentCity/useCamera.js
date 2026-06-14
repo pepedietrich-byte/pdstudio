@@ -32,32 +32,51 @@ export const AGENT_POSITIONS = {
   8: { gx: 0, gy: 0 },  // TWIN PEPE — center
 }
 
-const SPRING = { type: 'spring', stiffness: 90, damping: 22, mass: 0.9 }
+// Cinematic dual-phase animation:
+// Phase A: Pan smoothly toward target while zoom builds slowly
+// Phase B: Zoom deepens with subtle overshoot for "diving in" feel
+const PAN_SPRING  = { type: 'spring', stiffness: 60,  damping: 26, mass: 1.1 }
+const ZOOM_SPRING = { type: 'spring', stiffness: 70,  damping: 24, mass: 1.0 }
+const RESET_SPRING = { type: 'spring', stiffness: 80, damping: 28, mass: 1.0 }
+
+// Default cinematic zoom: pushed from 2.0 to 2.6 → fühlbar "näher dran"
+const DEFAULT_ZOOM = 2.6
 
 export function useCamera() {
   const x    = useMotionValue(0)
   const y    = useMotionValue(0)
   const zoom = useMotionValue(1)
+  // Parallax-Tiefe: Foreground stations bewegen sich leicht über die Scene-Cam
+  // hinaus, Background-Layer (depthGlow, hex-grid) leicht hinter ihr.
+  const parallaxFg = useMotionValue(0)
+  const parallaxBg = useMotionValue(0)
   const lastFocus = useRef(null)
 
-  const focusAgent = useCallback((agentId, targetZoom = 2) => {
+  const focusAgent = useCallback((agentId, targetZoom = DEFAULT_ZOOM) => {
     const pos = AGENT_POSITIONS[agentId]
     if (!pos) return
     const { x: sx, y: sy } = gridToScreen(pos.gx, pos.gy)
     // Move so that (sx,sy) lands at viewport center, then scale.
-    // In SVG: translate THEN scale → final tx = -(sx-CX)*z, ty = -(sy-CY)*z
-    animate(x,    -(sx - CX) * targetZoom, SPRING)
-    animate(y,    -(sy - CY) * targetZoom, SPRING)
-    animate(zoom, targetZoom, SPRING)
+    const dx = -(sx - CX) * targetZoom
+    const dy = -(sy - CY) * targetZoom
+
+    // Phase A: Pan startet sofort, zoom mit kurzer Verzögerung (cinematic dive-in)
+    animate(x,    dx, PAN_SPRING)
+    animate(y,    dy, PAN_SPRING)
+    animate(parallaxFg, dx * 0.06, PAN_SPRING)  // Foreground hint forward
+    animate(parallaxBg, dx * -0.04, PAN_SPRING) // Background hint backward
+    animate(zoom, targetZoom, { ...ZOOM_SPRING, delay: 0.08 })
     lastFocus.current = agentId
-  }, [x, y, zoom])
+  }, [x, y, zoom, parallaxFg, parallaxBg])
 
   const reset = useCallback(() => {
-    animate(x,    0, SPRING)
-    animate(y,    0, SPRING)
-    animate(zoom, 1, SPRING)
+    animate(x,    0, RESET_SPRING)
+    animate(y,    0, RESET_SPRING)
+    animate(parallaxFg, 0, RESET_SPRING)
+    animate(parallaxBg, 0, RESET_SPRING)
+    animate(zoom, 1, RESET_SPRING)
     lastFocus.current = null
-  }, [x, y, zoom])
+  }, [x, y, zoom, parallaxFg, parallaxBg])
 
-  return { x, y, zoom, focusAgent, reset, lastFocus }
+  return { x, y, zoom, parallaxFg, parallaxBg, focusAgent, reset, lastFocus }
 }

@@ -168,12 +168,16 @@ export default function AgentCityScene({ leads = [], executions = [], activeLead
           </pattern>
         </defs>
 
-        {/* Camera group — translate + scale via motion values */}
-        <motion.g style={{ x: camera.x, y: camera.y, scale: camera.zoom, originX: 600, originY: 350 }}>
+        {/* Background-Parallax-Group (Atmosphäre, hinter Hauptcam) */}
+        <motion.g style={{ x: camera.parallaxBg, scale: camera.zoom, originX: 600, originY: 350, opacity: 1 }}>
           {/* Layer 0: depth glow (atmosphere) */}
           <rect x="0" y="0" width="1200" height="700" fill="url(#depthGlow)" opacity="0.7" />
           {/* Layer 1: hex grid for depth perception */}
           <rect x="0" y="0" width="1200" height="700" fill="url(#hexgrid)" opacity="0.6" />
+        </motion.g>
+
+        {/* Main Camera-Group — translate + scale */}
+        <motion.g style={{ x: camera.x, y: camera.y, scale: camera.zoom, originX: 600, originY: 350 }}>
           {/* Layer 2: floor glow under Pepe */}
           <ellipse cx="600" cy="370" rx="540" ry="240" fill="url(#floorGlow)" opacity="0.55" />
           {/* Layer 3: outer hex ring connecting agents */}

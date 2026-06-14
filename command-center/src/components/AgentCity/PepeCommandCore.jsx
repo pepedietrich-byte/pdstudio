@@ -47,9 +47,9 @@ export default function PepeCommandCore({ pepe, onClick, focused, dimmed }) {
     <motion.g
       style={{ cursor: 'pointer' }}
       onClick={onClick}
-      animate={{ opacity: dimmed ? 0.35 : 1 }}
-      transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-      whileHover={dimmed ? {} : { scale: 1.05 }}
+      animate={{ opacity: dimmed ? 0.7 : 1 }}
+      transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+      whileHover={{ scale: dimmed ? 1.03 : 1.05 }}
     >
       {/* Large invisible hit area */}
       <ellipse cx={x} cy={y} rx={TILE_W * 1.1} ry={TILE_H * 1.1} fill="transparent" />
