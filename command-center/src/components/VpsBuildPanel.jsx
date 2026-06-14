@@ -16,6 +16,7 @@ import { generateConcept, describeConceptForPrompt } from '../lib/conceptArchite
 import { getAnimationBlock } from '../lib/animationLibrary'
 import { ensureHeroAvailable } from '../lib/poeImageGen'
 import { buildFinalPrompt } from '../lib/promptBuilder'
+import { buildPremiumPrompt } from '../lib/promptAnalyzer'
 import AssetQualityPanel from './AssetQualityPanel'
 import FactCheckPanel from './FactCheckPanel'
 
@@ -66,6 +67,7 @@ export default function VpsBuildPanel({ lead }) {
   const [promptError, setPromptError] = useState('')
   const [showPromptModal, setShowPromptModal] = useState(false)
   const [copyStatus, setCopyStatus] = useState(null) // 'copied' | 'failed' | null
+  const [premiumGenerating, setPremiumGenerating] = useState(false)
 
   // ── Recommended style aus erkannter Kategorie ──────────────────────────
   const detected = useMemo(() => detectCategory(lead || {}), [lead])
@@ -253,15 +255,57 @@ export default function VpsBuildPanel({ lead }) {
   }, [generatePrompt])
 
   const handleCopyFromModal = useCallback(async () => {
-    if (!finalPrompt?.prompt) return
+    const text = finalPrompt?.prompt || finalPrompt?.finalBuildPrompt
+    if (!text) return
     try {
-      await navigator.clipboard.writeText(finalPrompt.prompt)
+      await navigator.clipboard.writeText(text)
       setCopyStatus('copied')
     } catch {
       setCopyStatus('failed')
     }
     setTimeout(() => setCopyStatus(null), 2500)
   }, [finalPrompt])
+
+  // A6 Premium Prompt — async, nutzt Poe-Analyse
+  const handlePremiumPrompt = useCallback(async () => {
+    setPromptError('')
+    setCopyStatus(null)
+    if (!promptGate.ok) {
+      setPromptError(promptGate.reason)
+      setFinalPrompt(null)
+      return
+    }
+    setPremiumGenerating(true)
+    try {
+      const approved = assets.filter(a => ['hero_ready', 'usable'].includes(a.verdict))
+      const result = await buildPremiumPrompt({
+        lead,
+        gate_report: gateReport,
+        approved_assets: approved,
+        concept,
+        category_data: getCategory(gateReport.summary.category),
+        usePoeAnalysis: true,
+      })
+      // Unified shape: support .prompt (legacy) and .finalBuildPrompt
+      setFinalPrompt({
+        ...result,
+        prompt: result.finalBuildPrompt,
+        prompt_size: (result.finalBuildPrompt || '').length,
+        metadata: {
+          lead_name: result.businessName,
+          category_id: result.category,
+          hero_score: result.approvedAssetsUsed?.[0]?.score || null,
+          style_id: concept?.style_id || null,
+        },
+        hero_url: result.approvedAssetsUsed?.find(a => (a.role || '').toLowerCase().includes('hero'))?.url || '',
+      })
+      setShowPromptModal(true)
+    } catch (e) {
+      setPromptError(e.message || 'Premium-Prompt fehlgeschlagen')
+    } finally {
+      setPremiumGenerating(false)
+    }
+  }, [promptGate, assets, lead, gateReport, concept])
 
   // ── Build & Deploy ─────────────────────────────────────────────────────
   const handleBuild = useCallback(async () => {
@@ -519,7 +563,7 @@ export default function VpsBuildPanel({ lead }) {
           Kopiere ihn am Handy in die Claude App + PDSTUDIO Repo.
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <button onClick={handleShowPrompt} disabled={!promptGate.ok}
+          <button onClick={handleShowPrompt} disabled={!promptGate.ok || premiumGenerating}
             className="flex items-center justify-center gap-1.5 py-2 rounded text-[11px] font-medium"
             style={{
               background: promptGate.ok ? 'rgba(57,255,136,0.1)' : 'rgba(255,255,255,0.03)',
@@ -527,9 +571,9 @@ export default function VpsBuildPanel({ lead }) {
               color: promptGate.ok ? '#39ff88' : '#6b7a90',
               cursor: promptGate.ok ? 'pointer' : 'not-allowed',
             }}>
-            <Eye size={12} /> Prompt anzeigen
+            <Eye size={12} /> Standard
           </button>
-          <button onClick={handleCopyPrompt} disabled={!promptGate.ok}
+          <button onClick={handleCopyPrompt} disabled={!promptGate.ok || premiumGenerating}
             className="flex items-center justify-center gap-1.5 py-2 rounded text-[11px] font-medium"
             style={{
               background: promptGate.ok ? 'rgba(57,255,136,0.18)' : 'rgba(255,255,255,0.03)',
@@ -538,12 +582,24 @@ export default function VpsBuildPanel({ lead }) {
               cursor: promptGate.ok ? 'pointer' : 'not-allowed',
             }}>
             {copyStatus === 'copied'
-              ? (<><ClipboardCheck size={12} /> Prompt kopiert</>)
+              ? (<><ClipboardCheck size={12} /> Kopiert</>)
               : copyStatus === 'failed'
-                ? (<><AlertCircle size={12} /> Kopieren fehlgeschlagen</>)
-                : (<><Copy size={12} /> Prompt kopieren</>)}
+                ? (<><AlertCircle size={12} /> Fehler</>)
+                : (<><Copy size={12} /> Kopieren</>)}
           </button>
         </div>
+        <button onClick={handlePremiumPrompt} disabled={!promptGate.ok || premiumGenerating}
+          className="w-full mt-2 flex items-center justify-center gap-1.5 py-2 rounded text-[11px] font-bold"
+          style={{
+            background: promptGate.ok && !premiumGenerating ? 'linear-gradient(135deg, rgba(245,166,35,0.18), rgba(155,110,243,0.18))' : 'rgba(255,255,255,0.03)',
+            border: `1px solid ${promptGate.ok ? 'rgba(245,166,35,0.5)' : 'rgba(255,255,255,0.06)'}`,
+            color: promptGate.ok ? '#f5a623' : '#6b7a90',
+            cursor: promptGate.ok && !premiumGenerating ? 'pointer' : 'not-allowed',
+          }}>
+          {premiumGenerating
+            ? (<><Loader2 size={12} className="animate-spin" /> Poe-Analyse läuft…</>)
+            : (<><Sparkles size={12} /> A6 Premium-Prompt (Poe Design + Sales Analyse)</>)}
+        </button>
         {!promptGate.ok && (
           <div className="text-[10px] flex items-start gap-1.5"
             style={{ color: '#f5a623' }}>

@@ -14,6 +14,8 @@ import { triggerAgent, triggerWebsiteBuild, isWebhookConfigured } from '../lib/n
 import VpsBuildPanel from './VpsBuildPanel'
 import AgentsPanel from './AgentsPanel'
 import LeadQualifierPanel from './LeadQualifierPanel'
+import FactCheckResultPanel from './FactCheckResultPanel'
+import MailBuilderPanel from './MailBuilderPanel'
 import { AGENTS } from '../lib/agents'
 import { JOB_STATUS, JOB_STATUS_COLOR, JOB_STATUS_LABEL } from '../lib/status'
 import { useLeadResults } from '../hooks/useLeadResults'
@@ -973,6 +975,11 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
           {/* Client-side Qualifier — nutzt vorhandene Sheet-Daten, kein Webhook nötig */}
           <LeadQualifierPanel lead={lead} />
 
+          {/* A6 Fact Check — direkt unter Qualifier, gleicher Daten-Layer */}
+          <div className="mt-3">
+            <FactCheckResultPanel lead={lead} />
+          </div>
+
           <AgentAction
             label="A1 NEU QUALIFIZIEREN (n8n Audit)"
             status={a1Status}
@@ -1602,9 +1609,12 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
 
         {/* ── A4: HUMAN WRITER ── */}
         <AgentSection agentId={4} status={a4Status}>
+          {/* Neu: 3-Varianten Mail-Builder mit FactCheck-Integration */}
+          <MailBuilderPanel lead={lead} />
+
           {/* Tone selector */}
-          <div className="flex items-center gap-2 mb-3">
-            <FieldLabel>Tonalität:</FieldLabel>
+          <div className="flex items-center gap-2 mb-3 mt-3">
+            <FieldLabel>Tonalität (Legacy-Generator):</FieldLabel>
             {[['direkt', 'Direkt'], ['locker', 'Locker'], ['premium', 'Premium']].map(([v, l]) => (
               <button key={v} onClick={() => setA4Tone(v)}
                 className="px-2.5 py-0.5 rounded font-mono text-[10px]"
