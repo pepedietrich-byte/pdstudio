@@ -6,8 +6,21 @@ const PASS = '1209'
 const KEY  = 'cc_auth_v1'
 const EASE = [0.23, 1, 0.32, 1]
 
+// Persistent Auth: localStorage statt sessionStorage. Bleibt zwischen Browser-
+// Sessions eingeloggt — wichtig für iOS Action-Button Deep-Links damit Pepe
+// nicht jedes Mal das Passwort eintippen muss.
+function readAuth() {
+  try {
+    return localStorage.getItem(KEY) === '1' || sessionStorage.getItem(KEY) === '1'
+  } catch { return false }
+}
+function persistAuth() {
+  try { localStorage.setItem(KEY, '1') } catch { /* noop */ }
+  try { sessionStorage.setItem(KEY, '1') } catch { /* noop */ }
+}
+
 export default function PasswordGate({ children }) {
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem(KEY) === '1')
+  const [authed, setAuthed] = useState(() => readAuth())
   const [input,  setInput]  = useState('')
   const [shake,  setShake]  = useState(false)
   const [error,  setError]  = useState(false)
@@ -15,7 +28,7 @@ export default function PasswordGate({ children }) {
   function submit(e) {
     e.preventDefault()
     if (input === PASS) {
-      sessionStorage.setItem(KEY, '1')
+      persistAuth()
       setAuthed(true)
     } else {
       setError(true)

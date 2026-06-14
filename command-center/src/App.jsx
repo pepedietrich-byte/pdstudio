@@ -455,6 +455,28 @@ function RecentLeads({ leads, onSelect, activeLead, onSetActive }) {
   )
 }
 
+// Deep-Link Handler: liest ?twin=open / ?twin=start beim Mount und
+// öffnet das Voice-Panel direkt (für iOS Action-Button Shortcuts).
+function DeepLinkBootstrap() {
+  const twin = useTwin()
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const action = params.get('twin')
+    if (!action) return
+    if (action === 'open' || action === 'start') {
+      // Kleines Delay damit TwinProvider sich init hat
+      const t = setTimeout(() => {
+        try { twin?.setIsOpen?.(true) } catch { /* noop */ }
+        if (action === 'start') {
+          setTimeout(() => { try { twin?.start?.() } catch { /* noop */ } }, 400)
+        }
+      }, 250)
+      return () => clearTimeout(t)
+    }
+  }, [twin])
+  return null
+}
+
 export default function Root() {
   return (
     <TwinProvider>
@@ -463,6 +485,7 @@ export default function Root() {
       </PasswordGate>
       <TwinVoiceOrb />
       <TwinConversationPanel />
+      <DeepLinkBootstrap />
     </TwinProvider>
   )
 }
