@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, ChevronRight } from 'lucide-react'
 
-const PASS = '20051023'
+const PASS = '1209'
 const KEY  = 'cc_auth_v1'
 const EASE = [0.23, 1, 0.32, 1]
 
