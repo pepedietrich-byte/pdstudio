@@ -13,6 +13,7 @@ import { getLeadStage, getConfidence, getScoreBreakdown } from '../lib/sheets'
 import { triggerAgent, triggerWebsiteBuild, isWebhookConfigured } from '../lib/n8n'
 import VpsBuildPanel from './VpsBuildPanel'
 import AgentsPanel from './AgentsPanel'
+import LeadQualifierPanel from './LeadQualifierPanel'
 import { AGENTS } from '../lib/agents'
 import { JOB_STATUS, JOB_STATUS_COLOR, JOB_STATUS_LABEL } from '../lib/status'
 import { useLeadResults } from '../hooks/useLeadResults'
@@ -963,14 +964,17 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
                 </>
               ) : (
                 <EmptyState icon={HelpCircle}>
-                  Technischer Audit noch nicht durchgeführt. A1 starten mit Google Maps URL.
+                  Technischer n8n-Audit noch nicht durchgeführt. Client-Qualifier-Bewertung unten basiert auf vorhandenen Sheet-Daten.
                 </EmptyState>
               )}
             </div>
           </div>
 
+          {/* Client-side Qualifier — nutzt vorhandene Sheet-Daten, kein Webhook nötig */}
+          <LeadQualifierPanel lead={lead} />
+
           <AgentAction
-            label="A1 NEU QUALIFIZIEREN"
+            label="A1 NEU QUALIFIZIEREN (n8n Audit)"
             status={a1Status}
             msg={a1Msg}
             onClick={runA1}
