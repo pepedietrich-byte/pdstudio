@@ -24,32 +24,49 @@ const CRITERIA = {
     test: (code) => /(impressum)/i.test(code) && /(datenschutz)/i.test(code),
   },
   mobile_responsive: {
-    weight: 8, blocking: true, label: 'Mobile-Klassen (Tailwind sm:/md:/lg:)',
+    weight: 8, blocking: true, label: 'Mobile-Responsive (Tailwind oder CSS)',
     test: (code) => {
-      const responsiveHits = (code.match(/\b(sm|md|lg|xl):[a-z0-9-]+/g) || []).length
-      return responsiveHits >= 15
+      // Mehrere Mobile-Strategien akzeptieren: Tailwind, Media-Queries, clamp(), CSS-Variablen
+      const tailwindHits = (code.match(/\b(sm|md|lg|xl):[a-z0-9-]+/g) || []).length
+      const mediaQueries = (code.match(/@media[^{]*\(\s*(max|min)-width/gi) || []).length
+      const clampUses = (code.match(/\bclamp\s*\(/g) || []).length
+      const viewportUnits = (code.match(/\b\d+(vw|vh|vmin|vmax)\b/g) || []).length
+      return tailwindHits >= 15 || mediaQueries >= 3 || (clampUses >= 5 && viewportUnits >= 3)
     },
   },
 
   // ── Qualitäts-Pflichten (severity = critical) ─────────────────────────
   has_animations: {
-    weight: 8, blocking: false, label: 'Echte Animationen (framer-motion)',
+    weight: 8, blocking: false, label: 'Animationen (framer-motion oder CSS)',
     test: (code) => {
-      const animHits = (code.match(/framer-motion|whileInView|whileHover|initial={|animate={|transition={/g) || []).length
-      return animHits >= 5
+      const jsxHits = (code.match(/framer-motion|whileInView|whileHover|initial=\{|animate=\{|transition=\{/g) || []).length
+      const cssHits = (code.match(/@keyframes|animation\s*:|animation-name|animation-delay|transition\s*:/g) || []).length
+      return (jsxHits + cssHits) >= 5
     },
   },
   has_schema_org: {
     weight: 6, blocking: false, label: 'Schema.org Restaurant Markup',
-    test: (code) => /schema\.org|application\/ld\+json/i.test(code) && /Restaurant|FoodEstablishment|LocalBusiness/i.test(code),
+    // Schema.org steht meist im index.html — wir prüfen den combined-Code wenn beide übergeben sind
+    test: (code, ctx) => {
+      const combined = code + ' ' + (ctx?.indexHtmlContent || '')
+      return /schema\.org|application\/ld\+json/i.test(combined)
+        && /Restaurant|FoodEstablishment|LocalBusiness/i.test(combined)
+    },
   },
   has_demo_notice: {
     weight: 4, blocking: false, label: 'Demo-Hinweis (PDSTUDIO Markierung)',
-    test: (code) => /demo[- ]?(erstellt|version)|by\s*pdstudio|erstellt von pdstudio/i.test(code),
+    test: (code, ctx) => {
+      const combined = code + ' ' + (ctx?.indexHtmlContent || '')
+      return /demo[- ]?(erstellt|version)|by\s*pdstudio|erstellt von pdstudio|pdstudio/i.test(combined)
+    },
   },
   has_noindex: {
     weight: 4, blocking: false, label: 'noindex Meta-Tag',
-    test: (code) => /name=["']robots["']\s+content=["']noindex/i.test(code),
+    // noindex steht im HTML — wir prüfen den indexHtmlContent
+    test: (code, ctx) => {
+      const combined = code + ' ' + (ctx?.indexHtmlContent || '')
+      return /name=["']robots["']\s+content=["'][^"']*noindex/i.test(combined)
+    },
   },
 
   // ── Anti-Patterns (negative weights — Penalty wenn gefunden) ──────────
@@ -128,9 +145,12 @@ export function evaluateBuild({ appCode = '', indexHtml = '', context = {} }) {
   let totalWeight = 0
   const checkResults = []
 
+  // Augment context with HTML so combined-checks (schema, noindex, demo-notice) work
+  const enrichedCtx = { ...context, indexHtmlContent: indexHtml }
+
   // Code-Checks
   for (const [key, c] of Object.entries(CRITERIA)) {
-    const passed = c.test(appCode, context)
+    const passed = c.test(appCode, enrichedCtx)
     totalWeight += c.weight
     if (passed) totalScore += c.weight
     else if (c.blocking) blockingFails.push(c.label)

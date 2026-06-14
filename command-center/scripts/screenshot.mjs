@@ -71,6 +71,10 @@ async function main() {
         deviceScaleFactor: 2,
       })
       const page = await context.newPage()
+      // Auth-Bypass: setze sessionStorage Schlüssel den PasswordGate erwartet
+      await page.addInitScript(() => {
+        try { sessionStorage.setItem('cc_auth_v1', '1') } catch { /* noop */ }
+      })
 
       for (const view of VIEWS) {
         const url = `${BASE_URL}${view.path}`

@@ -310,6 +310,50 @@ export default function VpsBuildPanel({ lead }) {
     }
   }, [promptGate, assets, lead, gateReport, concept])
 
+  // ── Direct-Runner Bridge: Premium-Prompt direkt an den Runner ────────────
+  // Umgeht n8n. Pflicht-Felder: lead_id, final_prompt, gates_passed.
+  // Liefert ein Run-Result zurück (mit run_id für polling).
+  const handleDirectRunnerBuild = useCallback(async () => {
+    if (!finalPrompt?.prompt && !finalPrompt?.finalBuildPrompt) {
+      setBuildError('Erst Premium-Prompt generieren (Button oben)')
+      return
+    }
+    if (gateReport?.verdict !== 'proceed' && gateReport?.verdict !== 'proceed_forced') {
+      setBuildError('Gate verdict ist ' + gateReport?.verdict + ' — kein direkter Runner-Build')
+      return
+    }
+    setPipelineStatus('building')
+    setBuildError('')
+    try {
+      const heroAsset = assets.find(a => (a.role || '').toLowerCase().includes('hero') && a.score_total >= 90)
+      const resp = await fetch('/api/runner-trigger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lead_id: lead.lead_id,
+          site_dir: `sites/${lead.lead_id}`,
+          final_prompt: finalPrompt.prompt || finalPrompt.finalBuildPrompt,
+          gates_passed: true,
+          accepted_hero_url: heroAsset?.url || '',
+          a6_quality_score: finalPrompt.promptQualityScore || null,
+          prompt_builder_version: finalPrompt.promptBuilderVersion || finalPrompt.builtWithPromptBuilder || 'unknown',
+          async: true,
+        }),
+      })
+      const data = await resp.json()
+      if (!resp.ok) {
+        setBuildError(`Runner ${resp.status}: ${data.error || data.hint || ''}`)
+        setPipelineStatus('blocked')
+        return
+      }
+      setBuildResult({ ...data, source: 'direct-runner-bridge' })
+      setPipelineStatus('running')
+    } catch (e) {
+      setBuildError('Runner Bridge: ' + e.message)
+      setPipelineStatus('blocked')
+    }
+  }, [finalPrompt, assets, lead, gateReport])
+
   // ── Build & Deploy ─────────────────────────────────────────────────────
   const handleBuild = useCallback(async () => {
     if (!gateReport) return

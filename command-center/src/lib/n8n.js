@@ -279,6 +279,24 @@ export async function triggerVpsBuild(lead, buildOptions = {}) {
       animation_block: buildOptions.animation_block || '',
     },
     images:         lead.images || [],
+    // ── Stufe 4: Premium-Build-Bridge ────────────────────────────────────
+    // Wenn der Aufrufer den fertigen Prompt + Gate-Verdict mitgibt, dürfen
+    // n8n + Runner ihn 1:1 durchreichen — der "alte" n8n-Prompt wird ignoriert.
+    // Runner /run-a2 erwartet: prompt (Text) + metadata.gates_passed (boolean)
+    final_prompt:           buildOptions.final_prompt           || '',
+    prompt_builder_version: buildOptions.prompt_builder_version || '',
+    gates_passed:           buildOptions.gates_passed === true,
+    accepted_hero_url:      buildOptions.accepted_hero_url      || '',
+    a5_concept_id:          buildOptions.a5_concept_id          || '',
+    a6_quality_score:       buildOptions.a6_quality_score       || null,
+    excluded_unsafe_facts:  buildOptions.excluded_unsafe_facts  || {},
+    metadata: {
+      gates_passed:           buildOptions.gates_passed === true,
+      prompt_builder_version: buildOptions.prompt_builder_version || '',
+      accepted_hero_url:      buildOptions.accepted_hero_url      || '',
+      a6_quality_score:       buildOptions.a6_quality_score       || null,
+      site_dir:               buildOptions.site_dir               || `sites/${lead.lead_id}`,
+    },
   }
 
   // 1. Trigger via n8n webhook — async pattern returns run_id immediately

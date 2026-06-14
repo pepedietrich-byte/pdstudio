@@ -13,6 +13,8 @@ import {
 import {
   listTools, matchToolFromInput, executeTool, PERMISSION_LEVELS,
 } from '../../services/twin/toolRegistry'
+import VoiceBridgeStatus from './VoiceBridgeStatus'
+import { useTwin } from './TwinContext'
 
 const SUGGESTIONS = [
   'Prüfe diesen Lead und sag mir warum der Build blockiert oder erlaubt ist.',
@@ -90,6 +92,13 @@ export default function TwinControlPanel({ lead = null, assets = [], gateReport 
   const [viewerEntry, setViewerEntry] = useState(null)
   const [showTools, setShowTools] = useState(false)
   const inputRef = useRef(null)
+
+  // Twin Voice-Connection-Status für Live-Bridge-Anzeige
+  let twinStatus = 'disconnected'
+  try {
+    const t = useTwin()
+    twinStatus = t?.status || 'disconnected'
+  } catch { /* TwinProvider nicht im Tree — Status bleibt disconnected */ }
 
   const tools = useMemo(() => listTools(), [])
 
@@ -198,6 +207,11 @@ export default function TwinControlPanel({ lead = null, assets = [], gateReport 
             </button>
           )}
         </div>
+      </div>
+
+      {/* Voice-Bridge Status */}
+      <div className="px-4 py-2" style={{ background: 'rgba(0,0,0,0.15)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+        <VoiceBridgeStatus twinStatus={twinStatus} />
       </div>
 
       {/* Lead/Context status */}
