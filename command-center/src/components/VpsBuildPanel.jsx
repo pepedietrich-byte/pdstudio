@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Rocket, ExternalLink, Loader2, CheckCircle2, AlertCircle,
   Server, ChevronRight, Sparkles, Info, Shield, Lock, Unlock, Wrench,
-  Trophy, AlertTriangle, RefreshCw,
+  Trophy, AlertTriangle, RefreshCw, Copy, Eye, FileText, X, ClipboardCheck,
 } from 'lucide-react'
 import { triggerVpsBuild, updateBuildMetadata } from '../lib/n8n'
 import { markSiteFresh } from '../lib/sites'
@@ -15,6 +15,7 @@ import { runPreBuildGate } from '../lib/preBuildGate'
 import { generateConcept, describeConceptForPrompt } from '../lib/conceptArchitect'
 import { getAnimationBlock } from '../lib/animationLibrary'
 import { ensureHeroAvailable } from '../lib/poeImageGen'
+import { buildFinalPrompt } from '../lib/promptBuilder'
 import AssetQualityPanel from './AssetQualityPanel'
 import FactCheckPanel from './FactCheckPanel'
 
@@ -59,6 +60,12 @@ export default function VpsBuildPanel({ lead }) {
   const [buildError, setBuildError] = useState('')
   const [salesReadiness, setSalesReadiness] = useState(null)
   const [regeneratingRole, setRegeneratingRole] = useState(null)
+
+  // Prompt-Copy Flow (kein Build — nur finaler Prompt für Claude App)
+  const [finalPrompt, setFinalPrompt] = useState(null)
+  const [promptError, setPromptError] = useState('')
+  const [showPromptModal, setShowPromptModal] = useState(false)
+  const [copyStatus, setCopyStatus] = useState(null) // 'copied' | 'failed' | null
 
   // ── Recommended style aus erkannter Kategorie ──────────────────────────
   const detected = useMemo(() => detectCategory(lead || {}), [lead])
@@ -180,6 +187,81 @@ export default function VpsBuildPanel({ lead }) {
       setRegeneratingRole(null)
     }
   }, [detected.category, lead, styleId, runPipeline])
+
+  // ── Prompt-Only Flow (kein A7 Build) ───────────────────────────────────
+  // Gate-Check für "Prompt kopieren / anzeigen"
+  const promptGate = useMemo(() => {
+    if (!gateReport) return { ok: false, reason: 'Pipeline noch nicht gelaufen — warte auf Gate-Report' }
+    if (gateReport.verdict !== 'proceed' && gateReport.verdict !== 'proceed_forced') {
+      return { ok: false, reason: 'Gates blockiert — Repair durchführen (Category / Asset / Fact)' }
+    }
+    if (!gateReport.summary?.category) {
+      return { ok: false, reason: 'Category Gate offen — Kategorie nicht erkannt' }
+    }
+    if (!concept) {
+      return { ok: false, reason: 'A5 Concept fehlt — wird automatisch erzeugt sobald Gates grün sind' }
+    }
+    const hero = assets.find(a => (a.role || '').toLowerCase().includes('hero') && a.score_total >= 90)
+    if (!hero) {
+      return { ok: false, reason: 'Kein Hero-Asset mit Score ≥ 90 — Asset Gate offen, Hero regenerieren' }
+    }
+    return { ok: true }
+  }, [gateReport, concept, assets])
+
+  // Erzeugt finalen Build-Prompt aus buildFinalPrompt() — KEIN Build wird gestartet
+  const generatePrompt = useCallback(() => {
+    setPromptError('')
+    setCopyStatus(null)
+    if (!promptGate.ok) {
+      setPromptError(promptGate.reason)
+      setFinalPrompt(null)
+      return null
+    }
+    try {
+      const approved = assets.filter(a => ['hero_ready', 'usable'].includes(a.verdict))
+      const result = buildFinalPrompt({
+        lead,
+        gate_report: gateReport,
+        approved_assets: approved,
+        concept,
+        category_data: getCategory(gateReport.summary.category),
+      })
+      setFinalPrompt({ ...result, promptBuilderVersion: 'buildFinalPrompt' })
+      return result
+    } catch (e) {
+      setPromptError(e.message || 'Prompt-Erzeugung fehlgeschlagen')
+      setFinalPrompt(null)
+      return null
+    }
+  }, [promptGate, assets, lead, gateReport, concept])
+
+  const handleShowPrompt = useCallback(() => {
+    const r = generatePrompt()
+    if (r) setShowPromptModal(true)
+  }, [generatePrompt])
+
+  const handleCopyPrompt = useCallback(async () => {
+    const r = generatePrompt()
+    if (!r) return
+    try {
+      await navigator.clipboard.writeText(r.prompt)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('failed')
+    }
+    setTimeout(() => setCopyStatus(null), 2500)
+  }, [generatePrompt])
+
+  const handleCopyFromModal = useCallback(async () => {
+    if (!finalPrompt?.prompt) return
+    try {
+      await navigator.clipboard.writeText(finalPrompt.prompt)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('failed')
+    }
+    setTimeout(() => setCopyStatus(null), 2500)
+  }, [finalPrompt])
 
   // ── Build & Deploy ─────────────────────────────────────────────────────
   const handleBuild = useCallback(async () => {
@@ -417,6 +499,67 @@ export default function VpsBuildPanel({ lead }) {
         </div>
       )}
 
+      {/* Prompt-Only Flow — kein A7 Build */}
+      <div className="rounded-lg p-3 space-y-2"
+        style={{ background: 'rgba(57,255,136,0.03)', border: '1px solid rgba(57,255,136,0.18)' }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileText size={14} style={{ color: '#39ff88' }} />
+            <span className="text-xs font-semibold" style={{ color: '#e8edf4' }}>
+              Prompt für Claude App (manueller Build)
+            </span>
+          </div>
+          <span className="text-[9px] uppercase tracking-widest font-mono"
+            style={{ color: promptGate.ok ? '#39ff88' : '#6b7a90' }}>
+            {promptGate.ok ? 'READY · buildFinalPrompt v1' : 'BLOCKED'}
+          </span>
+        </div>
+        <div className="text-[10px]" style={{ color: '#9ca3b5' }}>
+          Erzeugt nur den finalen Prompt aus <code>buildFinalPrompt()</code> — startet keinen A7 Build.
+          Kopiere ihn am Handy in die Claude App + PDSTUDIO Repo.
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={handleShowPrompt} disabled={!promptGate.ok}
+            className="flex items-center justify-center gap-1.5 py-2 rounded text-[11px] font-medium"
+            style={{
+              background: promptGate.ok ? 'rgba(57,255,136,0.1)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${promptGate.ok ? 'rgba(57,255,136,0.35)' : 'rgba(255,255,255,0.06)'}`,
+              color: promptGate.ok ? '#39ff88' : '#6b7a90',
+              cursor: promptGate.ok ? 'pointer' : 'not-allowed',
+            }}>
+            <Eye size={12} /> Prompt anzeigen
+          </button>
+          <button onClick={handleCopyPrompt} disabled={!promptGate.ok}
+            className="flex items-center justify-center gap-1.5 py-2 rounded text-[11px] font-medium"
+            style={{
+              background: promptGate.ok ? 'rgba(57,255,136,0.18)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${promptGate.ok ? 'rgba(57,255,136,0.5)' : 'rgba(255,255,255,0.06)'}`,
+              color: promptGate.ok ? '#39ff88' : '#6b7a90',
+              cursor: promptGate.ok ? 'pointer' : 'not-allowed',
+            }}>
+            {copyStatus === 'copied'
+              ? (<><ClipboardCheck size={12} /> Prompt kopiert</>)
+              : copyStatus === 'failed'
+                ? (<><AlertCircle size={12} /> Kopieren fehlgeschlagen</>)
+                : (<><Copy size={12} /> Prompt kopieren</>)}
+          </button>
+        </div>
+        {!promptGate.ok && (
+          <div className="text-[10px] flex items-start gap-1.5"
+            style={{ color: '#f5a623' }}>
+            <AlertTriangle size={10} className="mt-0.5 flex-shrink-0" />
+            <span>{promptGate.reason}</span>
+          </div>
+        )}
+        {promptError && promptGate.ok && (
+          <div className="text-[10px] flex items-start gap-1.5"
+            style={{ color: '#ef4444' }}>
+            <AlertCircle size={10} className="mt-0.5 flex-shrink-0" />
+            <span>{promptError}</span>
+          </div>
+        )}
+      </div>
+
       {/* Build-Button */}
       <button onClick={handleBuild} disabled={isBuilding || (!canBuild && !adminOverride)}
         className="w-full flex items-center justify-center gap-2 py-3 rounded font-semibold"
@@ -513,6 +656,115 @@ export default function VpsBuildPanel({ lead }) {
                 ⚠ Unter 85 — NICHT als final/polished markieren. Repair empfohlen.
               </div>
             )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Prompt-Modal */}
+      <AnimatePresence>
+        {showPromptModal && finalPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(5,8,14,0.85)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setShowPromptModal(false)}>
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              className="w-full max-w-3xl max-h-[88vh] rounded-xl flex flex-col"
+              style={{
+                background: 'rgba(15,20,30,0.98)',
+                border: '1px solid rgba(57,255,136,0.3)',
+                boxShadow: '0 25px 60px rgba(0,0,0,0.55)',
+              }}
+              onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="px-5 py-4 flex items-center justify-between"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="flex items-center gap-3">
+                  <FileText size={18} style={{ color: '#39ff88' }} />
+                  <div>
+                    <div className="text-sm font-semibold" style={{ color: '#e8edf4' }}>
+                      Finaler Build-Prompt
+                    </div>
+                    <div className="text-[10px] font-mono uppercase tracking-widest"
+                      style={{ color: '#6b7a90' }}>
+                      promptBuilderVersion: buildFinalPrompt · {finalPrompt.prompt_size?.toLocaleString()} chars
+                    </div>
+                  </div>
+                </div>
+                <button onClick={() => setShowPromptModal(false)}
+                  className="p-1.5 rounded hover:bg-white/5">
+                  <X size={16} style={{ color: '#9ca3b5' }} />
+                </button>
+              </div>
+
+              {/* Meta-Zeile */}
+              <div className="px-5 py-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px]"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <div>
+                  <div className="uppercase tracking-widest font-bold" style={{ color: '#6b7a90' }}>Lead</div>
+                  <div style={{ color: '#e8edf4' }}>{finalPrompt.metadata?.lead_name || lead?.business_name || '—'}</div>
+                </div>
+                <div>
+                  <div className="uppercase tracking-widest font-bold" style={{ color: '#6b7a90' }}>Kategorie</div>
+                  <div style={{ color: '#e8edf4' }}>{finalPrompt.metadata?.category_id || '—'}</div>
+                </div>
+                <div>
+                  <div className="uppercase tracking-widest font-bold" style={{ color: '#6b7a90' }}>Hero Score</div>
+                  <div style={{ color: '#39ff88' }}>{finalPrompt.metadata?.hero_score ?? '—'}</div>
+                </div>
+                <div>
+                  <div className="uppercase tracking-widest font-bold" style={{ color: '#6b7a90' }}>Style</div>
+                  <div style={{ color: '#e8edf4' }}>{finalPrompt.metadata?.style_id || '—'}</div>
+                </div>
+              </div>
+
+              {/* Prompt Textarea */}
+              <div className="flex-1 overflow-hidden p-5">
+                <textarea
+                  readOnly
+                  value={finalPrompt.prompt}
+                  className="w-full h-full min-h-[300px] p-3 rounded font-mono text-[11px] leading-relaxed resize-none"
+                  style={{
+                    background: 'rgba(0,0,0,0.4)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: '#cbd5e1',
+                    outline: 'none',
+                  }}
+                  onClick={e => e.target.select()}
+                />
+              </div>
+
+              {/* Footer Actions */}
+              <div className="px-5 py-4 flex items-center justify-between gap-3"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="text-[10px]" style={{ color: '#6b7a90' }}>
+                  Hero: <span style={{ color: '#39ff88' }}>{finalPrompt.hero_url?.slice(0, 48)}{finalPrompt.hero_url?.length > 48 ? '…' : ''}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {copyStatus === 'copied' && (
+                    <span className="text-[11px] flex items-center gap-1" style={{ color: '#39ff88' }}>
+                      <CheckCircle2 size={12} /> Prompt kopiert
+                    </span>
+                  )}
+                  {copyStatus === 'failed' && (
+                    <span className="text-[11px] flex items-center gap-1" style={{ color: '#ef4444' }}>
+                      <AlertCircle size={12} /> Kopieren fehlgeschlagen
+                    </span>
+                  )}
+                  <button onClick={handleCopyFromModal}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded text-[11px] font-semibold"
+                    style={{
+                      background: 'linear-gradient(135deg, #39ff88, #2ecc71)',
+                      color: '#0a1018',
+                    }}>
+                    <Copy size={12} /> In Clipboard kopieren
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
