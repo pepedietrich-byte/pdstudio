@@ -10,20 +10,24 @@ import Agent2Monitor from '../Panels/Agent2Monitor'
 import Agent7Monitor from '../Panels/Agent7Monitor'
 
 const COLORS = {
-  1: '#00d4ff', 2: '#e8197f', 3: '#2ddb72',
-  4: '#f5a623', 5: '#9b6ef3', 6: '#00d4ff', 7: '#e8197f',
+  1: '#00d4ff',  // Lead Qualifier
+  2: '#9b6ef3',  // Claude Code Builder
+  3: '#e8197f',  // Polish Agent
+  4: '#f5a623',  // Human Writer
+  5: '#2ddb72',  // Pricing Agent
+  6: '#ff6b35',  // Fact Checker
 }
 const GOLD = '#ffd700'
 const EASE = [0.23, 1, 0.32, 1]
 
+// PDSTUDIO 6-Agent-Architektur (matches lib/agents.js)
 const AGENT_ROLES = {
-  1: 'Google Maps Scraping',
-  2: 'Website Text Extraktion',
-  3: 'Bild & Logo Extraktion',
-  4: 'Datenqualität Prüfung',
-  5: 'Design Konzept',
-  6: 'Prompt Generierung',
-  7: 'Website Deployment',
+  1: 'Score + Confidence berechnen',
+  2: 'Website bauen + deployen',
+  3: 'Bilder generieren + polishen',
+  4: 'Verkaufs-Mails schreiben',
+  5: 'Preise berechnen',
+  6: 'Fakten verifizieren',
 }
 
 function agentHealth(agentId, executions) {
@@ -417,7 +421,7 @@ export default function MobileAgentCity({ leads = [], executions = [], onOpenPep
         <div style={{
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10,
         }}>
-          {[1, 2, 3, 4, 5, 6, 7].map(id => (
+          {[1, 2, 3, 4, 5, 6].map(id => (
             <MobileAgentCard
               key={id}
               agentId={id}

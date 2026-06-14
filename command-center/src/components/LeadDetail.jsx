@@ -16,6 +16,7 @@ import AgentsPanel from './AgentsPanel'
 import LeadQualifierPanel from './LeadQualifierPanel'
 import FactCheckResultPanel from './FactCheckResultPanel'
 import MailBuilderPanel from './MailBuilderPanel'
+import { TwinControlPanel } from './Twin'
 import { AGENTS } from '../lib/agents'
 import { JOB_STATUS, JOB_STATUS_COLOR, JOB_STATUS_LABEL } from '../lib/status'
 import { useLeadResults } from '../hooks/useLeadResults'
@@ -909,6 +910,9 @@ Antworte NUR mit JSON, kein Markdown außen rum.`
             </div>
           )}
         </Card>
+
+        {/* ── TWIN CONTROL — Befehls-Interface über die Tool Registry ── */}
+        <TwinControlPanel lead={lead} />
 
         {/* ── A1: LEAD QUALIFIER ── */}
         <AgentSection agentId={1} status={a1Status}>

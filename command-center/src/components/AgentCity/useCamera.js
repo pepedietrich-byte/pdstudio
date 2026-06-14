@@ -14,15 +14,22 @@ export function gridToScreen(gx, gy) {
   }
 }
 
-// 6 agents + TWIN PEPE positions (grid coords)
+// 6 agents arranged in a perfect hexagon around TWIN PEPE (symmetrical).
+// Hexagon math: r=2.8, angle increments of 60deg starting at -90deg (top).
+const HEX_R = 2.8
+function hexPos(idx) {
+  const angle = (-90 + idx * 60) * Math.PI / 180
+  return { gx: Math.round(Math.cos(angle) * HEX_R * 10) / 10, gy: Math.round(Math.sin(angle) * HEX_R * 10) / 10 }
+}
+
 export const AGENT_POSITIONS = {
-  1: { gx: -2, gy: -2 },   // Lead Qualifier — NW
-  2: { gx:  0, gy: -3 },   // Claude Code Builder — N (deep)
-  3: { gx:  2, gy: -2 },   // Polish Agent — NE
-  4: { gx:  3, gy:  0 },   // Human Writer — E
-  5: { gx:  2, gy:  2 },   // Pricing Agent — SE
-  6: { gx:  0, gy:  3 },   // Fact Checker — S
-  8: { gx:  0, gy:  0 },   // TWIN PEPE — center
+  1: hexPos(0),   // 12:00 — Lead Qualifier (Pipeline-Eingang oben)
+  2: hexPos(1),   //  2:00 — Claude Code Builder
+  3: hexPos(2),   //  4:00 — Polish Agent
+  4: hexPos(3),   //  6:00 — Human Writer (gegenüber Qualifier)
+  5: hexPos(4),   //  8:00 — Pricing Agent
+  6: hexPos(5),   // 10:00 — Fact Checker
+  8: { gx: 0, gy: 0 },  // TWIN PEPE — center
 }
 
 const SPRING = { type: 'spring', stiffness: 90, damping: 22, mass: 0.9 }

@@ -146,19 +146,44 @@ export default function AgentCityScene({ leads = [], executions = [], activeLead
       >
         <defs>
           <radialGradient id="floorGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(155,110,243,0.20)" />
+            <stop offset="0%" stopColor="rgba(155,110,243,0.22)" />
+            <stop offset="60%" stopColor="rgba(155,110,243,0.06)" />
             <stop offset="100%" stopColor="rgba(155,110,243,0)" />
           </radialGradient>
+          <radialGradient id="depthGlow" cx="50%" cy="40%" r="65%">
+            <stop offset="0%" stopColor="rgba(255,215,0,0.08)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+          </radialGradient>
+          <filter id="agentShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="6" />
+            <feOffset dx="0" dy="4" result="offsetblur" />
+            <feComponentTransfer><feFuncA type="linear" slope="0.5" /></feComponentTransfer>
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <pattern id="hexgrid" patternUnits="userSpaceOnUse" width="60" height="52">
+            <path d="M30 0 L60 17 L60 35 L30 52 L0 35 L0 17 Z" fill="none" stroke="rgba(155,110,243,0.04)" strokeWidth="0.5" />
+          </pattern>
         </defs>
 
         {/* Camera group — translate + scale via motion values */}
         <motion.g style={{ x: camera.x, y: camera.y, scale: camera.zoom, originX: 600, originY: 350 }}>
-          <ellipse cx="600" cy="370" rx="540" ry="240" fill="url(#floorGlow)" opacity="0.5" />
+          {/* Layer 0: depth glow (atmosphere) */}
+          <rect x="0" y="0" width="1200" height="700" fill="url(#depthGlow)" opacity="0.7" />
+          {/* Layer 1: hex grid for depth perception */}
+          <rect x="0" y="0" width="1200" height="700" fill="url(#hexgrid)" opacity="0.6" />
+          {/* Layer 2: floor glow under Pepe */}
+          <ellipse cx="600" cy="370" rx="540" ry="240" fill="url(#floorGlow)" opacity="0.55" />
+          {/* Layer 3: outer hex ring connecting agents */}
+          <polygon points="600,170 924,250 924,450 600,530 276,450 276,250"
+            fill="none" stroke="rgba(155,110,243,0.12)" strokeWidth="1.5" strokeDasharray="4 8" />
           <IsometricGround />
           <DataStreams selectedAgent={selectedAgent} />
           <HotLeadRadar leads={leads} />
 
-          {/* 6 Agent stations — A7 is deprecated visually (webhook reused by A2) */}
+          {/* 6 Agent stations on hexagon (symmetric) */}
           {[1, 2, 3, 4, 5, 6].map(id => (
             <AgentStation
               key={id}
