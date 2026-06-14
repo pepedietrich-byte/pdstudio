@@ -31,29 +31,30 @@ const AGENT_COLORS = {
 export default function AgentCityScene({ leads = [], executions = [], activeLead, onOpenPepeRoom, onOpenLeads }) {
   const camera = useCamera()
   const pepe   = usePepe({ leads, executions })
-  const { sendAgentContext, status: twinStatus, setIsOpen: openTwin } = useTwin()
+  const { sendAgentContext, status: twinStatus } = useTwin()
   const [selectedAgent, setSelectedAgent] = useState(null)
   const [hoverAgent, setHoverAgent] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
   const containerRef = useRef(null)
 
   // ── Click-Handler — App-Verhalten ──────────────────────────────────────
+  // TWIN (8) verhält sich gleich wie die anderen Agenten: Camera zoomt
+  // sanft heran, Detail-Panel öffnet rechts. Das große Voice-Modal kommt
+  // jetzt nur noch über den dedizierten "Voice starten" Button im
+  // Detail-Panel (siehe TwinControlPanel / TwinConversationPanel).
   function handleAgentClick(agentId) {
-    if (agentId === 8) {
-      openTwin(true)
-      if (twinStatus === 'connected') sendAgentContext(8, 'COMMAND_CORE', leads.length)
-      setSelectedAgent(8)
-      camera.focusAgent(8, 2.4)
-      return
-    }
     setSelectedAgent(agentId)
     camera.focusAgent(agentId)
 
     if (twinStatus === 'connected') {
-      const agentErrors = pepe.agentErrors?.[agentId]
-      const execStatus = agentErrors?.lastError ? 'Fehler' : 'OK'
-      const stageLeads = leads.filter(l => getLeadStage(l) === agentId).length
-      sendAgentContext(agentId, execStatus, stageLeads)
+      if (agentId === 8) {
+        sendAgentContext(8, 'COMMAND_CORE', leads.length)
+      } else {
+        const agentErrors = pepe.agentErrors?.[agentId]
+        const execStatus = agentErrors?.lastError ? 'Fehler' : 'OK'
+        const stageLeads = leads.filter(l => getLeadStage(l) === agentId).length
+        sendAgentContext(agentId, execStatus, stageLeads)
+      }
     }
   }
 
@@ -419,7 +420,7 @@ export default function AgentCityScene({ leads = [], executions = [], activeLead
           Eine subtile gestrichelte Linie vom focused Station zum
           Detail-Panel-Rand rechts. */}
       <AnimatePresence>
-        {selectedAgent !== null && selectedAgent !== 8 && focusedPos && (
+        {selectedAgent !== null && focusedPos && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }}
             style={{
@@ -445,9 +446,9 @@ export default function AgentCityScene({ leads = [], executions = [], activeLead
         agentErrors={pepe.agentErrors}
       />
 
-      {/* Agent Detail Panel */}
+      {/* Agent Detail Panel — auch für TWIN (8) gleich wie für 1-6 */}
       <AnimatePresence>
-        {selectedAgent !== null && selectedAgent !== 8 && (
+        {selectedAgent !== null && (
           <div onClick={e => e.stopPropagation()} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 10 }}>
             <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, pointerEvents: 'auto' }}>
               <AgentDetailPanel

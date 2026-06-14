@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
-import { X, Activity, AlertTriangle, CheckCircle, Clock, Cpu, ArrowRight, Target, ExternalLink, Database } from 'lucide-react'
+import { X, Activity, AlertTriangle, CheckCircle, Clock, Cpu, ArrowRight, Target, ExternalLink, Database, Mic } from 'lucide-react'
 import { AGENT_NAMES } from '../../lib/n8n'
 import { AGENTS } from '../../lib/agents'
 import { useAgentDiagnostics } from '../../hooks/useAgentDiagnostics'
 import { getAllLeadResults } from '../../hooks/useLeadResults'
+import { useTwin } from '../Twin/TwinContext'
 import AgentLiveDataBlock from './AgentLiveDataBlock'
 
 const COLORS = {
@@ -13,6 +14,7 @@ const COLORS = {
   4: '#f5a623',  // Human Writer
   5: '#2ddb72',  // Pricing Agent
   6: '#ff6b35',  // Fact Checker
+  8: '#ffd700',  // TWIN PEPE
 }
 
 const AGENT_DESCRIPTIONS = {
@@ -22,6 +24,17 @@ const AGENT_DESCRIPTIONS = {
   4: 'Schreibt personalisierte Verkaufs-E-Mails, DMs, Follow-ups und Call Scripts auf Deutsch. Keine generischen KI-Texte.',
   5: 'Berechnet Min/Empfehlung/Premium Preis basierend auf Score, Rating, Branche. Schätzt Closing-Chance.',
   6: 'Prüft Website-URL, Telefon, E-Mail, Name, Adresse. Gibt Trust Score und Versandstatus zurück.',
+  8: 'TWIN PEPE · Command Center Orchestrator. Voice-Bridge zu ElevenLabs, Tool-Registry mit 15 Actions, Memory-System. Kann Pipeline-Phasen ausführen, Mails kuratieren, Build triggern.',
+}
+
+const TWIN_AGENT = {
+  id: 8,
+  name: 'TWIN PEPE',
+  role: 'Command Center Orchestrator',
+  glyph: 'PD',
+  color: '#ffd700',
+  category: 'twin',
+  webhookConfigured: true,
 }
 
 const AGENT_STATUS_FIELD = {
@@ -60,8 +73,14 @@ function StatusBadge({ status }) {
 export default function AgentDetailPanel({ agentId, leads = [], executions = [], onClose, onOpenLeads, activeLead }) {
   const diag  = useAgentDiagnostics(agentId, { leads, executions })
   const color = COLORS[agentId] || '#9b6ef3'
-  const name  = AGENT_NAMES[agentId]
-  const agent = AGENTS[agentId]
+  // TWIN-specific actions: Voice-Conversation öffnen
+  let twinControls = null
+  try {
+    const t = useTwin()
+    twinControls = { open: () => t?.setIsOpen?.(true), status: t?.status }
+  } catch { /* TwinProvider may be missing in some contexts */ }
+  const name  = agentId === 8 ? TWIN_AGENT.name : AGENT_NAMES[agentId]
+  const agent = agentId === 8 ? TWIN_AGENT : AGENTS[agentId]
 
   // Get active lead results for this agent
   const allResults = getAllLeadResults()
@@ -200,6 +219,28 @@ export default function AgentDetailPanel({ agentId, leads = [], executions = [],
             </button>
           )}
         </div>
+      )}
+
+      {/* ── TWIN-spezifisch: Voice-Conversation öffnen ── */}
+      {agentId === 8 && twinControls && (
+        <button onClick={twinControls.open}
+          style={{
+            width: '100%', marginBottom: 12, padding: '10px 14px',
+            background: `linear-gradient(135deg, ${color}25 0%, ${color}10 100%)`,
+            border: `1px solid ${color}50`,
+            borderRadius: 6, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            color, fontFamily: 'var(--font-mono,monospace)',
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+          }}>
+          <Mic size={12} /> VOICE CONVERSATION ÖFFNEN
+          {twinControls.status === 'connected' && (
+            <span style={{
+              marginLeft: 4, width: 6, height: 6, borderRadius: '50%',
+              background: '#39ff88', boxShadow: '0 0 6px #39ff88',
+            }} />
+          )}
+        </button>
       )}
 
       {/* ── LIVE DATA — echte Outputs aus den Lib-Funktionen ── */}
