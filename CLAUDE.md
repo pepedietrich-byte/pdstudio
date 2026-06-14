@@ -56,6 +56,13 @@ Pepe entscheidet pro Lead, welcher Agent läuft.
 - Vercel Deployment-IDs immer verifizieren vor dem Wechsel (DEPLOYMENT_NOT_FOUND-Bug)
 - Vollständige PATCH-Payloads, nie partielle Updates
 
+### Mobile / Cloud Claude — Network Policy
+- Die Mobile/Cloud Claude Sandbox blockt Egress zu `api.vercel.com` (CLI **und** REST). `VERCEL_TOKEN` existiert, hilft aber nicht.
+- **NIEMALS** versuchen, von einer Mobile/Cloud Session direkt zu deployen (kein `vercel deploy`, kein `curl api.vercel.com`).
+- Für `command-center`: aktuell **kein** GitHub→Vercel Auto-Deploy aktiv (Projekt `prj_ayAeMsCYrMINcWVRCuPdBKUvvipr` ist nicht git-verlinkt). Mobile Claude darf nur `git push` machen und muss Pepe darauf hinweisen, dass ein manueller Deploy nötig ist — bis Auto-Deploy einmalig eingerichtet wurde (Vercel Dashboard → Project `command-center` → Settings → Git → Connect `pepedietrich-byte/pdstudio`, Production Branch `main`).
+- Für Demo-Sites (`sites/*`): Deploy läuft über n8n A7 Workflow. Mobile Claude triggert nur den n8n Webhook (Host `n8n.srv1736252.hstgr.cloud`) — kein direkter Vercel API Call nötig.
+- Alternative für Restaurant-Builds am Handy: **Prompt-Only Flow** im VpsBuildPanel — kopiert den finalen Build-Prompt aus `buildFinalPrompt()`, danach Build via Claude App + git push.
+
 **Vollständige Build-Regeln:** → [BUILD_RULES.md](BUILD_RULES.md)
 
 ---
