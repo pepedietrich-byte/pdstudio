@@ -120,8 +120,9 @@ export default function AgentCityScene({ leads = [], executions = [], activeLead
       style={{
         position: 'relative',
         width: '100%',
-        height: 'min(78vh, 720px)',
-        minHeight: 480,
+        // Etwas größer damit Photo-Zoom mehr "Bühne" hat
+        height: 'min(82vh, 780px)',
+        minHeight: 520,
         marginBottom: 24,
         borderRadius: 12,
         overflow: 'hidden',
@@ -330,15 +331,22 @@ export default function AgentCityScene({ leads = [], executions = [], activeLead
           onClick={() => { if (selectedAgent !== null) handleClose() }}
         />
 
-        {/* Background-Parallax-Group (Atmosphäre, hinter Hauptcam) */}
-        <motion.g style={{ x: camera.parallaxBg, scale: camera.zoom, originX: 600, originY: 350 }}
+        {/* Background-Parallax-Group (Atmosphäre, hinter Hauptcam)
+            transform-origin via CSS auf SVG-Koordinate-Mitte */}
+        <motion.g style={{
+            x: camera.parallaxBg, scale: camera.zoom,
+            transformOrigin: '600px 350px',
+          }}
           pointerEvents="none">
           <rect x="0" y="0" width="1200" height="700" fill="url(#depthGlow)" opacity="0.7" />
           <rect x="0" y="0" width="1200" height="700" fill="url(#hexgrid)" opacity="0.6" />
         </motion.g>
 
         {/* Main Camera-Group */}
-        <motion.g style={{ x: camera.x, y: camera.y, scale: camera.zoom, originX: 600, originY: 350 }}>
+        <motion.g style={{
+            x: camera.x, y: camera.y, scale: camera.zoom,
+            transformOrigin: '600px 350px',
+          }}>
           {/* Layer 2: floor glow under Pepe */}
           <ellipse cx="600" cy="370" rx="540" ry="240" fill="url(#floorGlow)" opacity="0.55" pointerEvents="none" />
           {/* Layer 3: outer hex ring connecting agents */}

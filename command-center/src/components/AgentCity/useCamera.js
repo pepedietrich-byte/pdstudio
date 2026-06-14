@@ -32,22 +32,28 @@ export const AGENT_POSITIONS = {
   8: { gx: 0, gy: 0 },  // TWIN PEPE — center
 }
 
-// Cinematic dual-phase animation:
-// Phase A: Pan smoothly toward target while zoom builds slowly
-// Phase B: Zoom deepens with subtle overshoot for "diving in" feel
-const PAN_SPRING  = { type: 'spring', stiffness: 60,  damping: 26, mass: 1.1 }
-const ZOOM_SPRING = { type: 'spring', stiffness: 70,  damping: 24, mass: 1.0 }
-const RESET_SPRING = { type: 'spring', stiffness: 80, damping: 28, mass: 1.0 }
+// Photo-Viewer Zoom — wie ein Bild näher heranziehen, nicht reinscrollen.
+// - Sanfter Zoom (1.65x), bewahrt Kontext rundherum
+// - Pan nur partiell (60% des Weges), Agent rückt näher zur Mitte aber Nachbarn bleiben sichtbar
+// - Detail-Panel offset: leichte Korrektur damit der Fokus-Punkt nicht
+//   vom rechten Panel verdeckt wird → Pan nach LINKS verschoben
+const PAN_SPRING   = { type: 'spring', stiffness: 70, damping: 26, mass: 1.0 }
+const ZOOM_SPRING  = { type: 'spring', stiffness: 75, damping: 24, mass: 0.95 }
+const RESET_SPRING = { type: 'spring', stiffness: 90, damping: 28, mass: 0.9 }
 
-// Default cinematic zoom: pushed from 2.0 to 2.6 → fühlbar "näher dran"
-const DEFAULT_ZOOM = 2.6
+// Photo-Viewer Defaults
+// „Wie ein Bild ranzoomen, nicht reinscrollen":
+// - Sanfter Zoom (1.45x) — das ganze Bild wird größer
+// - Nur sehr leichtes Pan in Richtung Agent (25%) — Nachbarn bleiben rundum sichtbar
+// - Shift nach links damit Detail-Panel den Fokuspunkt nicht verdeckt
+const DEFAULT_ZOOM    = 1.45
+const PAN_FRACTION    = 0.25
+const PANEL_OFFSET_X  = -140
 
 export function useCamera() {
   const x    = useMotionValue(0)
   const y    = useMotionValue(0)
   const zoom = useMotionValue(1)
-  // Parallax-Tiefe: Foreground stations bewegen sich leicht über die Scene-Cam
-  // hinaus, Background-Layer (depthGlow, hex-grid) leicht hinter ihr.
   const parallaxFg = useMotionValue(0)
   const parallaxBg = useMotionValue(0)
   const lastFocus = useRef(null)
@@ -56,16 +62,20 @@ export function useCamera() {
     const pos = AGENT_POSITIONS[agentId]
     if (!pos) return
     const { x: sx, y: sy } = gridToScreen(pos.gx, pos.gy)
-    // Move so that (sx,sy) lands at viewport center, then scale.
-    const dx = -(sx - CX) * targetZoom
-    const dy = -(sy - CY) * targetZoom
 
-    // Phase A: Pan startet sofort, zoom mit kurzer Verzögerung (cinematic dive-in)
+    // Statt voll auf die Position zu zentrieren: nur einen Teil des Weges (PAN_FRACTION).
+    // Das bewahrt die Wahrnehmung „das ganze Bild wird größer".
+    // Plus: leichter Offset nach links (PANEL_OFFSET_X) damit der Agent nicht vom
+    // Detail-Panel rechts verdeckt wird.
+    const dx = -(sx - CX) * targetZoom * PAN_FRACTION + PANEL_OFFSET_X
+    const dy = -(sy - CY) * targetZoom * PAN_FRACTION
+
     animate(x,    dx, PAN_SPRING)
     animate(y,    dy, PAN_SPRING)
-    animate(parallaxFg, dx * 0.06, PAN_SPRING)  // Foreground hint forward
-    animate(parallaxBg, dx * -0.04, PAN_SPRING) // Background hint backward
-    animate(zoom, targetZoom, { ...ZOOM_SPRING, delay: 0.08 })
+    // Parallax leicht damit Layers sich nicht starr mitbewegen
+    animate(parallaxFg, dx * 0.08, PAN_SPRING)
+    animate(parallaxBg, dx * -0.05, PAN_SPRING)
+    animate(zoom, targetZoom, { ...ZOOM_SPRING, delay: 0.05 })
     lastFocus.current = agentId
   }, [x, y, zoom, parallaxFg, parallaxBg])
 

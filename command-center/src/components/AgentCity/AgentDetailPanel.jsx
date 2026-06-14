@@ -77,11 +77,14 @@ export default function AgentDetailPanel({ agentId, leads = [], executions = [],
       transition={{ type: 'spring', stiffness: 120, damping: 22 }}
       style={{
         position: 'absolute', top: 0, right: 0, bottom: 0,
-        width: '42%', minWidth: 340, maxWidth: 480, zIndex: 10,
-        background: 'linear-gradient(180deg, rgba(7,5,26,0.97) 0%, rgba(10,6,28,0.97) 100%)',
-        borderLeft: `1px solid ${color}40`,
-        backdropFilter: 'blur(8px)',
-        boxShadow: `-20px 0 60px rgba(0,0,0,0.5), inset 1px 0 0 ${color}10`,
+        // Schmaler als vorher (38% statt 42%) — AgentCity behält mehr Sichtbarkeit
+        width: '38%', minWidth: 320, maxWidth: 460, zIndex: 10,
+        // Transparenter — AgentCity scheint subtle durch (Photo-Viewer-Feeling)
+        background: 'linear-gradient(180deg, rgba(7,5,26,0.78) 0%, rgba(10,6,28,0.82) 100%)',
+        borderLeft: `1px solid ${color}50`,
+        backdropFilter: 'blur(14px) saturate(140%)',
+        WebkitBackdropFilter: 'blur(14px) saturate(140%)',
+        boxShadow: `-24px 0 60px rgba(0,0,0,0.45), inset 1px 0 0 ${color}18`,
         padding: '18px 18px 24px',
         overflowY: 'auto',
       }}

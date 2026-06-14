@@ -47,7 +47,7 @@ export default function PepeCommandCore({ pepe, onClick, focused, dimmed }) {
     <motion.g
       style={{ cursor: 'pointer' }}
       onClick={onClick}
-      animate={{ opacity: dimmed ? 0.7 : 1 }}
+      animate={{ opacity: dimmed ? 0.88 : 1 }}
       transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
       whileHover={{ scale: dimmed ? 1.03 : 1.05 }}
     >
