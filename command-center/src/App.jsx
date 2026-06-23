@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { RefreshCw, Cpu, Users, Globe, Activity, Wifi, WifiOff, TrendingUp, Rocket } from 'lucide-react'
+import { RefreshCw, Cpu, Users, Globe, Activity, Wifi, WifiOff, TrendingUp, Rocket, Coins } from 'lucide-react'
 import QuickBuildMobile from './components/QuickBuildMobile'
+import WinningsView from './components/WinningsView'
 import { getLeadStage, getConfidence } from './lib/sheets'
 import { useSheetData } from './hooks/useSheetData'
 import { useExecutions } from './hooks/useExecutions'
@@ -29,6 +30,7 @@ const TABS = [
   { id: 'leads',      label: 'Leads',      icon: Users },
   { id: 'sites',      label: 'Sites',      icon: Globe },
   { id: 'executions', label: 'Executions', icon: Activity },
+  { id: 'gewinne',    label: 'Gewinne',    icon: Coins },
 ]
 
 const EASE = [0.23, 1, 0.32, 1]
@@ -301,6 +303,12 @@ function App() {
               initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.18, ease: EASE }}>
               <QuickBuildMobile />
+            </motion.div>
+          ) : activeTab === 'gewinne' ? (
+            <motion.div key="gewinne"
+              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: EASE }}>
+              <WinningsView />
             </motion.div>
           ) : null}
         </AnimatePresence>
